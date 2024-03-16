@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: bbqms
+  jpa:
+    database: mysql
+    hibernate:
+      ddl-auto: none
+  datasource:
+    url: jdbc:mysql://localhost:3306
+    username: root
+    password: password
+  flyway:
+    schemas: bbqms
