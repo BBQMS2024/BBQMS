@@ -1,12 +1,13 @@
 import { useEffect } from "react";
 import { useState } from "react"
+import { SERVER_URL } from "./constants";
 
 
 export default function App() {
     const [message, setMessage] = useState('');
 
     async function getMessageFromBackend() {
-        const response = await fetch('http://localhost:8080/api/v1/admin');
+        const response = await fetch(SERVER_URL + '/api/v1/admin');
         const body = await response.json();
 
         setMessage('Got from backend: ' + body.text);

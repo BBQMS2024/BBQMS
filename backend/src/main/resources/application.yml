@@ -6,8 +6,8 @@ spring:
     hibernate:
       ddl-auto: none
   datasource:
-    url: jdbc:mysql://localhost:3306
-    username: root
-    password: password
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
   flyway:
-    schemas: bbqms
+    schemas: ${DB_SCHEMA}
