@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "tenant")
 public class Tenant {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -17,7 +18,7 @@ public class Tenant {
     private String name;
 
     @Column(name = "hq_address")
-    private String hqAddress;
+    private String hq_address;
 
     @Column(name = "font")
     private String font;
@@ -25,40 +26,31 @@ public class Tenant {
     @Column(name = "welcome_message")
     private String welcomeMessage;
 
-    @OneToOne
+    @OneToOne()
     @JoinColumn(name = "logo_id", referencedColumnName = "id")
     private TenantLogo logo;
+
+    @OneToOne(mappedBy = "tenant")
+    private User user;
 
     public Tenant() {
     }
 
-    public Tenant(final String code,
-                  final String name,
-                  final String hqAddress,
-                  final String font,
-                  final String welcomeMessage,
-                  final TenantLogo logo) {
+    public Tenant(String code, String name, String hq_address, String font, String welcomeMessage, TenantLogo logo, User user) {
         this.code = code;
         this.name = name;
-        this.hqAddress = hqAddress;
+        this.hq_address = hq_address;
         this.font = font;
         this.welcomeMessage = welcomeMessage;
         this.logo = logo;
-    }
-
-    public Tenant(final String code,
-                  final String name,
-                  final String hqAddress,
-                  final String font,
-                  final String welcomeMessage) {
-        this(code, name, hqAddress, font, welcomeMessage, null);
+        this.user = user;
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(final Long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -66,7 +58,7 @@ public class Tenant {
         return code;
     }
 
-    public void setCode(final String code) {
+    public void setCode(String code) {
         this.code = code;
     }
 
@@ -74,23 +66,23 @@ public class Tenant {
         return name;
     }
 
-    public void setName(final String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public String getHqAddress() {
-        return hqAddress;
+    public String getHq_address() {
+        return hq_address;
     }
 
-    public void setHqAddress(final String hqAddress) {
-        this.hqAddress = hqAddress;
+    public void setHq_address(String hq_address) {
+        this.hq_address = hq_address;
     }
 
     public String getFont() {
         return font;
     }
 
-    public void setFont(final String font) {
+    public void setFont(String font) {
         this.font = font;
     }
 
@@ -98,7 +90,7 @@ public class Tenant {
         return welcomeMessage;
     }
 
-    public void setWelcomeMessage(final String welcomeMessage) {
+    public void setWelcomeMessage(String welcomeMessage) {
         this.welcomeMessage = welcomeMessage;
     }
 
@@ -106,8 +98,16 @@ public class Tenant {
         return logo;
     }
 
-    public void setLogo(final TenantLogo logo) {
+    public void setLogo(TenantLogo logo) {
         this.logo = logo;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @Override
@@ -116,10 +116,12 @@ public class Tenant {
                 "id=" + id +
                 ", code='" + code + '\'' +
                 ", name='" + name + '\'' +
-                ", hq_address='" + hqAddress + '\'' +
+                ", hq_address='" + hq_address + '\'' +
                 ", font='" + font + '\'' +
                 ", welcomeMessage='" + welcomeMessage + '\'' +
                 ", logo=" + logo +
+                ", user=" + user +
                 '}';
     }
+
 }
