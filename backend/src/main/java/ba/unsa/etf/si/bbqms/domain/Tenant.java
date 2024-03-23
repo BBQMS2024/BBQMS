@@ -30,20 +30,17 @@ public class Tenant {
     @JoinColumn(name = "logo_id", referencedColumnName = "id")
     private TenantLogo logo;
 
-    @OneToOne(mappedBy = "tenant")
-    private User user;
 
     public Tenant() {
     }
 
-    public Tenant(String code, String name, String hqAddress, String font, String welcomeMessage, TenantLogo logo, User user) {
+    public Tenant(String code, String name, String hqAddress, String font, String welcomeMessage, TenantLogo logo) {
         this.code = code;
         this.name = name;
         this.hqAddress = hqAddress;
         this.font = font;
         this.welcomeMessage = welcomeMessage;
         this.logo = logo;
-        this.user = user;
     }
 
     public Long getId() {
@@ -102,13 +99,6 @@ public class Tenant {
         this.logo = logo;
     }
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
 
     @Override
     public String toString() {
@@ -120,7 +110,6 @@ public class Tenant {
                 ", font='" + font + '\'' +
                 ", welcomeMessage='" + welcomeMessage + '\'' +
                 ", logo=" + logo +
-                ", user=" + user +
                 '}';
     }
 

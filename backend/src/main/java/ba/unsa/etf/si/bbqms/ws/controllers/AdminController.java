@@ -17,10 +17,15 @@ public class AdminController {
         this.adminService = adminService;
     }
 
-    @PostMapping("/addTenant")
+    @PostMapping("/tenants")
     public ResponseEntity addTenant(@RequestBody AddTenantDto tenantDto) {
+        return ResponseEntity.ok().body(adminService.addTenant(tenantDto));
+    }
+
+    @GetMapping("/tenants/{id}")
+    public ResponseEntity getTenant(@PathVariable(name = "id") Long id) {
         try {
-            return ResponseEntity.ok().body(adminService.saveTenant(tenantDto));
+            return ResponseEntity.ok().body(adminService.getById(id));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.badRequest().body(new ErrorResponseDto(e.getMessage()));
         }
