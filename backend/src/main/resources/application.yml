@@ -5,7 +5,6 @@ spring:
     database: mysql
     hibernate:
       ddl-auto: none
-    show-sql: true
   datasource:
     url: ${DB_URL}/${DB_SCHEMA}
     username: ${DB_USERNAME}

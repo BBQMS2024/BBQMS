@@ -9,7 +9,7 @@ import ba.unsa.etf.si.bbqms.domain.User;
 import ba.unsa.etf.si.bbqms.exceptions.AuthException;
 import ba.unsa.etf.si.bbqms.jwt_service.api.JwtService;
 import ba.unsa.etf.si.bbqms.tfa_service.api.TwoFactorService;
-import ba.unsa.etf.si.bbqms.utils.EmailValidator;
+import ba.unsa.etf.si.bbqms.utils.UserValidator;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -45,9 +45,7 @@ public class DefaultAuthService implements AuthService {
 
     @Override
     public User registerUser(final User user) throws AuthException {
-        if (!EmailValidator.validate(user.getEmail()) ||
-                user.getPassword() == null ||
-                user.getPassword().length() < 4) {
+        if (!UserValidator.validateData(user)) {
             throw new AuthException("Invalid email/password format.");
         }
 
@@ -62,7 +60,7 @@ public class DefaultAuthService implements AuthService {
         user.setRoles(Set.of(role));
         user.setOauth(false);
         user.setTfaSecret(this.twoFactorService.generateNewSecret());
-        user.setPassword(this.passwordEncoder.encode(user.getPassword()));
+        user.setPassword(this.passwordEncoder.encode(user.getPassword().trim()));
 
         return userService.save(user);
     }

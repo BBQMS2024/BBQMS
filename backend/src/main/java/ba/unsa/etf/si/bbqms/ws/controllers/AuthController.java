@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,10 +35,11 @@ public class AuthController {
     }
 
     @PostMapping("/register")
+    @PreAuthorize("!isAuthenticated()")
     public ResponseEntity register(@RequestBody final RegisterRequest request) {
         final User newUser = User.builder()
-                .password(request.password().trim())
-                .email(request.email.trim())
+                .password(request.password())
+                .email(request.email)
                 .build();
         try {
             final User user = this.authService.registerUser(newUser);
@@ -49,6 +51,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
+    @PreAuthorize("!isAuthenticated()")
     public ResponseEntity login(@RequestBody final LoginRequest loginRequest) {
         final User userData = User.builder()
                 .email(loginRequest.email().trim())
