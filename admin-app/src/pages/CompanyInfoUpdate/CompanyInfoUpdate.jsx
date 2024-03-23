@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import CompanyInfoForm from "../../components/CompanyDetailsForm/CompanyDetailsForm"; 
-
+import "./CompanyInfoUpdate.css"
 
 //import "./Home.css";
 

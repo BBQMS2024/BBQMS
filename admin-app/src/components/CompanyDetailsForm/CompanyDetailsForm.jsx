@@ -52,7 +52,7 @@ function CompanyDetailsForm() {
         <div className="right-column">
         <form>
           <div className="form-group">
-            <label htmlFor="hqAddress">HQ address</label>
+            <label htmlFor="hqAddress">HQ Address</label>
             <input
               type="text"
               id="hqAddress"
@@ -61,7 +61,7 @@ function CompanyDetailsForm() {
               required />
           </div>
           <div className="form-group">
-            <label htmlFor="welcomeMessage">Welcome message</label>
+            <label htmlFor="welcomeMessage">Welcome Message</label>
             <input
               type="text"
               id="welcomeMessage"
@@ -96,7 +96,7 @@ function CompanyDetailsForm() {
           </form>
         </div>
       </div>
-      </><button type="submit">Submit</button></>
+      </><button type="submit">SUBMIT</button></>
   );  
 }
 
