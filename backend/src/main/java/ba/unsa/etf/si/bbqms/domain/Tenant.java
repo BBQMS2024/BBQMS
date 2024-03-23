@@ -18,7 +18,7 @@ public class Tenant {
     private String name;
 
     @Column(name = "hq_address")
-    private String hq_address;
+    private String hqAddress;
 
     @Column(name = "font")
     private String font;
@@ -36,10 +36,10 @@ public class Tenant {
     public Tenant() {
     }
 
-    public Tenant(String code, String name, String hq_address, String font, String welcomeMessage, TenantLogo logo, User user) {
+    public Tenant(String code, String name, String hqAddress, String font, String welcomeMessage, TenantLogo logo, User user) {
         this.code = code;
         this.name = name;
-        this.hq_address = hq_address;
+        this.hqAddress = hqAddress;
         this.font = font;
         this.welcomeMessage = welcomeMessage;
         this.logo = logo;
@@ -70,12 +70,12 @@ public class Tenant {
         this.name = name;
     }
 
-    public String getHq_address() {
-        return hq_address;
+    public String getHqAddress() {
+        return hqAddress;
     }
 
-    public void setHq_address(String hq_address) {
-        this.hq_address = hq_address;
+    public void setHqAddress(String hqAddress) {
+        this.hqAddress = hqAddress;
     }
 
     public String getFont() {
@@ -116,7 +116,7 @@ public class Tenant {
                 "id=" + id +
                 ", code='" + code + '\'' +
                 ", name='" + name + '\'' +
-                ", hq_address='" + hq_address + '\'' +
+                ", hq_address='" + hqAddress + '\'' +
                 ", font='" + font + '\'' +
                 ", welcomeMessage='" + welcomeMessage + '\'' +
                 ", logo=" + logo +
