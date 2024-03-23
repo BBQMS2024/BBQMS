@@ -1,10 +1,7 @@
 package ba.unsa.etf.si.bbqms.ws.models;
 
 public class TenantIdDto {
-    private Long tenantId;
-
-    public TenantIdDto() {
-    }
+    private final Long tenantId;
 
     public TenantIdDto(Long tenantId) {
         this.tenantId = tenantId;
@@ -14,8 +11,5 @@ public class TenantIdDto {
         return tenantId;
     }
 
-    public void setTenantId(Long tenantId) {
-        this.tenantId = tenantId;
-    }
 
 }
