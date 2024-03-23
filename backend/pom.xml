@@ -57,6 +57,16 @@
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+			<version>0.12.3</version>
+		</dependency>
+		<dependency>
+			<groupId>dev.samstevens.totp</groupId>
+			<artifactId>totp-spring-boot-starter</artifactId>
+			<version>1.7.1</version>
+		</dependency>
 	</dependencies>
 
 	<build>

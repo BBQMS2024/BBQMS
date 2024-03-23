@@ -5,9 +5,20 @@ spring:
     database: mysql
     hibernate:
       ddl-auto: none
+    show-sql: true
   datasource:
-    url: ${DB_URL}
+    url: ${DB_URL}/${DB_SCHEMA}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
   flyway:
     schemas: ${DB_SCHEMA}
+
+jwt:
+  cookie-title: access-token
+  secret-key: ${JWT_KEY}
+  authorities-key: USER_AUTHORITIES
+  token-validity-time: PT30M
+tfa:
+  label: BBQMS
+  issuer: BBQMS
+
