@@ -30,7 +30,7 @@ function CompanyDetailsForm() {
         <div className="left-column">
           <form>
             <div className="form-group">
-              <label htmlFor="name">Name</label>
+              <label htmlFor="name" id='Name'>Name</label>
               <input
                 type="text"
                 id="name"
@@ -39,7 +39,7 @@ function CompanyDetailsForm() {
                 required />
             </div>
             <div className="form-group">
-              <label htmlFor="logo">Logo</label>
+              <label htmlFor="logo" id='Logo'>Logo</label>
               <input
                 type="file"
                 onChange={handleChange}
