@@ -32,6 +32,12 @@ export default function HomeScreen() {
 
     return (
         <View style={styles.container}>
+            <View style={styles.image}>
+                <Image
+                style={{ height: 150, resizeMode: "contain" }}
+                source={require("../../assets/icon.png")}
+        ></Image>
+      </View>
             <Text style={styles.text}>Dobro došli </Text>
             <WelcomeMessage name={companyName} settings={settings} />
         </View>
