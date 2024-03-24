@@ -1,0 +1,7 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-image: linear-gradient(rgba(255,255,255,0.3), rgba(255,255,255,0.3)), url('../../images/backgroundimage.jpg');
+    background-size: cover;
+    background-position: center;
+  }
