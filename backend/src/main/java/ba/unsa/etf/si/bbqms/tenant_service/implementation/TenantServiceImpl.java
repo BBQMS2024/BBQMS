@@ -45,7 +45,7 @@ public class TenantServiceImpl implements TenantService {
 
     @Override
     public Tenant updateTenant(final String code, final TenantDto request) throws EntityNotFoundException{
-        Tenant tenant = findByCode(code);
+        final Tenant tenant = findByCode(code);
 
         if (request.name() != null) {
             tenant.setName(request.name());

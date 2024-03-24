@@ -31,7 +31,7 @@ public class TenantController {
     }
 
     @PutMapping("/{code}")
-    public ResponseEntity updateTenant(@PathVariable String code, @RequestBody TenantDto request) {
+    public ResponseEntity updateTenant(@PathVariable final String code, @RequestBody final TenantDto request) {
         try{
             return ResponseEntity.ok().body(tenantService.updateTenant(code, request));
         } catch (EntityNotFoundException e) {
