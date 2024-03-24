@@ -6,13 +6,10 @@ import ba.unsa.etf.si.bbqms.repository.TenantLogoRepository;
 import ba.unsa.etf.si.bbqms.repository.TenantRepository;
 import ba.unsa.etf.si.bbqms.tenant_service.api.TenantService;
 import ba.unsa.etf.si.bbqms.ws.models.TenantDto;
-import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
-import java.util.Optional;
 
 @Service
 public class TenantServiceImpl implements TenantService {
@@ -50,17 +47,21 @@ public class TenantServiceImpl implements TenantService {
     public Tenant updateTenant(final String code, final TenantDto request) throws EntityNotFoundException{
         Tenant tenant = findByCode(code);
 
-        tenant.setName(request.name());
-        tenant.setCode(request.code());
-        tenant.setHqAddress(request.hqAddress());
-        tenant.setFont(request.font());
-        tenant.setWelcomeMessage(request.welcomeMessage());
-
-        if(request.logo() != null)
-           tenant.getLogo().setBase64Logo(request.logo());
-        Optional<Tenant> optionalTenant = tenantRepository.findByCode(request.code());
-        if (optionalTenant.isPresent() && !Objects.equals(code, request.code()))
-            throw new EntityExistsException("Tenant with code " + request.code() + " already exists");
+        if (request.name() != null) {
+            tenant.setName(request.name());
+        }
+        if (request.hqAddress() != null) {
+            tenant.setHqAddress(request.hqAddress());
+        }
+        if (request.font() != null) {
+            tenant.setFont(request.font());
+        }
+        if (request.welcomeMessage() != null) {
+            tenant.setWelcomeMessage(request.welcomeMessage());
+        }
+        if(request.logo() != null) {
+            tenant.getLogo().setBase64Logo(request.logo());
+        }
         return tenantRepository.save(tenant);
     }
 }

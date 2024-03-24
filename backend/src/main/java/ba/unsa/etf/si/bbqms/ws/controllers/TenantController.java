@@ -3,7 +3,6 @@ package ba.unsa.etf.si.bbqms.ws.controllers;
 import ba.unsa.etf.si.bbqms.tenant_service.api.TenantService;
 import ba.unsa.etf.si.bbqms.ws.models.TenantDto;
 import ba.unsa.etf.si.bbqms.ws.models.ErrorResponseDto;
-import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,9 +34,8 @@ public class TenantController {
     public ResponseEntity updateTenant(@PathVariable String code, @RequestBody TenantDto request) {
         try{
             return ResponseEntity.ok().body(tenantService.updateTenant(code, request));
-        } catch (EntityNotFoundException | EntityExistsException e) {
+        } catch (EntityNotFoundException e) {
             return ResponseEntity.badRequest().body(new ErrorResponseDto(e.getMessage()));
         }
-
     }
 }
