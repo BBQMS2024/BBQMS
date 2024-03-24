@@ -1,3 +1,5 @@
+BEGIN;
+
 CREATE TABLE tenant
 (
     id              BIGINT AUTO_INCREMENT NOT NULL,
@@ -21,4 +23,6 @@ ALTER TABLE tenant
     ADD CONSTRAINT uc_tenant_logo UNIQUE (logo_id);
 
 ALTER TABLE tenant
-    ADD CONSTRAINT FK_TENANT_ON_LOGO FOREIGN KEY (logo_id) REFERENCES tenant_logo (id);
+    ADD CONSTRAINT fk_tenant_on_logo FOREIGN KEY (logo_id) REFERENCES tenant_logo (id);
+
+COMMIT;
