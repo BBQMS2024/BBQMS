@@ -10,8 +10,6 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 public class TenantServiceImpl implements TenantService {
     private final TenantRepository tenantRepository;
@@ -22,18 +20,18 @@ public class TenantServiceImpl implements TenantService {
         this.tenantRepository = tenantRepository;
         this.tenantLogoRepository = tenantLogoRepository;
     }
+
     @Override
     public Tenant addTenant(final AddTenantDto request){
         final Tenant tenant = new Tenant(
                 request.getCode(),
                 request.getName(),
-                request.getHq_address(),
+                request.getHqAddress(),
                 request.getFont(),
                 request.getWelcomeMessage()
         );
 
-        final TenantLogo newLogo = new TenantLogo();
-        newLogo.setBase64Logo(request.getLogo());
+        final TenantLogo newLogo = new TenantLogo(request.getLogo());
         final TenantLogo savedLogo = tenantLogoRepository.save(newLogo);
         tenant.setLogo(savedLogo);
         return tenantRepository.save(tenant);

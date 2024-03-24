@@ -1,6 +1,5 @@
 package ba.unsa.etf.si.bbqms.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -33,7 +32,12 @@ public class Tenant {
     public Tenant() {
     }
 
-    public Tenant(final String code, final String name, final String hqAddress, final String font, final String welcomeMessage, final TenantLogo logo) {
+    public Tenant(final String code,
+                  final String name,
+                  final String hqAddress,
+                  final String font,
+                  final String welcomeMessage,
+                  final TenantLogo logo) {
         this.code = code;
         this.name = name;
         this.hqAddress = hqAddress;
@@ -42,12 +46,12 @@ public class Tenant {
         this.logo = logo;
     }
 
-    public Tenant(final String code, final String name, final String hqAddress, final String font, final String welcomeMessage) {
-        this.code = code;
-        this.name = name;
-        this.hqAddress = hqAddress;
-        this.font = font;
-        this.welcomeMessage = welcomeMessage;
+    public Tenant(final String code,
+                  final String name,
+                  final String hqAddress,
+                  final String font,
+                  final String welcomeMessage) {
+        this(code, name, hqAddress, font, welcomeMessage, null);
     }
 
     public Long getId() {
