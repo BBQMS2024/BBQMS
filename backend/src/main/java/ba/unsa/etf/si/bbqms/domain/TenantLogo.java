@@ -1,11 +1,10 @@
 package ba.unsa.etf.si.bbqms.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
-
 public class TenantLogo {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -15,12 +14,13 @@ public class TenantLogo {
     private String base64Logo;
 
     @OneToOne(mappedBy = "logo")
+    @JsonIgnore
     private Tenant tenant;
 
     public TenantLogo() {
     }
 
-    public TenantLogo(String base64Logo, Tenant tenant) {
+    public TenantLogo(final String base64Logo, final Tenant tenant) {
         this.base64Logo = base64Logo;
         this.tenant = tenant;
     }
@@ -29,7 +29,7 @@ public class TenantLogo {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(final Long id) {
         this.id = id;
     }
 
@@ -37,7 +37,7 @@ public class TenantLogo {
         return base64Logo;
     }
 
-    public void setBase64Logo(String base64Logo) {
+    public void setBase64Logo(final String base64Logo) {
         this.base64Logo = base64Logo;
     }
 
@@ -45,7 +45,7 @@ public class TenantLogo {
         return tenant;
     }
 
-    public void setTenant(Tenant tenant) {
+    public void setTenant(final Tenant tenant) {
         this.tenant = tenant;
     }
 
@@ -57,5 +57,4 @@ public class TenantLogo {
                 ", tenant=" + tenant +
                 '}';
     }
-
 }

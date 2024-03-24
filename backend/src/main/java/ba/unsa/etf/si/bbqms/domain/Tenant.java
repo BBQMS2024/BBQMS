@@ -1,11 +1,11 @@
 package ba.unsa.etf.si.bbqms.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "tenant")
 public class Tenant {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -26,15 +26,14 @@ public class Tenant {
     @Column(name = "welcome_message")
     private String welcomeMessage;
 
-    @OneToOne()
+    @OneToOne
     @JoinColumn(name = "logo_id", referencedColumnName = "id")
     private TenantLogo logo;
-
 
     public Tenant() {
     }
 
-    public Tenant(String code, String name, String hqAddress, String font, String welcomeMessage, TenantLogo logo) {
+    public Tenant(final String code, final String name, final String hqAddress, final String font, final String welcomeMessage, final TenantLogo logo) {
         this.code = code;
         this.name = name;
         this.hqAddress = hqAddress;
@@ -43,11 +42,19 @@ public class Tenant {
         this.logo = logo;
     }
 
+    public Tenant(final String code, final String name, final String hqAddress, final String font, final String welcomeMessage) {
+        this.code = code;
+        this.name = name;
+        this.hqAddress = hqAddress;
+        this.font = font;
+        this.welcomeMessage = welcomeMessage;
+    }
+
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(final Long id) {
         this.id = id;
     }
 
@@ -55,7 +62,7 @@ public class Tenant {
         return code;
     }
 
-    public void setCode(String code) {
+    public void setCode(final String code) {
         this.code = code;
     }
 
@@ -63,7 +70,7 @@ public class Tenant {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -71,7 +78,7 @@ public class Tenant {
         return hqAddress;
     }
 
-    public void setHqAddress(String hqAddress) {
+    public void setHqAddress(final String hqAddress) {
         this.hqAddress = hqAddress;
     }
 
@@ -79,7 +86,7 @@ public class Tenant {
         return font;
     }
 
-    public void setFont(String font) {
+    public void setFont(final String font) {
         this.font = font;
     }
 
@@ -87,7 +94,7 @@ public class Tenant {
         return welcomeMessage;
     }
 
-    public void setWelcomeMessage(String welcomeMessage) {
+    public void setWelcomeMessage(final String welcomeMessage) {
         this.welcomeMessage = welcomeMessage;
     }
 
@@ -95,10 +102,9 @@ public class Tenant {
         return logo;
     }
 
-    public void setLogo(TenantLogo logo) {
+    public void setLogo(final TenantLogo logo) {
         this.logo = logo;
     }
-
 
     @Override
     public String toString() {
@@ -112,5 +118,4 @@ public class Tenant {
                 ", logo=" + logo +
                 '}';
     }
-
 }
