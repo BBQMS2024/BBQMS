@@ -1,5 +1,7 @@
-import React, { useEffect, useRef, useReducer } from "react";
+import React, { useEffect, useRef, useReducer, useState } from "react";
 import "./LoginAuth.css";
+
+const SERVER_URL = "http://localhost:8080";
 
 function doSubmit(submittedValues) {
     console.log(`Submitted: ${submittedValues.join("")}`);
@@ -77,12 +79,12 @@ const initialState = {
     status: "idle"
 };
 
-export default function App() {
+export default function LoginAuth() {
     const [{ inputValues, focusedIndex, status }, dispatch] = useReducer(
         reducer,
         initialState
     );
-    // console.log(focusedIndex);
+    const [error, setError] = useState("");
 
     function handleInput(index, value) {
         dispatch({ type: "INPUT", payload: { index, value } });
@@ -107,37 +109,60 @@ export default function App() {
         dispatch({ type: "FOCUS", payload: { focusedIndex } });
     }
 
-    function handleSubmit(e) {
+    async function handleSubmit(e) {
         e.preventDefault();
 
         dispatch({ type: "VERIFY" });
-        doSubmit(inputValues).then(() => dispatch({ type: "VERIFY_SUCCESS" }));
+
+        try {
+            const response = await fetch(`${SERVER_URL}/api/v1/auth/tfa`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    code: inputValues.join(""),
+                    email: "emir@rrr.ba"  // OVO TREBA PROMIJENITI LOGICNO
+                }),
+            });
+
+            if (response.ok) {
+                dispatch({ type: "VERIFY_SUCCESS" });
+
+            } else {
+                throw new Error("Code could not be verified. It is incorrect or expired.");
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            setError("Code could not be verified. It is incorrect or expired.");
+        }
     }
 
     return (
         <div id="auth-container">
-        <form id="authForm" onSubmit={handleSubmit}>
-            <div className="inputs">
-                {inputValues.map((value, index) => {
-                    return (
-                        <Input
-                            key={index}
-                            index={index}
-                            value={value}
-                            onChange={handleInput}
-                            onBackspace={handleBack}
-                            onPaste={handlePaste}
-                            isFocused={index === focusedIndex}
-                            onFocus={handleFocus}
-                            isDisabled={status === "pending"}
-                        />
-                    );
-                })}
-            </div>
-            <button disabled={status === "pending"}>
-                {status === "pending" ? "VERIFYING..." : "VERIFY"}
-            </button>
-        </form>
+            <form id="authForm" onSubmit={handleSubmit}>
+                <div className="inputs">
+                    {inputValues.map((value, index) => {
+                        return (
+                            <Input
+                                key={index}
+                                index={index}
+                                value={value}
+                                onChange={handleInput}
+                                onBackspace={handleBack}
+                                onPaste={handlePaste}
+                                isFocused={index === focusedIndex}
+                                onFocus={handleFocus}
+                                isDisabled={status === "pending"}
+                            />
+                        );
+                    })}
+                </div>
+                <button disabled={status === "pending"}>
+                    {status === "pending" ? "VERIFYING..." : "VERIFY"}
+                </button>
+            </form>
+            {error && <p className="error">{error}</p>}
         </div>
     );
 }
@@ -155,11 +180,6 @@ function Input({
     const ref = useRef();
     useEffect(() => {
         requestAnimationFrame(() => {
-            // console.log(
-            //   ref.current,
-            //   document.activeElement,
-            //   ref.current !== document.activeElement
-            // );
             if (ref.current !== document.activeElement && isFocused) {
                 ref.current.focus();
             }
@@ -199,5 +219,3 @@ function Input({
         />
     );
 }
-
-

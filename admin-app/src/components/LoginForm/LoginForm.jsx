@@ -2,17 +2,21 @@ import React, { useState } from "react";
 import validator from "validator";
 import "./LoginForm.css";
 import LoginAuth from "../LoginAuth/LoginAuth";
-import {Route, Routes} from "react-router-dom";
-
+import { Route, Routes, useNavigate } from "react-router-dom";
+const SERVER_URL = "http://localhost:8080";
 
 const LoginForm = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
-    const [isSubmitted, setIsSubmitted] = useState(false); // Dodali smo novo stanje
+    const [isSubmitted, setIsSubmitted] = useState(false);
+    const navigate = useNavigate();
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
+
+        console.log("username: "+ username);
+        console.log("password: "+ password);
 
         if (!username.trim()) {
             setError("Username is required");
@@ -29,13 +33,29 @@ const LoginForm = () => {
             return;
         }
 
-        // Ako sve provere prođu, postavljamo isSubmitted na true
-        setIsSubmitted(true);
+        try {
+            const response = await fetch(`${SERVER_URL}/api/v1/auth/login`,  {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: username,
+                    password: password
+                }),
+            });
 
-        // Clear form fields i error ako je sve u redu
-        setUsername("");
-        setPassword("");
-        setError("");
+            const data = await response.json();
+            if (response.ok) {
+                setIsSubmitted(true);
+                navigate('/');
+            } else {
+                setError("Login failed. Please check your credentials.");
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            setError("An error occurred. Please try again.");
+        }
     };
 
     const handleUsernameChange = (event) => {
@@ -48,14 +68,14 @@ const LoginForm = () => {
         setError("");
     };
 
-    if (isSubmitted){
+    if (isSubmitted) {
         return (
             <Routes>
-                <Route path='/' element={ <LoginAuth /> } />
-            </Routes>)
+                <Route path='/' element={<LoginAuth />} />
+            </Routes>
+        )
     }
 
-    // Inače prikaži formu za login
     return (
         <div id="login-form">
             <h1>LOGIN</h1>
@@ -90,6 +110,5 @@ const LoginForm = () => {
         </div>
     );
 };
-
 
 export default LoginForm;
