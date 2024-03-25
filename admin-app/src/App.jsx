@@ -1,4 +1,3 @@
-import LoginScreen from '../pages/LoginScreen/LoginScreen.jsx'
 import RegistrationScreen from '../pages/RegistrationScreen/RegistrationScreen.jsx'
 import { Route, Routes } from 'react-router-dom'
 
