@@ -1,37 +1,40 @@
-const { SERVER_URL } = require('../constants.js');
+const { SERVER_URL } = require("../constants.js");
 
-async function postCode(code: string) {
-    /*
-    let details = await fetch(`${SERVER_URL}/api/v1/tenants/${code}`, {
-        method: 'GET',
-    }).then(response => {
-        console.log(response)
-        if (response.status === 200) {
-            return response.json();
-        } else {
-            return null;
-        }
-    })
-        .then(data => {
-            return data;
+interface CompanyData {
+    name: string;
+    welcomeMessage: string;
+    font: string;
+    logoUrl: string;
+}
+
+async function getCompanyDetails(code: string) {
+    let details: CompanyData | null = await fetch(
+        `${SERVER_URL}/api/v1/tenants/${code}`,
+        { method: "GET" }
+    )
+        .then((response) => {
+            console.log(response);
+            if (response.status === 200) {
+                return response.json();
+            } else {
+                return null;
+            }
+        })
+        .then((data) => {
+            if (!data) return null;
+            const companyData: CompanyData = {
+                name: data.name,
+                welcomeMessage: data.welcomeMessage,
+                font: data.font,
+                logoUrl: data.logo.base64Logo,
+            };
+            return companyData;
         })
         .catch((error) => {
-            console.error('Error:', error);
+            console.error("Error:", error);
+            return null;
         });
-        */
-    let details = {
-        "id": 42,
-        "code": "T001",
-        "name": "Example Tenant",
-        "hqAddress": "123 Main Street, City, Country",
-        "font": "Arial",
-        "welcomeMessage": "Welcome to our Bank!",
-        "logo": {
-            "id": 42,
-            "base64Logo": ""
-        }
-    }
     return details;
 }
 
-export { postCode }
+export { getCompanyDetails };
