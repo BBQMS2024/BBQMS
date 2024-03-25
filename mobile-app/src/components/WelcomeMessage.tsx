@@ -3,7 +3,8 @@ import { View, Text, StyleSheet } from "react-native";
 
 interface WelcomeMessageProps {
   name: string;
-  settings: string;
+  welcome: string;
+  font : string;
 }
 
 export default function WelcomeMessage(params : WelcomeMessageProps ) {
@@ -11,9 +12,9 @@ export default function WelcomeMessage(params : WelcomeMessageProps ) {
     return (
       <View style={styles.welcomeBox}>
         <Text
-          style={{fontFamily: params.settings, fontSize: 32}}
+          style={{fontFamily: params.font, fontSize: 32}}
         >
-          Dobro došli {params.name}!
+          {params.welcome} {params.name}
         </Text>
       </View>
     );

@@ -8,38 +8,53 @@ import {
   Text,
   TouchableOpacity,
 } from "react-native";
-import { CommonActions } from "@react-navigation/native";
+import { useRoute } from "@react-navigation/native";
 import WelcomeMessage from "../components/WelcomeMessage";
+import { fetchSettings } from "../services/FetchData";
+import LoadingAnimation from "../components/LoadingAnimation";
+
+interface RouteParams {
+  code: string;
+}
 
 export default function HomeScreen() {
-
-    // const { accountID } = route.params;
-    const [companyName, setcompanyName] = useState("Opcina centar");
-    const [settings, setSettings] = useState("arial");
+    const route = useRoute()
+    const { code } = route.params as RouteParams;
+    const [name, setName] = useState("");
+    const [welcomeMessage, setWelcomeMessage] = useState("");
+    const [font, setFont] = useState("");
+    const [logo, setLogo] = useState("");
 
     useEffect(() => {
+      fetchData();
       
     }, []);
 
-/*
-    <View style={styles.image}>
-    <Image
-      style={{ height: 350, resizeMode: "contain" }}
-      source={require("")}
-    ></Image>
-  </View>
-*/
-
+    async function fetchData() {
+      try {
+        const { font, welcomeMessage, logo, name } = await fetchSettings(code);
+        setFont(font);
+        setLogo(logo.base64Logo);
+        setName(name);
+        setWelcomeMessage(welcomeMessage)
+  
+      } catch (error) {
+        console.error("Failed to fetch data in HomeScreen:", error);
+      }
+    }
+    if ( name == "" || welcomeMessage == "" || font == "" || logo == ""){
+      return <LoadingAnimation />;
+    }
+    else
     return (
         <View style={styles.container}>
             <View style={styles.image}>
                 <Image
                 style={{ height: 150, resizeMode: "contain" }}
-                source={require("../../assets/icon.png")}
-        ></Image>
-      </View>
-            <Text style={styles.text}>Dobro došli </Text>
-            <WelcomeMessage name={companyName} settings={settings} />
+                source={{uri : logo}}
+                ></Image>
+            </View>
+            <WelcomeMessage name={name} font={font} welcome={welcomeMessage}/>
         </View>
         
       );

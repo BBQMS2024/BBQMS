@@ -14,6 +14,7 @@ const Stack = createNativeStackNavigator();
 
 export default function App() {
   const [accountID, setAccountID] = useState(1);
+  const [code, setcode] = useState("T001");
 
 /*  const getData = async () => {
     try {
@@ -44,7 +45,7 @@ export default function App() {
               name="Home"
               component={HomeScreen}
               options={{ title: "Welcome", headerShown: false }}
-              initialParams={{ accountID: accountID }}/>
+              initialParams={{ code: code }}/>
           </Stack.Navigator>
         </NavigationContainer>
       </>
