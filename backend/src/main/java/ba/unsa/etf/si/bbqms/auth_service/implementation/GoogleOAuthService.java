@@ -1,9 +1,11 @@
 package ba.unsa.etf.si.bbqms.auth_service.implementation;
 
 import ba.unsa.etf.si.bbqms.auth_service.api.OAuthService;
+import ba.unsa.etf.si.bbqms.auth_service.api.RoleService;
 import ba.unsa.etf.si.bbqms.domain.Role;
 import ba.unsa.etf.si.bbqms.domain.RoleName;
 import ba.unsa.etf.si.bbqms.domain.User;
+import ba.unsa.etf.si.bbqms.exceptions.AuthException;
 import ba.unsa.etf.si.bbqms.repository.UserRepository;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
@@ -24,20 +26,26 @@ public class GoogleOAuthService implements OAuthService {
     private String GOOGLE_CLIENT_ID;
 
     private final UserRepository userRepository;
+    private final RoleService roleService;
 
-    public GoogleOAuthService(final UserRepository userRepository) {
+    public GoogleOAuthService(final UserRepository userRepository, final RoleService roleService) {
         this.userRepository = userRepository;
+        this.roleService = roleService;
     }
 
     @Override
     public Optional<User> authenticateUser(final String googleCredentials) {
         try {
             final String userEmail = this.extractToken(googleCredentials);
+
+            final Role role = this.roleService.getRoleByName(RoleName.ROLE_SUPER_ADMIN)
+                    .orElseThrow(() -> new AuthException("Tried setting a role that doesn't exist."));
+
             final User user = this.userRepository.findByEmailEquals(userEmail)
                     .orElseGet(() -> this.userRepository.save(
                             User.builder()
                                     .email(userEmail)
-                                    .roles(Set.of(new Role(RoleName.ROLE_SUPER_ADMIN)))
+                                    .roles(Set.of(role))
                                     .oAuth(true)
                                     .build()
                     ));
