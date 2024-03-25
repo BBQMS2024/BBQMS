@@ -2,6 +2,7 @@ package ba.unsa.etf.si.bbqms.ws.controllers;
 
 import ba.unsa.etf.si.bbqms.auth_service.api.AuthService;
 import ba.unsa.etf.si.bbqms.auth_service.api.CookieService;
+import ba.unsa.etf.si.bbqms.auth_service.api.OAuthService;
 import ba.unsa.etf.si.bbqms.domain.User;
 import ba.unsa.etf.si.bbqms.ws.models.ErrorMessage;
 import ba.unsa.etf.si.bbqms.ws.models.SimpleMessageDto;
@@ -28,10 +29,14 @@ public class AuthController {
 
     private final AuthService authService;
     private final CookieService cookieService;
+    private final OAuthService oAuthService;
 
-    public AuthController(final AuthService authService, final CookieService cookieService) {
+    public AuthController(final AuthService authService,
+                          final CookieService cookieService,
+                          final OAuthService oAuthService) {
         this.authService = authService;
         this.cookieService = cookieService;
+        this.oAuthService = oAuthService;
     }
 
     @PostMapping("/register")
@@ -61,17 +66,23 @@ public class AuthController {
         final Optional<User> optionalUser = this.authService.loginUser(userData);
 
         if (optionalUser.isEmpty()) {
-            return ResponseEntity.badRequest().body(new ErrorMessage("Incorrect email or password."));
+            return ResponseEntity.notFound().build();
         }
 
         return ResponseEntity.ok(UserDto.fromEntity(optionalUser.get()));
+    }
+
+    @GetMapping
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity verifyToken() {
+        return ResponseEntity.ok(this.authService.getCurrentUser().isPresent());
     }
 
     @GetMapping("/tfa")
     public ResponseEntity getQrCode(@RequestParam final String email) {
         final Optional<User> optionalUser = this.authService.findByEmail(email);
         if (optionalUser.isEmpty()) {
-            return ResponseEntity.badRequest().body(new ErrorMessage("Cannot find user."));
+            return ResponseEntity.notFound().build();
         }
         String qrCodeUri = this.authService.generateUserQrCode(optionalUser.get());
 
@@ -83,7 +94,7 @@ public class AuthController {
                                      @RequestBody final TfaCodeVerificationRequest request) {
         final Optional<User> optionalUser = this.authService.findByEmail(request.email());
         if (optionalUser.isEmpty()) {
-            return ResponseEntity.badRequest().body(new ErrorMessage("Cannot find user."));
+            return ResponseEntity.notFound().build();
         }
         final User user = optionalUser.get();
 
@@ -100,8 +111,19 @@ public class AuthController {
     }
 
     @PostMapping("/login/oauth2/google")
-    public UserDto loginWithGoogle() {
-        return null;
+    public ResponseEntity loginWithGoogle(final HttpServletResponse response,
+                                          @RequestBody final GoogleLoginRequest request) {
+        final Optional<User> optionalUser = this.oAuthService.authenticateUser(request.googleToken());
+        if (optionalUser.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            final User user = optionalUser.get();
+            final String userToken = this.authService.generateUserToken(user);
+            final Cookie jwtCookie = this.cookieService.generateDefaultJwtCookie(userToken);
+            response.addCookie(jwtCookie);
+
+            return ResponseEntity.ok().body(UserDto.fromEntity(user));
+        }
     }
 
     public record RegisterRequest(String email, String password) {
@@ -114,5 +136,8 @@ public class AuthController {
     }
 
     public record QrCodeResponse(String qrCode) {
+    }
+
+    public record GoogleLoginRequest(String googleToken) {
     }
 }

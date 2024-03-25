@@ -5,6 +5,6 @@ import jakarta.servlet.http.Cookie;
 import java.util.Optional;
 
 public interface CookieService {
-    Cookie generateDefaultJwtCookie(String token);
-    Optional<Cookie> extractJwtCookie(Cookie[] cookies);
+    Cookie generateDefaultJwtCookie(final String token);
+    Optional<Cookie> extractJwtCookie(final Cookie[] cookies);
 }

@@ -23,7 +23,7 @@ public class UsernamePasswordUserService implements UserService {
             throw new UsernameNotFoundException("Invalid email format");
         }
 
-        return this.userRepository.findByEmailEqualsIgnoreCaseAndOauthEquals(email, false)
+        return this.userRepository.findByEmailEquals(email)
                 .orElseThrow(() -> new UsernameNotFoundException("No user with email: " + email + " found"));
     }
 
@@ -34,6 +34,6 @@ public class UsernamePasswordUserService implements UserService {
 
     @Override
     public Optional<User> findByEmail(final String email) {
-        return this.userRepository.findByEmailEqualsIgnoreCaseAndOauthEquals(email, false);
+        return this.userRepository.findByEmailEqualsAndOauthEquals(email, false);
     }
 }
