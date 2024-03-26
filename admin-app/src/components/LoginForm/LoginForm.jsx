@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import validator from "validator";
 import "./LoginForm.css";
 import LoginAuth from "../LoginAuth/LoginAuth";
-import { Route, Routes, useNavigate } from "react-router-dom";
-import {SERVER_URL} from "../../constants.js";
+import { Route, Routes, useNavigate, Link } from "react-router-dom";
+import { SERVER_URL } from "../../constants.js";
 
 const LoginForm = () => {
     const [username, setUsername] = useState("");
@@ -108,7 +108,7 @@ const LoginForm = () => {
                 </div>
                 <input type="submit" value="Submit" />
                 <p id="registration">
-                    Not registered? <a href="https://c2.etf.unsa.ba/">Create an account</a>
+                    Not registered? <Link to="/registration">Create an account</Link>
                 </p>
             </form>
         </div>

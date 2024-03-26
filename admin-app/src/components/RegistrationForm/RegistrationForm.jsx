@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Route, Routes, useNavigate } from "react-router-dom";
+import { Route, Routes, useNavigate, Link } from "react-router-dom";
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import "./RegistrationForm.css";
@@ -46,7 +46,7 @@ export default function RegistrationForm() {
                         setQrCode(responseData.qrCode);
                         setEmail(body.email);
                         setNextPage(true);
-                    }else if (response.status === 400) {
+                    } else if (response.status === 400) {
                         setFieldError('email', 'Email already in use');
                     } else {
                         console.error('Failed to register:', response.statusText);
@@ -68,7 +68,7 @@ export default function RegistrationForm() {
 
     return (
         <div className="login-form-reg">
-            <h1>Register Account</h1>
+            <h1>REGISTER ACCOUNT</h1>
             <form onSubmit={formik.handleSubmit}>
                 <label htmlFor="email">Email or phone number:</label>
                 <input
@@ -96,7 +96,7 @@ export default function RegistrationForm() {
                 ) : null}
                 <input type="submit" value="Create new account"/>
                 <p className="login">
-                    Already have an account? <a href="https://c2.etf.unsa.ba/">Login</a>
+                    Already have an account? <Link to="/login">Login</Link>
                 </p>
             </form>
         </div>
