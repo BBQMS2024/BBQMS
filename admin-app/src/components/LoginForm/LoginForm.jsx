@@ -3,7 +3,7 @@ import validator from "validator";
 import "./LoginForm.css";
 import LoginAuth from "../LoginAuth/LoginAuth";
 import { Route, Routes, useNavigate } from "react-router-dom";
-const SERVER_URL = "http://localhost:8080";
+import {SERVER_URL} from "../../constants.js";
 
 const LoginForm = () => {
     const [username, setUsername] = useState("");
@@ -29,7 +29,7 @@ const LoginForm = () => {
         }
 
         if (!password.trim()) {
-            setError("Password is required");
+            setError("Password is required.");
             return;
         }
 
@@ -46,11 +46,14 @@ const LoginForm = () => {
             });
 
             const data = await response.json();
+
+            localStorage.setItem('email', data.email);
+
             if (response.ok) {
                 setIsSubmitted(true);
                 navigate('/');
-            } else {
-                setError("Login failed. Please check your credentials.");
+            } else if(response.status === 403){
+                setError("Your credentials are incorrect.");
             }
         } catch (error) {
             console.error('Error:', error);
@@ -90,6 +93,7 @@ const LoginForm = () => {
                         onChange={handleUsernameChange}
                     />
                     {error && (error.includes("Username") || error.includes("Invalid")) && <p className="error">{error}</p>}
+                    {error && (error.includes("credentials")) && <p className="error">{error}</p>}
                 </div>
                 <div className="form-group">
                     <label htmlFor="password">Password:</label>

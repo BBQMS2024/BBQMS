@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useReducer, useState } from "react";
 import "./LoginAuth.css";
-
-const SERVER_URL = "http://localhost:8080";
+import { SERVER_URL } from "../../constants.js";
 
 function doSubmit(submittedValues) {
     console.log(`Submitted: ${submittedValues.join("")}`);
@@ -68,6 +67,14 @@ function reducer(state, action) {
                 status: "idle"
             };
 
+        case "RESET_INPUTS":
+            return {
+                ...state,
+                inputValues: Array(6).fill(""),
+                focusedIndex: 0,
+                status: "idle"
+            };
+
         default:
             throw new Error("unknown action");
     }
@@ -84,7 +91,6 @@ export default function LoginAuth() {
         reducer,
         initialState
     );
-    const [error, setError] = useState("");
 
     function handleInput(index, value) {
         dispatch({ type: "INPUT", payload: { index, value } });
@@ -122,20 +128,23 @@ export default function LoginAuth() {
                 },
                 body: JSON.stringify({
                     code: inputValues.join(""),
-                    email: "emir@rrr.ba"  // OVO TREBA PROMIJENITI LOGICNO
+                    email: localStorage.getItem('email')
                 }),
             });
 
             if (response.ok) {
                 dispatch({ type: "VERIFY_SUCCESS" });
-
             } else {
                 throw new Error("Code could not be verified. It is incorrect or expired.");
             }
         } catch (error) {
-            console.error('Error:', error);
-            setError("Code could not be verified. It is incorrect or expired.");
+            alert("Code could not be verified. It is incorrect or expired.");
+            resetInputs();
         }
+    }
+
+    function resetInputs() {
+        dispatch({ type: "RESET_INPUTS" });
     }
 
     return (
@@ -162,7 +171,6 @@ export default function LoginAuth() {
                     {status === "pending" ? "VERIFYING..." : "VERIFY"}
                 </button>
             </form>
-            {error && <p className="error">{error}</p>}
         </div>
     );
 }
