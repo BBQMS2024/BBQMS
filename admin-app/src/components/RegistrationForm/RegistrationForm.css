@@ -1,4 +1,4 @@
-#login-form {
+.login-form-reg {
   position: relative;
   width: 420px;
   max-width: 100%;
@@ -9,7 +9,7 @@
   font-family: "Poppins", sans-serif;
 }
 
-#login-form h1 {
+.login-form-reg h1 {
   text-align: center;
   margin: 0;
   padding: 20px 0;
@@ -18,14 +18,14 @@
   color: white;
 }
 
-#login-form form {
+.login-form-reg form {
   padding: 20px;
   background-color: white;
   border-radius: 10px;
   font-family: "Poppins", sans-serif;
 }
 
-#login-form form label {
+.login-form-reg form label {
   display: block;
   margin-bottom: 8px;
   font-size: 14px;
@@ -33,8 +33,8 @@
   font-family: "Poppins", sans-serif;
 }
 
-#login-form form input[type="text"],
-#login-form form input[type="password"] {
+.login-form-reg form input[type="text"],
+.login-form-reg form input[type="password"] {
   width: 100%;
   padding: 12px;
   border: 1px solid lightgray;
@@ -44,7 +44,7 @@
   margin-bottom: 20px;
 }
 
-#login-form form input[type="submit"] {
+.login-form-reg form input[type="submit"] {
   width: 100%;
   margin-top: 10px;
   padding: 12px;
@@ -59,12 +59,16 @@
   transition: background-color 0.3s ease;
 }
 
-#login-form form input[type="submit"]:hover {
+.login-form-reg form input[type="submit"]:hover {
   background-color: #334257;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
-.error{
+.login{
+  text-align: center;
+}
+
+.error-reg{
   color: red;
   font-size: 12px;
   margin-top: 5px; 

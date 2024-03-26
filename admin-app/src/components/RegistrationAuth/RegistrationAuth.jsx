@@ -120,25 +120,39 @@ export default function RefistrationAuth( {qrCode, email} ) {
             code: enteredValues,
             email: email
         }
-        const response = await fetch(SERVER_URL + '/api/v1/auth/tfa', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(requestBody)
-        });
-        const body = await response.json();
-        console.log(body);
+        try{
+            const response = await fetch(SERVER_URL + '/api/v1/auth/tfa', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestBody)
+            });
+            if(response.status == 400){
+                alert("Code could not be verified. It is incorrect.");
+                resetInputs();
+            }
+            const body = await response.json();
+            console.log(body);
+        }catch(error){
+            alert("Code could not be verified. It is incorrect.");
+            resetInputs();
+        }
+        
+    }
+
+    function resetInputs() {
+        dispatch({ type: "RESET_INPUTS" });
     }
 
     return (
-        <div id="auth-container">
-            <form id="authForm" onSubmit={handleSubmit}>
+        <div className="auth-container-reg">
+            <form className="authForm-reg" onSubmit={handleSubmit}>
                 <div className="QRCodeContainer">
                     <h1>Scan QR code</h1>
                     <img src={qrCode} height='300px'></img>
                 </div>
-                <div className="inputs">
+                <div className="inputs-reg">
                     {inputValues.map((value, index) => {
                         return (
                             <Input

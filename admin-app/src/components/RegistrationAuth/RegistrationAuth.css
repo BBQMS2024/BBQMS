@@ -1,15 +1,15 @@
-#auth-container *{
+.auth-container-reg *{
     box-sizing: border-box;
 }
 
-#auth-container{
+.auth-container-reg{
     font-family: "Poppins", sans-serif;
     min-height: 100vh;
     display: grid;
     place-items: center;
 }
 
-#authForm {
+.authForm-reg {
     border: 1px solid black;
     padding: 0px 40px 40px 40px;
     width: 1000px;
@@ -29,14 +29,14 @@
     margin-bottom: 30px;
 }
 
-.inputs {
+.inputs-reg {
     display: grid;
     gap: 20px;
     grid-template-columns: repeat(6, 1fr);
     margin-bottom: 20px;
 }
 
-.inputs > * {
+.inputs-reg > * {
     border: 1px solid black;
     width: 100%;
     padding: 40px;

@@ -67,7 +67,7 @@ export default function RegistrationForm() {
     }
 
     return (
-        <div id="login-form">
+        <div className="login-form-reg">
             <h1>Register Account</h1>
             <form onSubmit={formik.handleSubmit}>
                 <label htmlFor="email">Email or phone number:</label>
@@ -80,7 +80,7 @@ export default function RegistrationForm() {
                     value={formik.values.email}
                 />
                 {formik.touched.email && formik.errors.email ? (
-                    <p className="error">{formik.errors.email}</p>
+                    <p className="error-reg">{formik.errors.email}</p>
                 ) : null}
                 <label htmlFor="password">Password:</label>
                 <input
@@ -92,9 +92,12 @@ export default function RegistrationForm() {
                     value={formik.values.password}
                 />
                 {formik.touched.password && formik.errors.password ? (
-                    <p className="error">{formik.errors.password}</p>
+                    <p className="error-reg">{formik.errors.password}</p>
                 ) : null}
                 <input type="submit" value="Create new account"/>
+                <p className="login">
+                    Already have an account? <a href="https://c2.etf.unsa.ba/">Login</a>
+                </p>
             </form>
         </div>
     );
