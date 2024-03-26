@@ -26,4 +26,6 @@ jwt:
 tfa:
   label: BBQMS
   issuer: BBQMS
+tenancy:
+  default-code: DFLT
 
