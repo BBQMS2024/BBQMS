@@ -40,7 +40,7 @@ function CompanyDetailsForm() {
           hqAddress: hqAddress,
           font: font,
           welcomeMessage: welcomeMessage,
-          logo: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
+          logo: file
         }),
         headers: {
           'Content-Type': 'application/json',

@@ -1,5 +1,6 @@
 package ba.unsa.etf.si.bbqms.ws.controllers;
 
+import ba.unsa.etf.si.bbqms.auth_service.api.AuthService;
 import ba.unsa.etf.si.bbqms.tenant_service.api.TenantService;
 import ba.unsa.etf.si.bbqms.ws.models.TenantDto;
 import ba.unsa.etf.si.bbqms.ws.models.ErrorResponseDto;
@@ -16,7 +17,7 @@ public class TenantController {
         this.tenantService = tenantService;
     }
 
-    @PostMapping()
+    @PostMapping
     public ResponseEntity addTenant(@RequestBody final TenantDto tenantDto) {
         return ResponseEntity.ok().body(tenantService.addTenant(tenantDto));
     }
