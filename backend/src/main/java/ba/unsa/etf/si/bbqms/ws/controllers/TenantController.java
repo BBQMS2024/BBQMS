@@ -1,5 +1,7 @@
 package ba.unsa.etf.si.bbqms.ws.controllers;
 
+import ba.unsa.etf.si.bbqms.auth_service.api.AuthService;
+import ba.unsa.etf.si.bbqms.domain.User;
 import ba.unsa.etf.si.bbqms.tenant_service.api.TenantService;
 import ba.unsa.etf.si.bbqms.ws.models.TenantDto;
 import ba.unsa.etf.si.bbqms.ws.models.ErrorResponseDto;
@@ -11,12 +13,14 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/tenants")
 public class TenantController {
     private final TenantService tenantService;
+    private final AuthService authService;
 
-    public TenantController(final TenantService tenantService) {
+    public TenantController(final TenantService tenantService, final AuthService authService) {
         this.tenantService = tenantService;
+        this.authService = authService;
     }
 
-    @PostMapping()
+    @PostMapping
     public ResponseEntity addTenant(@RequestBody final TenantDto tenantDto) {
         return ResponseEntity.ok().body(tenantService.addTenant(tenantDto));
     }
@@ -32,6 +36,12 @@ public class TenantController {
 
     @PutMapping("/{code}")
     public ResponseEntity updateTenant(@PathVariable final String code, @RequestBody final TenantDto request) {
+        final User currentUser = this.authService.getCurrentUser().get(); // we don't need to check existence because auth is required for this endpoint
+        if (!currentUser.getTenant().getCode().equals(code)) {
+            return ResponseEntity.badRequest().build();
+            //user tried to update tenant that doesn't belong to him
+        }
+
         try{
             return ResponseEntity.ok().body(tenantService.updateTenant(code, request));
         } catch (EntityNotFoundException e) {
