@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useReducer, useState } from "react";
 import "./RegistrationAuth.css";
-import { SERVER_URL } from "../../src/constants";
+import { SERVER_URL } from "../../constants";
 
 function doSubmit(submittedValues) {
     console.log(`Submitted: ${submittedValues.join("")}`);

@@ -1,6 +1,6 @@
 import React from "react";
 import RegistrationForm from '../../components/RegistrationForm/RegistrationForm.jsx'
-import "../RegistrationScreen/RegistrationScreen.css";
+import "./RegistrationScreen.css";
 
 export default function RegistrationScreen(){
     return(

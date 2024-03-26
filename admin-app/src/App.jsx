@@ -1,5 +1,5 @@
-import RegistrationScreen from '../pages/RegistrationScreen/RegistrationScreen.jsx'
 import { Route, Routes } from 'react-router-dom'
+import RegistrationScreen from './pages/RegistrationScreen/RegistrationScreen'
 
 export default function App() {
     return (

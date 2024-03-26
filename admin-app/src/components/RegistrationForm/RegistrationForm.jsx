@@ -4,7 +4,7 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import "./RegistrationForm.css";
 import RegistrationAuth from '../RegistrationAuth/RegistrationAuth';
-import { SERVER_URL } from '../../src/constants';
+import { SERVER_URL } from '../../constants';
 
 const userSchema = yup.object().shape({
     email: yup.string().email("Please enter a valid email").required("Email is required"),
