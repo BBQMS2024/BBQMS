@@ -1,3 +1,4 @@
+import { GoogleLogin } from '@react-oauth/google';
 import React, { useState } from "react";
 import validator from "validator";
 import "./LoginForm.css";
@@ -11,6 +12,25 @@ const LoginForm = () => {
     const [error, setError] = useState("");
     const [isSubmitted, setIsSubmitted] = useState(false);
     const navigate = useNavigate();
+
+    async function handleGoogleLogin(credentialResponse) {
+        const response = await fetch(`${SERVER_URL}/api/v1/auth/login/oauth2/google`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                googleToken: credentialResponse.credential
+            })
+        });
+        if (!response.ok) {
+            setError("Error while trying to log in with Google.");
+            return;
+        }
+        const data = await response.json();
+        localStorage.setItem('email', data.email);
+        navigate('/');
+    }
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -110,6 +130,13 @@ const LoginForm = () => {
                 <p id="registration">
                     Not registered? <Link to="/registration">Create an account</Link>
                 </p>
+                <div style={{
+                    display: 'flex',
+                    justifyContent: 'center'
+                }}>
+                    <GoogleLogin onSuccess={ credentialResponse => handleGoogleLogin(credentialResponse)}
+                    />
+                </div>
             </form>
         </div>
     );
