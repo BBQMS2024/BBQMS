@@ -1,12 +1,25 @@
-import { Route, Routes } from 'react-router-dom'
-import RegistrationScreen from './pages/RegistrationScreen/RegistrationScreen'
+import { useEffect } from "react";
+import { useState } from "react"
+import { SERVER_URL } from "./constants";
+
 
 export default function App() {
+    const [message, setMessage] = useState('');
+
+    async function getMessageFromBackend() {
+        const response = await fetch(SERVER_URL + '/api/v1/admin');
+        const body = await response.json();
+
+        setMessage('Got from backend: ' + body.text);
+    }
+
     return (
         <>
-            <Routes>
-                <Route path='/' element={ <RegistrationScreen /> } />
-            </Routes>
+            <p>
+                Hello world. Please set up my structure similar to Teller-app
+            </p>
+            <button onClick={ getMessageFromBackend }> Click me </button>
+            <p>{ message }</p>
         </>
     )
 }
