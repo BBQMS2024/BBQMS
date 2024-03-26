@@ -6,10 +6,7 @@ import ba.unsa.etf.si.bbqms.domain.RoleName;
 import ba.unsa.etf.si.bbqms.repository.RoleRepository;
 import org.springframework.stereotype.Service;
 
-import javax.naming.AuthenticationException;
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 public class DefaultRoleService implements RoleService {
@@ -18,7 +15,6 @@ public class DefaultRoleService implements RoleService {
     public DefaultRoleService(final RoleRepository roleRepository) {
         this.roleRepository = roleRepository;
     }
-
 
     @Override
     public Optional<Role> getRoleByName(final RoleName roleName) {

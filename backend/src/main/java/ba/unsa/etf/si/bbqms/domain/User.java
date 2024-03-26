@@ -56,7 +56,6 @@ public class User implements UserDetails {
         this.email = email;
     }
 
-
     public void setPassword(final String password) {
         this.password = password;
     }
