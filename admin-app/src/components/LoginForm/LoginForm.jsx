@@ -28,7 +28,7 @@ const LoginForm = () => {
             return;
         }
         const data = await response.json();
-        localStorage.setItem('email', data.email);
+        localStorage.setItem('userData', JSON.stringify(data));
         navigate('/');
     }
 
