@@ -121,6 +121,11 @@ export default function LoginAuth() {
         dispatch({ type: "VERIFY" });
 
         try {
+            const email = localStorage.getItem('email');
+            if (!email) {
+                throw new Error("Email not found in localStorage");
+            }
+
             const response = await fetch(`${SERVER_URL}/api/v1/auth/tfa`, {
                 method: 'POST',
                 headers: {
@@ -128,7 +133,7 @@ export default function LoginAuth() {
                 },
                 body: JSON.stringify({
                     code: inputValues.join(""),
-                    email: localStorage.getItem('email')
+                    email: email
                 }),
             });
 
@@ -142,6 +147,7 @@ export default function LoginAuth() {
             resetInputs();
         }
     }
+
 
     function resetInputs() {
         dispatch({ type: "RESET_INPUTS" });

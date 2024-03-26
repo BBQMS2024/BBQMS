@@ -47,7 +47,7 @@ const LoginForm = () => {
 
             const data = await response.json();
 
-            localStorage.setItem('email', data.email);
+            localStorage.setItem('userData', JSON.stringify(data));
 
             if (response.ok) {
                 setIsSubmitted(true);
