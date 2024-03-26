@@ -6,8 +6,24 @@ spring:
     hibernate:
       ddl-auto: none
   datasource:
-    url: ${DB_URL}
+    url: ${DB_URL}/${DB_SCHEMA}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
   flyway:
     schemas: ${DB_SCHEMA}
+
+jwt:
+  cookie-title: access-token
+  secret-key: ${JWT_KEY}
+  authorities-key: USER_AUTHORITIES
+  token-validity-time: PT30M
+tfa:
+  label: BBQMS
+  issuer: BBQMS
+
