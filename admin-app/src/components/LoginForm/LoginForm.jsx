@@ -13,6 +13,15 @@ const LoginForm = () => {
     const [isSubmitted, setIsSubmitted] = useState(false);
     const navigate = useNavigate();
 
+    function openHome(){
+            return (
+                <Routes>
+                    <Route path='*' element={<CompanyDetailsForm/>} />
+                </Routes>
+            );
+        
+    }
+
     async function handleGoogleLogin(credentialResponse) {
         const response = await fetch(`${SERVER_URL}/api/v1/auth/login/oauth2/google`, {
             method: 'POST',
@@ -126,7 +135,7 @@ const LoginForm = () => {
                     />
                     {error && error.includes("Password") && <p className="error">{error}</p>}
                 </div>
-                <input type="submit" value="Submit" />
+                <input type="submit" value="Submit" onClick = {openHome} />
                 <p id="registration">
                     Not registered? <Link to="/registration">Create an account</Link>
                 </p>
