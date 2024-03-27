@@ -1,1 +1,1 @@
-export const SERVER_URL = 'https://virtserver.swaggerhub.com/EKAPIC1/BBQMS/1.0.0';
+export const SERVER_URL = 'https://bbqms-backend-v1.onrender.com';

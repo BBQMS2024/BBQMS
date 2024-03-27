@@ -1,4 +1,5 @@
 const { SERVER_URL } = require("../constants/api");
+const { Dialogs } = require("../constants/dialogs");
 const { validateCode } = require("../utils/validation");
 
 interface CompanyData {
@@ -9,10 +10,8 @@ interface CompanyData {
 }
 
 async function getCompanyDetails(code: string) {
-    if (!validateCode(code)) {
-        return null;
-    }
-    let details: CompanyData | null = await fetch(
+    if (!validateCode(code)) throw new Error(Dialogs.ERROR.INVALID_CODE);
+    let details: CompanyData = await fetch(
         `${SERVER_URL}/api/v1/tenants/${code}`,
         { method: "GET" }
     )
@@ -21,11 +20,10 @@ async function getCompanyDetails(code: string) {
             if (response.status === 200) {
                 return response.json();
             } else {
-                return null;
+                throw new Error(Dialogs.ERROR.INVALID_CODE);
             }
         })
         .then((data) => {
-            if (!data) return null;
             const companyData: CompanyData = {
                 name: data.name,
                 welcomeMessage: data.welcomeMessage,
@@ -36,7 +34,7 @@ async function getCompanyDetails(code: string) {
         })
         .catch((error) => {
             console.error("Error:", error);
-            return null;
+            throw error;
         });
     return details;
 }

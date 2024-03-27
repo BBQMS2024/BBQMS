@@ -32,16 +32,18 @@ export default function CodeEnterScreen({ navigation }: { navigation: any }) {
         setIsLoading(true);
         // await new Promise((resolve) => setTimeout(resolve, 2000));
         const code = text;
-        getCompanyDetails(code).then(function (details) {
-            setIsLoading(false);
-            if (details) {
+        getCompanyDetails(code)
+            .then(function (details) {
+                setIsLoading(false);
                 navigation.navigate(Screens.WELCOME, {
                     details: details,
                 });
-            } else {
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+                setIsLoading(false);
                 displayInvalidCodeAlert();
-            }
-        });
+            });
     }
 
     return (
