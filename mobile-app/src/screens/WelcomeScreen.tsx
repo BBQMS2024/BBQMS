@@ -1,12 +1,15 @@
 import React from "react";
-import { View, StyleSheet, Image } from "react-native";
+import { View, StyleSheet, Image, Animated } from "react-native";
 import WelcomeMessage from "../components/WelcomeMessage";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 
 export default function WelcomeScreen({ route }: { route: any }) {
     const details = route.params.details;
-    const { name, welcomeMessage, font, logoUrl } = details;
+    let { name, welcomeMessage, font, logoUrl } = details;
+
+    if(!font) font = "Arial";
+    if(!logoUrl) logoUrl = "../../assets/images/default_logo.png";
 
     let [fontsLoaded] = useFonts({
         Arial: require("../../assets/fonts/arial.ttf"),
@@ -21,12 +24,26 @@ export default function WelcomeScreen({ route }: { route: any }) {
         "Comic Sans MS": require("../../assets/fonts/comic-sans-ms.ttf"),
     });
 
+    const fadeAnim = React.useRef(new Animated.Value(0)).current;
+
     if (!fontsLoaded) SplashScreen.preventAutoHideAsync();
     else SplashScreen.hideAsync();
+
+    React.useEffect(() => {
+        Animated.timing(fadeAnim, {
+            toValue: 1,
+            duration: 2000,
+            useNativeDriver: true,
+        }).start();
+    }, [fadeAnim]);
+
     return (
         <View style={styles.container}>
-            <View style={styles.image}>
-                <Image style={styles.logo} source={{ uri: logoUrl }}></Image>
+            <View style={styles.logoContainer}>
+                <Animated.Image
+                    style={[styles.logo, { opacity: fadeAnim }]}
+                    source={{ uri: logoUrl }}
+                />
             </View>
             <WelcomeMessage name={name} font={font} welcome={welcomeMessage} />
         </View>
@@ -36,23 +53,16 @@ export default function WelcomeScreen({ route }: { route: any }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#548CA8",
-        flexDirection: "row",
+        backgroundColor: "#EEEEEE",
+        alignItems: "center",
     },
-    image: {
+    logoContainer: {
         marginTop: 80,
-        marginRight: 10,
         marginBottom: 20,
-        marginLeft: 20,
     },
     logo: {
-        width: 100,
-        height: 100,
+        width: 250,
+        height: 250,
         resizeMode: "contain",
-    },
-    text: {
-        color: "white",
-        fontSize: 22,
-        fontWeight: "bold",
     },
 });
