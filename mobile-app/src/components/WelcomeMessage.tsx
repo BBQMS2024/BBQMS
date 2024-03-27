@@ -12,37 +12,21 @@ export default function WelcomeMessage(params : WelcomeMessageProps ) {
     return (
       <View style={styles.welcomeBox}>
         <Text
-          style={{fontFamily: params.font, fontSize: 32}}
+          style={{fontFamily: params.font, fontSize: 28, fontWeight: "bold"}}
         >
-          {params.welcome} {params.name}
+          {params.welcome}{'\n'}{params.name}
         </Text>
       </View>
     );
-
-  /*
-  const letters = "aeioukh";
-  const lastLetter = name.slice(-1);
-  if (!letters.includes(lastLetter)) name += "e";
-
-  return (
-    <View style={styles.welcomeBox}>
-      <Text
-        style={{
-          fontSize: settings.fontSize + 6,
-          fontFamily: settings.font,
-        }}
-      >
-        Dobro došao {name}!
-      </Text>
-    </View>
-  );*/
 }
 
 const styles = StyleSheet.create({
   welcomeBox: {
-    marginLeft: 25,
-    marginRight: 25,
-    marginTop: 70,
-    marginBottom: 20,
+    marginLeft: 20,
+    marginRight: 20,
+    marginTop: 80,
+    marginBottom: 10,
+    backgroundColor : "#548CA8",
+    flex: 1,
   },
 });

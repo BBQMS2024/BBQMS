@@ -17,32 +17,22 @@ interface RouteParams {
   code: string;
 }
 
+interface CompanyData {
+  name: string,
+  welcomeMessage: string,
+  font: string,
+  logoUrl: string
+}
+
 export default function HomeScreen() {
     const route = useRoute()
-    const { code } = route.params as RouteParams;
-    const [name, setName] = useState("");
-    const [welcomeMessage, setWelcomeMessage] = useState("");
-    const [font, setFont] = useState("");
-    const [logo, setLogo] = useState("");
+    const { name, welcomeMessage, font, logoUrl } = route.params as CompanyData;
 
     useEffect(() => {
-      fetchData();
       
     }, []);
 
-    async function fetchData() {
-      try {
-        const { font, welcomeMessage, logo, name } = await fetchSettings(code);
-        setFont(font);
-        setLogo(logo.base64Logo);
-        setName(name);
-        setWelcomeMessage(welcomeMessage)
-  
-      } catch (error) {
-        console.error("Failed to fetch data in HomeScreen:", error);
-      }
-    }
-    if ( name == "" || welcomeMessage == "" || font == "" || logo == ""){
+    if ( name == "" || welcomeMessage == "" || font == "" || logoUrl == "" ){
       return <LoadingAnimation />;
     }
     else
@@ -50,8 +40,8 @@ export default function HomeScreen() {
         <View style={styles.container}>
             <View style={styles.image}>
                 <Image
-                style={{ height: 150, resizeMode: "contain" }}
-                source={{uri : logo}}
+                style={styles.logo}
+                source={{uri : logoUrl}}
                 ></Image>
             </View>
             <WelcomeMessage name={name} font={font} welcome={welcomeMessage}/>
@@ -63,12 +53,19 @@ export default function HomeScreen() {
     const styles = StyleSheet.create({
         container: {
           flex: 1,
-          backgroundColor: "#fff",
-          alignItems: "center",
+          backgroundColor : "#548CA8",
+          flexDirection: 'row',
         },
         image: {
           marginTop: 80,
           marginRight: 10,
+          marginBottom: 20,
+          marginLeft: 20
+        },
+        logo: {
+          width: 100,
+          height: 100,
+          resizeMode: 'contain',
         },
         text: {
           color: "white",
