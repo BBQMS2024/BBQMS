@@ -66,7 +66,13 @@ function reducer(state, action) {
                 ...state,
                 status: "idle"
             };
-
+        case "RESET_INPUTS":
+            return {
+                ...state,
+                inputValues: Array(6).fill(""),
+                focusedIndex: 0,
+                status: "idle"
+            };
         default:
             throw new Error("unknown action");
     }
@@ -128,13 +134,12 @@ export default function RefistrationAuth( {qrCode, email} ) {
                 },
                 body: JSON.stringify(requestBody)
             });
-            if(response.status == 400){
-                alert("Code could not be verified. It is incorrect.");
-                resetInputs();
+            if (response.ok) {
+                dispatch({ type: "VERIFY_SUCCESS" });
+            } else {
+                throw new Error("Code could not be verified. It is incorrect or expired.");
             }
-            const body = await response.json();
-            console.log(body);
-        }catch(error){
+        } catch (error) {
             alert("Code could not be verified. It is incorrect.");
             resetInputs();
         }
