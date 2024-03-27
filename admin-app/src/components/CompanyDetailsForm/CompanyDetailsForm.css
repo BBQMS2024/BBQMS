@@ -1,4 +1,4 @@
-.form-container {
+.form-container-comp {
   width: 70%;
   height: 70vh; 
   margin: 0;
@@ -32,11 +32,11 @@
   text-align: center;
 }
 
-.form-group {
+.form-group-comp {
   margin-bottom: 20px;
 }
 
-label {
+.labels-comp {
   display: block;
   font-weight: bold;
   font-size: larger;
@@ -46,8 +46,8 @@ label {
   margin-bottom: 10px;
 }
 
-input[type="text"],
-input[type="file"],
+.inputs-comp[type="text"],
+.inputs-comp[type="file"],
 textarea,
 select {
   width: 80%;
@@ -59,7 +59,7 @@ select {
   margin-bottom: 20px;
 }
 
-input[type="file"] {
+.inputs-comp[type="file"] {
   width: 80%;
   padding: 11px;
   border: 1px solid lightgray;
@@ -80,7 +80,7 @@ img {
   width: 50%;
 }
 
-.left-column label {
+.left-column .labels-comp {
   text-align: center; 
 }
 
@@ -88,15 +88,15 @@ img {
   width: 50%;
 }
 
-.right-column form-group {
+.right-column .form-group-comp {
   margin-left: 10px; 
 }
 
-.right-column label {
+.right-column .labels-comp {
   text-align: center; 
 }
 
-.right-column input,
+.right-column .inputs-comp,
 .right-column textarea,
 .right-column select {
   width: calc(100% - 20px); 

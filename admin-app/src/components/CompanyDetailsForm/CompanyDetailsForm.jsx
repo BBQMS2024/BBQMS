@@ -58,12 +58,12 @@ function CompanyDetailsForm() {
         <div className='heading2'>
           <h2>COMPANY DETAILS</h2>
         </div>
-        <div className="form-container">
+        <div className="form-container-comp">
           <div className="left-column">
             <form>
-              <div className="form-group">
-                <label htmlFor="name" id='Name'>Name</label>
-                <input
+              <div className="form-group-comp">
+                <label className="labels-comp" htmlFor="name" id='Name'>Name</label>
+                <input className="inputs-comp"
                     type="text"
                     id="name"
                     value={name}
@@ -71,9 +71,9 @@ function CompanyDetailsForm() {
                     required
                 />
               </div>
-              <div className="form-group">
-                <label htmlFor="logo" id='Logo'>Logo</label>
-                <input
+              <div className="form-group-comp">
+                <label className="labels-comp" htmlFor="logo" id='Logo'>Logo</label>
+                <input className="inputs-comp"
                     type="file"
                     onChange={handleChange}
                     accept="image/*"
@@ -85,9 +85,9 @@ function CompanyDetailsForm() {
           </div>
           <div className="right-column">
             <form>
-              <div className="form-group">
-                <label htmlFor="hqAddress">HQ Address</label>
-                <input
+              <div className="form-group-comp">
+                <label className="labels-comp" htmlFor="hqAddress">HQ Address</label>
+                <input className="inputs-comp"
                     type="text"
                     id="hqAddress"
                     value={hqAddress}
@@ -95,9 +95,9 @@ function CompanyDetailsForm() {
                     required
                 />
               </div>
-              <div className="form-group">
-                <label htmlFor="welcomeMessage">Welcome Message</label>
-                <input
+              <div className="form-group-comp">
+                <label className="labels-comp" htmlFor="welcomeMessage">Welcome Message</label>
+                <input className="inputs-comp"
                     type="text"
                     id="welcomeMessage"
                     value={welcomeMessage}
@@ -110,7 +110,7 @@ function CompanyDetailsForm() {
                 </div>
               
               <div className='fontSelect'>
-                <label htmlFor="font">Font</label>
+                <label className="labels-comp" htmlFor="font">Font</label>
                 <select
                     className="form-select"
                     id="font"
