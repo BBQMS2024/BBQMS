@@ -121,7 +121,10 @@ export default function LoginAuth() {
         dispatch({ type: "VERIFY" });
 
         try {
-            const email = localStorage.getItem('email');
+            const userDataString = localStorage.getItem('userData');
+            const userData = JSON.parse(userDataString);
+            const email = userData.email;
+            console.log(email);
             if (!email) {
                 throw new Error("Email not found in localStorage");
             }
