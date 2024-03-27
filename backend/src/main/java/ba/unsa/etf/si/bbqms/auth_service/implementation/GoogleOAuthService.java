@@ -4,9 +4,11 @@ import ba.unsa.etf.si.bbqms.auth_service.api.OAuthService;
 import ba.unsa.etf.si.bbqms.auth_service.api.RoleService;
 import ba.unsa.etf.si.bbqms.domain.Role;
 import ba.unsa.etf.si.bbqms.domain.RoleName;
+import ba.unsa.etf.si.bbqms.domain.Tenant;
 import ba.unsa.etf.si.bbqms.domain.User;
 import ba.unsa.etf.si.bbqms.exceptions.AuthException;
 import ba.unsa.etf.si.bbqms.repository.UserRepository;
+import ba.unsa.etf.si.bbqms.tenant_service.api.TenantService;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -25,12 +27,19 @@ public class GoogleOAuthService implements OAuthService {
     @Value("${spring.security.oauth2.client.registration.google.client-id}")
     private String GOOGLE_CLIENT_ID;
 
+    @Value("${tenancy.default-code}")
+    private String TENANCY_DEFAULT_CODE;
+
     private final UserRepository userRepository;
     private final RoleService roleService;
+    private final TenantService tenantService;
 
-    public GoogleOAuthService(final UserRepository userRepository, final RoleService roleService) {
+    public GoogleOAuthService(final UserRepository userRepository,
+                              final RoleService roleService,
+                              final TenantService tenantService) {
         this.userRepository = userRepository;
         this.roleService = roleService;
+        this.tenantService = tenantService;
     }
 
     @Override
@@ -41,11 +50,14 @@ public class GoogleOAuthService implements OAuthService {
             final Role role = this.roleService.getRoleByName(RoleName.ROLE_SUPER_ADMIN)
                     .orElseThrow(() -> new AuthException("Tried setting a role that doesn't exist."));
 
+            final Tenant tenant = this.tenantService.findByCode(this.TENANCY_DEFAULT_CODE);
+
             final User user = this.userRepository.findByEmailEquals(userEmail)
                     .orElseGet(() -> this.userRepository.save(
                             User.builder()
                                     .email(userEmail)
                                     .roles(Set.of(role))
+                                    .tenant(tenant)
                                     .oAuth(true)
                                     .build()
                     ));
