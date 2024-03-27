@@ -14,12 +14,6 @@
   display: flex; 
 }
 
-.error input,
-.error select {
-  border: 1px solid red; 
-}
-
-
 .heading2{
   width: 72.6%;
   height: 10vh; 
