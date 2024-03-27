@@ -1,5 +1,5 @@
-const { SERVER_URL } = require("../constants.js");
-const { validateCode } = require("../utils/validation.ts");
+const { SERVER_URL } = require("../constants/api");
+const { validateCode } = require("../utils/validation");
 
 interface CompanyData {
     name: string;

@@ -3,6 +3,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import CodeEnterScreen from "../screens/CodeEnterScreen";
 import WelcomeScreen from "../screens/WelcomeScreen";
+import { Screens } from "../constants/screens";
 
 const Stack = createStackNavigator();
 
@@ -10,16 +11,16 @@ const AppNavigator = () => {
     return (
         <NavigationContainer>
             <Stack.Navigator
-                initialRouteName="CodeEnterScreen"
+                initialRouteName={Screens.CODE_ENTER}
                 screenOptions={{
                     headerShown: false,
                 }}
             >
                 <Stack.Screen
-                    name="CodeEnterScreen"
+                    name={Screens.CODE_ENTER}
                     component={CodeEnterScreen}
                 />
-                <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} />
+                <Stack.Screen name={Screens.WELCOME} component={WelcomeScreen} />
             </Stack.Navigator>
         </NavigationContainer>
     );

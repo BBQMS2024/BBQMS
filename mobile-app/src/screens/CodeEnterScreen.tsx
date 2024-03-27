@@ -11,10 +11,22 @@ import {
 } from "react-native";
 import { registerRootComponent } from "expo";
 import { getCompanyDetails } from "../services/fetchData";
+import { Dialogs } from "../constants/dialogs";
+import { Colors } from "../constants/colors";
+import { Screens } from "../constants/screens";
 
 export default function CodeEnterScreen({ navigation }: { navigation: any }) {
     const [text, onChangeText] = React.useState("");
     const [isLoading, setIsLoading] = useState(false);
+
+    function displayInvalidCodeAlert() {
+        Alert.alert(
+            Dialogs.ERROR.INVALID_CODE,
+            Dialogs.ERROR.INVALID_CODE_DESC,
+            [{ text: Dialogs.BUTTON.OK }],
+            { cancelable: false }
+        );
+    }
 
     async function handlePress() {
         setIsLoading(true);
@@ -23,31 +35,24 @@ export default function CodeEnterScreen({ navigation }: { navigation: any }) {
         getCompanyDetails(code).then(function (details) {
             setIsLoading(false);
             if (details) {
-                navigation.navigate("WelcomeScreen", {
+                navigation.navigate(Screens.WELCOME, {
                     details: details,
                 });
             } else {
-                Alert.alert(
-                    "Invalid Code",
-                    "The code you entered is invalid. Please try again.",
-                    [{ text: "OK" }],
-                    { cancelable: false }
-                );
+                displayInvalidCodeAlert();
             }
         });
     }
 
     return (
         <SafeAreaView style={styles.area}>
-            {isLoading && (
-                <ActivityIndicator style={styles.loader} size={75} />
-            )}
+            {isLoading && <ActivityIndicator style={styles.loader} size={75} />}
             {isLoading && <View style={styles.loadingArea}></View>}
             <TextInput
                 style={styles.input}
                 onChangeText={(text) => onChangeText(text)}
                 value={text}
-                placeholder="Enter your company code here:"
+                placeholder={Dialogs.PROMPT.ENTER_CODE}
             />
             <Pressable
                 style={({ pressed }) => [
@@ -56,7 +61,7 @@ export default function CodeEnterScreen({ navigation }: { navigation: any }) {
                 ]}
                 onPress={handlePress}
             >
-                <Text style={styles.text}>Submit</Text>
+                <Text style={styles.text}>{Dialogs.BUTTON.SUBMIT}</Text>
             </Pressable>
         </SafeAreaView>
     );
@@ -95,10 +100,10 @@ const styles = StyleSheet.create({
         borderRadius: 4,
         elevation: 3,
         width: 120,
-        backgroundColor: "#548CA8",
+        backgroundColor: Colors.ACCENT,
     },
     buttonPressed: {
-        backgroundColor: "#334257",
+        backgroundColor: Colors.PRIMARY,
     },
     text: {
         fontSize: 16,
