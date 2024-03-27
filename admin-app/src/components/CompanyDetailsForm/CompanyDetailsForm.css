@@ -9,18 +9,33 @@
   padding: 20px;
   border: 1px solid #ccc;
   border-radius: 5px;
-  background-color: #9fc6c8; 
+  background-color: #ffff; 
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   display: flex; 
 }
 
+.error input,
+.error select {
+  border: 1px solid red; 
+}
+
+
 .heading2{
+  width: 72.6%;
+  height: 10vh; 
+  background-color: #334257;
   margin: 0;
+  margin-top: 1%;
   position: absolute; 
   left:50%;
   transform: translate(-50%);
-  color: #334257;
+  color: #ffff;
   font-family:"Poppins", sans-serif;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  display: flex; 
+  text-align: center;
 }
 
 .form-group {
@@ -32,8 +47,9 @@ label {
   font-weight: bold;
   font-size: larger;
   text-align: center;
-  color: #334257; 
+  color: #666362; 
   font-family:"Poppins", sans-serif;
+  margin-bottom: 10px;
 }
 
 input[type="text"],
@@ -50,7 +66,14 @@ select {
 }
 
 input[type="file"] {
-  padding: 5px;
+  width: 80%;
+  padding: 11px;
+  border: 1px solid lightgray;
+  border-radius: 5px;
+  font-size: 16px;
+  box-sizing: border-box;
+  margin-bottom: 20px;
+  margin-top: 0.03%;
 }
 
 img {
@@ -89,7 +112,7 @@ button[type="submit"] {
   display: block;
   width: 15%;
   padding: 10px;
-  background-color: #548CA8; 
+  background-color: #334257; 
   color: white;
   border: none;
   border-radius: 5px;
@@ -108,24 +131,34 @@ button[type="submit"]:hover {
 }
 
 .logo{
-  width: 300px;
-  height: 300px;
-  margin: 0 auto;
+  width: 250px;
+  height: 250px;
+  margin-left: 17%;
+  margin-top: 0.03%;
 }
 
 .welcome-message{
   margin: 0 auto;
-  width: 300px;
-  height:200px;
-  margin-top: 2%;
+  width: 40%;
+  height: 100px;
+  margin-top: 4%;
   overflow: auto; 
   max-height: 200px; 
   border: solid 1px black;
   font-family: "Poppins", sans-serif;
+  position: absolute;
+  left: 54%;
+  top: 40%;
 }
 
 .form-select{
-  width: 105%;
+  width: 81%;
+  padding: 13px;
+  border: 1px solid lightgray;
+  border-radius: 5px;
+  font-size: 16px;
+  box-sizing: border-box;
+  margin-bottom: 20px;
 }
 
 #Logo{
@@ -133,8 +166,20 @@ button[type="submit"]:hover {
   padding-left: 0px;
   margin-right: 50px;
 }
+
 #Name{
   margin-left: 0px;
   padding-left: 0px;
   margin-right: 50px;
+}
+
+h2{
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.fontSelect{
+  margin-top: 30%;
 }

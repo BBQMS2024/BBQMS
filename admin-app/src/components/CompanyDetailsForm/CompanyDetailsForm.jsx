@@ -1,18 +1,15 @@
 import React, { useState } from 'react';
 import './CompanyDetailsForm.css';
 
-
 const SERVER_URL = "http://localhost:8080";
 
 function CompanyDetailsForm() {
-  // State hooks
   let [name, setName] = useState('');
   let [hqAddress, setHQAddress] = useState('');
   let [welcomeMessage, setWelcomeMessage] = useState('');
   let [font, setFont] = useState('Arial');
   let [file, setFile] = useState('');
 
-  // Function to handle file change
   function handleChange(e) {
     const file = e.target.files[0];
     const reader = new FileReader();
@@ -22,17 +19,14 @@ function CompanyDetailsForm() {
     };
 
     reader.readAsDataURL(file);
-    // TO DO - add/update this url in database
   }
 
-  // Function to handle name change
-  const handleNameChange = (event) => {
-    setName(event.target.value);
-  };
-
-  // Function to submit form
   async function submitForm() {
     try {
+      if (name === '' || hqAddress === '' || welcomeMessage === '') {
+        alert('Error: Please fill out all required fields.');
+        return;
+      }
       const response = await fetch(`${SERVER_URL}/api/v1/tenants/DFLT`, {
         method: 'PUT',
         body: JSON.stringify({
@@ -73,7 +67,7 @@ function CompanyDetailsForm() {
                     type="text"
                     id="name"
                     value={name}
-                    onChange={handleNameChange}
+                    onChange = {(e) => setName(e.target.value)}
                     required
                 />
               </div>
@@ -110,11 +104,12 @@ function CompanyDetailsForm() {
                     onChange={(e) => setWelcomeMessage(e.target.value)}
                     required
                 />
+                </div>
                 <div className="welcome-message" style={{ fontFamily: font }} >
                   <p>{welcomeMessage}</p>
                 </div>
-              </div>
-              <div>
+              
+              <div className='fontSelect'>
                 <label htmlFor="font">Font</label>
                 <select
                     className="form-select"
