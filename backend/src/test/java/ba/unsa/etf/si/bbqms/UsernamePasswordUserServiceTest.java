@@ -1,6 +1,5 @@
 package ba.unsa.etf.si.bbqms;
 
-
 import ba.unsa.etf.si.bbqms.auth_service.implementation.UsernamePasswordUserService;
 import ba.unsa.etf.si.bbqms.repository.UserRepository;
 import org.junit.jupiter.api.Test;
@@ -9,7 +8,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
