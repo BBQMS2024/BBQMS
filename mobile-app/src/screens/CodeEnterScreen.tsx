@@ -7,6 +7,7 @@ import {
     Text,
     Alert,
     ActivityIndicator,
+    View,
 } from "react-native";
 import { registerRootComponent } from "expo";
 import { getCompanyDetails } from "../services/fetchData";
@@ -15,11 +16,33 @@ export default function CodeEnterScreen({ navigation }: { navigation: any }) {
     const [text, onChangeText] = React.useState("");
     const [isLoading, setIsLoading] = useState(false);
 
+    async function handlePress() {
+        setIsLoading(true);
+        // await new Promise((resolve) => setTimeout(resolve, 2000));
+        const code = text;
+        getCompanyDetails(code).then(function (details) {
+            setIsLoading(false);
+            if (details) {
+                navigation.navigate("WelcomeScreen", {
+                    details: details,
+                });
+            } else {
+                Alert.alert(
+                    "Invalid Code",
+                    "The code you entered is invalid. Please try again.",
+                    [{ text: "OK" }],
+                    { cancelable: false }
+                );
+            }
+        });
+    }
+
     return (
         <SafeAreaView style={styles.area}>
             {isLoading && (
-                <ActivityIndicator style={styles.loading} size="large" />
+                <ActivityIndicator style={styles.loader} size="large" />
             )}
+            {isLoading && <View style={styles.loading}></View>}
             <TextInput
                 style={styles.input}
                 onChangeText={(text) => onChangeText(text)}
@@ -31,25 +54,7 @@ export default function CodeEnterScreen({ navigation }: { navigation: any }) {
                     styles.button,
                     pressed ? styles.buttonPressed : null,
                 ]}
-                onPress={async () => {
-                    const code = text;
-                    setIsLoading(true);
-                    getCompanyDetails(code).then(function (details) {
-                        setIsLoading(false);
-                        if (details) {
-                            navigation.navigate("WelcomeScreen", {
-                                details: details,
-                            });
-                        } else {
-                            Alert.alert(
-                                "Invalid Code",
-                                "The code you entered is invalid. Please try again.",
-                                [{ text: "OK" }],
-                                { cancelable: false }
-                            );
-                        }
-                    });
-                }}
+                onPress={handlePress}
             >
                 <Text style={styles.text}>Submit</Text>
             </Pressable>
@@ -60,7 +65,14 @@ export default function CodeEnterScreen({ navigation }: { navigation: any }) {
 const styles = StyleSheet.create({
     loading: {
         position: "absolute",
-        zIndex: 999,
+        zIndex: 2,
+        height: "100%",
+        width: "100%",
+        backgroundColor: "rgba(255, 255, 255, 0.75)",
+    },
+    loader: {
+        position: "absolute",
+        zIndex: 100,
     },
     input: {
         height: 40,
@@ -96,5 +108,9 @@ const styles = StyleSheet.create({
         color: "white",
     },
 });
+
+CodeEnterScreen.navigationOptions = {
+    headerShown: false,
+};
 
 registerRootComponent(CodeEnterScreen);

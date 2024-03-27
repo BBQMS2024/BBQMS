@@ -1,4 +1,5 @@
 const { SERVER_URL } = require("../constants.js");
+const { validateCode } = require("../utils/validation.ts");
 
 interface CompanyData {
     name: string;
@@ -8,6 +9,9 @@ interface CompanyData {
 }
 
 async function getCompanyDetails(code: string) {
+    if (!validateCode(code)) {
+        return null;
+    }
     let details: CompanyData | null = await fetch(
         `${SERVER_URL}/api/v1/tenants/${code}`,
         { method: "GET" }
