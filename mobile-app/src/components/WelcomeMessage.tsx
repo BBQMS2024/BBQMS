@@ -12,7 +12,7 @@ export default function WelcomeMessage(params : WelcomeMessageProps ) {
     return (
       <View style={styles.welcomeBox}>
         <Text
-          style={{fontFamily: params.font, fontSize: 28, fontWeight: "bold"}}
+          style={{fontFamily: params.font, fontSize: 28}}
         >
           {params.welcome}{'\n'}{params.name}
         </Text>
