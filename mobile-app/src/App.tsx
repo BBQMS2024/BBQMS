@@ -16,25 +16,9 @@ export default function App() {
   const [accountID, setAccountID] = useState(1);
   const [code, setcode] = useState("T001");
 
-/*  const getData = async () => {
-    try {
-      const value = await AsyncStorage.getItem("account");
-      console.log("Id u async storage: " + value);
-      if (value != null) {
-        const id = parseInt(value);
-        setAccountID(id);
-      } else setAccountID(0);
-    } catch (e) {
-      console.log("Error when geting data: " + e);
-    }
-  };
-  */
   useEffect(() => {
-
-
     
   }, []);
-
 
   return (
       <>

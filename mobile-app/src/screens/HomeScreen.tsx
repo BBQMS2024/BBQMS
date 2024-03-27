@@ -10,7 +10,6 @@ import {
 } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import WelcomeMessage from "../components/WelcomeMessage";
-import { fetchSettings } from "../services/FetchData";
 import LoadingAnimation from "../components/LoadingAnimation";
 
 interface CompanyData {
