@@ -1,5 +1,4 @@
-
-    import React, { useEffect, useRef, useReducer, useState } from "react";
+import React, { useEffect, useRef, useReducer, useState } from "react";
 import "./LoginAuth.css";
 import { SERVER_URL } from "../../constants.js";
 import { useNavigate } from "react-router-dom";

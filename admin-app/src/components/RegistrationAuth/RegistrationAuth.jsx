@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useReducer, useState } from "react";
 import "./RegistrationAuth.css";
 import { SERVER_URL } from "../../constants";
+import {useNavigate} from "react-router-dom";
 
 function doSubmit(submittedValues) {
     console.log(`Submitted: ${submittedValues.join("")}`);
@@ -119,7 +120,12 @@ export default function RefistrationAuth( {qrCode, email} ) {
         dispatch({ type: "VERIFY" });
         doSubmit(inputValues).then(() => dispatch({ type: "VERIFY_SUCCESS" }));
     }
-    
+    let navigate = useNavigate();
+
+    function routeChange() {
+        let path = `/companydetails`;
+        navigate(path);
+    }
     const checkInputValues = async () =>{
         const enteredValues = inputValues.join("");
         const requestBody = {
@@ -136,6 +142,7 @@ export default function RefistrationAuth( {qrCode, email} ) {
             });
             if (response.ok) {
                 dispatch({ type: "VERIFY_SUCCESS" });
+                routeChange();
             } else {
                 throw new Error("Code could not be verified. It is incorrect or expired.");
             }
