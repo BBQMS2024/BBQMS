@@ -40,9 +40,9 @@ export default function CodeEnterScreen({ navigation }: { navigation: any }) {
     return (
         <SafeAreaView style={styles.area}>
             {isLoading && (
-                <ActivityIndicator style={styles.loader} size="large" />
+                <ActivityIndicator style={styles.loader} size={75} />
             )}
-            {isLoading && <View style={styles.loading}></View>}
+            {isLoading && <View style={styles.loadingArea}></View>}
             <TextInput
                 style={styles.input}
                 onChangeText={(text) => onChangeText(text)}
@@ -63,7 +63,7 @@ export default function CodeEnterScreen({ navigation }: { navigation: any }) {
 }
 
 const styles = StyleSheet.create({
-    loading: {
+    loadingArea: {
         position: "absolute",
         zIndex: 2,
         height: "100%",
@@ -108,9 +108,5 @@ const styles = StyleSheet.create({
         color: "white",
     },
 });
-
-CodeEnterScreen.navigationOptions = {
-    headerShown: false,
-};
 
 registerRootComponent(CodeEnterScreen);
