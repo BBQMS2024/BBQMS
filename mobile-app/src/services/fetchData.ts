@@ -1,5 +1,7 @@
 const { SERVER_URL } = require("../constants/api");
 const { Dialogs } = require("../constants/dialogs");
+const { Fonts } = require("../constants/fonts");
+const { Assets } = require("../constants/assets");
 const { validateCode } = require("../utils/validation");
 
 interface CompanyData {
@@ -30,6 +32,10 @@ async function getCompanyDetails(code: string) {
                 font: data.font,
                 logoUrl: data.logo.base64Logo,
             };
+            if(!companyData.font)
+                companyData.font = Fonts.DEFAULT_FONT;
+            if(!companyData.logoUrl)
+                companyData.logoUrl = Assets.DEFAULT_LOGO;
             return companyData;
         })
         .catch((error) => {

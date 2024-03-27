@@ -1,33 +1,29 @@
 import React from "react";
-import { View, StyleSheet, Image, Animated } from "react-native";
+import { View, StyleSheet, Animated } from "react-native";
 import WelcomeMessage from "../components/WelcomeMessage";
 import { useFonts } from "expo-font";
-import * as SplashScreen from "expo-splash-screen";
+const { Fonts } = require("../constants/fonts");
+const { Assets } = require("../constants/assets");
+const { Colors } = require("../constants/colors");
 
 export default function WelcomeScreen({ route }: { route: any }) {
     const details = route.params.details;
     let { name, welcomeMessage, font, logoUrl } = details;
 
-    if(!font) font = "Arial";
-    if(!logoUrl) logoUrl = "../../assets/images/default_logo.png";
-
     let [fontsLoaded] = useFonts({
         Arial: require("../../assets/fonts/arial.ttf"),
-        "Times New Roman": require("../../assets/fonts/times-new-roman.ttf"),
-        Verdana: require("../../assets/fonts/verdana.ttf"),
-        Helvetica: require("../../assets/fonts/helvetica.ttf"),
-        Montserrat: require("../../assets/fonts/montserrat.ttf"),
-        Calibri: require("../../assets/fonts/calibri.ttf"),
-        Futura: require("../../assets/fonts/futura.ttf"),
-        Bodoni: require("../../assets/fonts/bodoni.ttf"),
-        Rockwell: require("../../assets/fonts/rockwell.ttf"),
-        "Comic Sans MS": require("../../assets/fonts/comic-sans-ms.ttf"),
+        [Fonts.TIMES_NEW_ROMAN]: Assets.TIMES_NEW_ROMAN,
+        [Fonts.VERDANA]: Assets.VERDANA,
+        [Fonts.HELVETICA]: Assets.HELVETICA,
+        [Fonts.MONTSERRAT]: Assets.MONTSERRAT,
+        [Fonts.CALIBRI]: Assets.CALIBRI,
+        [Fonts.FUTURA]: Assets.FUTURA,
+        [Fonts.BODONI]: Assets.BODONI,
+        [Fonts.ROCKWELL]: Assets.ROCKWELL,
+        [Fonts.COMIC_SANS_MS]: Assets.COMIC_SANS_MS,
     });
 
     const fadeAnim = React.useRef(new Animated.Value(0)).current;
-
-    if (!fontsLoaded) SplashScreen.preventAutoHideAsync();
-    else SplashScreen.hideAsync();
 
     React.useEffect(() => {
         Animated.timing(fadeAnim, {
@@ -53,7 +49,7 @@ export default function WelcomeScreen({ route }: { route: any }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#EEEEEE",
+        backgroundColor: Colors.BACKGROUND,
         alignItems: "center",
     },
     logoContainer: {
