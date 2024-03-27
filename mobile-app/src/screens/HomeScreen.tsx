@@ -13,10 +13,6 @@ import WelcomeMessage from "../components/WelcomeMessage";
 import { fetchSettings } from "../services/FetchData";
 import LoadingAnimation from "../components/LoadingAnimation";
 
-interface RouteParams {
-  code: string;
-}
-
 interface CompanyData {
   name: string,
   welcomeMessage: string,
