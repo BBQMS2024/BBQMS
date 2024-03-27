@@ -1,19 +1,14 @@
 package ba.unsa.etf.si.bbqms;
 
-import ba.unsa.etf.si.bbqms.domain.Role;
-import ba.unsa.etf.si.bbqms.domain.RoleName;
-import ba.unsa.etf.si.bbqms.domain.User;
 import ba.unsa.etf.si.bbqms.jwt_service.implementation.DefaultJwtService;
 import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.parallel.Execution;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
