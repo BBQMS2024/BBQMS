@@ -7,6 +7,7 @@ import {
     Dimensions,
     Animated,
 } from "react-native";
+import { Colors } from "../constants/colors";
 
 interface WelcomeMessageProps {
     name: string;
@@ -37,20 +38,21 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     title: {
-        color: "#334257",
+        color: Colors.PRIMARY,
         fontWeight: "bold",
-        marginBottom: 15,
+        marginBottom: 30,
     },
     borderContainer: {
         borderWidth: 1,
         padding: 10,
         width: "90%",
         alignItems: "center",
-        borderColor: "#548CA8",
+        borderColor: Colors.ACCENT,
+        borderRadius: 10,
     },
     message: {
         textAlign: "center",
         fontSize: 40,
-        color: "#334257",
+        color: Colors.PRIMARY,
     },
 });

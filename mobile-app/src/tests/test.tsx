@@ -1,8 +1,6 @@
 const { validateCodeFormat } = require("../utils/validation");
 const { Dialogs } = require("../constants/dialogs");
 
-
-
 describe('Code validation tests', () => {
 
   test('Valid and invalid code formats', () => {
@@ -16,8 +14,3 @@ describe('Code validation tests', () => {
     expect(validateCodeFormat('ABC')).toBe(false); 
   });
 });
-
-
-
-
-

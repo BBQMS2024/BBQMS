@@ -52,10 +52,10 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: Colors.BACKGROUND,
         alignItems: "center",
+        justifyContent: "center",
     },
     logoContainer: {
-        marginTop: 80,
-        marginBottom: 20,
+        
     },
     logo: {
         width: 250,
