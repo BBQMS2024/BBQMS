@@ -126,7 +126,7 @@ const LoginForm = () => {
                     />
                     {error && error.includes("Password") && <p className="error">{error}</p>}
                 </div>
-                <input type="submit" value="Submit" />
+                <input type="submit" value="Submit"  />
                 <p id="registration">
                     Not registered? <Link to="/registration">Create an account</Link>
                 </p>

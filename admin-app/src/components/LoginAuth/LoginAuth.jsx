@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useReducer, useState } from "react";
 import "./LoginAuth.css";
 import { SERVER_URL } from "../../constants.js";
+import { useNavigate } from "react-router-dom";
 
 function doSubmit(submittedValues) {
     console.log(`Submitted: ${submittedValues.join("")}`);
@@ -116,15 +117,13 @@ export default function LoginAuth() {
     }
 
     async function handleSubmit(e) {
+
         e.preventDefault();
 
         dispatch({ type: "VERIFY" });
 
         try {
-            const userDataString = localStorage.getItem('userData');
-            const userData = JSON.parse(userDataString);
-            const email = userData.email;
-            console.log(email);
+            const email = localStorage.getItem('email');
             if (!email) {
                 throw new Error("Email not found in localStorage");
             }
@@ -156,6 +155,11 @@ export default function LoginAuth() {
     function resetInputs() {
         dispatch({ type: "RESET_INPUTS" });
     }
+    let navigate = useNavigate();
+    function routeChange() {
+        let path = `/companydetails`;
+        navigate(path);
+    }
 
     return (
         <div id="auth-container">
@@ -177,7 +181,7 @@ export default function LoginAuth() {
                         );
                     })}
                 </div>
-                <button disabled={status === "pending"}>
+                <button disabled={status === "pending"}   onClick={routeChange}>
                     {status === "pending" ? "VERIFYING..." : "VERIFY"}
                 </button>
             </form>
