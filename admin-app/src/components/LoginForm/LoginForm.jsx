@@ -29,7 +29,7 @@ const LoginForm = () => {
         }
         const data = await response.json();
         localStorage.setItem('userData', JSON.stringify(data));
-        navigate('/');
+        navigate('/companydetails');
     }
 
     const handleSubmit = async (event) => {
@@ -67,9 +67,8 @@ const LoginForm = () => {
 
             const data = await response.json();
 
-            localStorage.setItem('userData', JSON.stringify(data));
-
             if (response.ok) {
+                localStorage.setItem('userData', JSON.stringify(data));
                 setIsSubmitted(true);
                 navigate('/');
             } else if(response.status === 403){

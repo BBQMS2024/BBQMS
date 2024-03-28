@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './CompanyDetailsForm.css';
 import {Link, useNavigate} from "react-router-dom";
 
-const SERVER_URL = "http://localhost:8080";
+import {SERVER_URL} from '../../constants.js';
 
 function CompanyDetailsForm() {
   let [name, setName] = useState('');
