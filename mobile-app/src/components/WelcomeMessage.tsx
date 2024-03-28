@@ -1,5 +1,12 @@
 import React from "react";
-import { View, Text, StyleSheet, SafeAreaView, Dimensions, Animated } from "react-native";
+import {
+    View,
+    Text,
+    StyleSheet,
+    SafeAreaView,
+    Dimensions,
+    Animated,
+} from "react-native";
 
 interface WelcomeMessageProps {
     name: string;
@@ -13,11 +20,13 @@ export default function WelcomeMessage(params: WelcomeMessageProps) {
 
     return (
         <SafeAreaView style={styles.container}>
-            <Animated.Text style={[styles.title, { fontFamily: params.font, fontSize }]}>
+            <Animated.Text style={[styles.title, { fontSize }]}>
                 {params.name}
             </Animated.Text>
             <View style={styles.borderContainer}>
-                <Text style={styles.message}>{params.welcome}</Text>
+                <Text style={[styles.message, { fontFamily: params.font }]}>
+                    {params.welcome}
+                </Text>
             </View>
         </SafeAreaView>
     );

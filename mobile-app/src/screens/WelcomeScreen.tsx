@@ -1,5 +1,5 @@
-import React from "react";
-import { View, StyleSheet, Animated } from "react-native";
+import React, { useEffect } from "react";
+import { View, StyleSheet, Animated, Text } from "react-native";
 import WelcomeMessage from "../components/WelcomeMessage";
 import { useFonts } from "expo-font";
 const { Fonts } = require("../constants/fonts");
@@ -11,7 +11,7 @@ export default function WelcomeScreen({ route }: { route: any }) {
     let { name, welcomeMessage, font, logoUrl } = details;
 
     let [fontsLoaded] = useFonts({
-        Arial: require("../../assets/fonts/arial.ttf"),
+        [Fonts.ARIAL]: Assets.ARIAL,
         [Fonts.TIMES_NEW_ROMAN]: Assets.TIMES_NEW_ROMAN,
         [Fonts.VERDANA]: Assets.VERDANA,
         [Fonts.HELVETICA]: Assets.HELVETICA,
@@ -33,6 +33,7 @@ export default function WelcomeScreen({ route }: { route: any }) {
         }).start();
     }, [fadeAnim]);
 
+    if (!fontsLoaded) return <Text>Loading...</Text>;
     return (
         <View style={styles.container}>
             <View style={styles.logoContainer}>
