@@ -2,7 +2,7 @@ const { SERVER_URL } = require("../constants/api");
 const { Dialogs } = require("../constants/dialogs");
 const { Fonts } = require("../constants/fonts");
 const { Assets } = require("../constants/assets");
-const { validateCode } = require("../utils/validation");
+const { validateCodeFormat } = require("../utils/validation");
 
 interface CompanyData {
     name: string;
@@ -12,7 +12,7 @@ interface CompanyData {
 }
 
 async function getCompanyDetails(code: string) {
-    if (!validateCode(code)) throw new Error(Dialogs.ERROR.INVALID_CODE);
+    if (!validateCodeFormat(code)) throw new Error(Dialogs.ERROR.INVALID_CODE);
     let details: CompanyData = await fetch(
         `${SERVER_URL}/api/v1/tenants/${code}`,
         { method: "GET" }

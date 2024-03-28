@@ -1,29 +1,23 @@
-import React from 'react';
-import { render, fireEvent } from '@testing-library/react-native';
-import WelcomeScreen from '../screens/WelcomeScreen';
+const { validateCodeFormat } = require("../utils/validation");
+const { Dialogs } = require("../constants/dialogs");
 
-test('valid code navigation', () => {
-  const navigationMock = { navigate: jest.fn() };
-  const { getByPlaceholderText, getByText } = render(<WelcomeScreen navigation={navigationMock} />);
 
-  const codeInput = getByPlaceholderText('Enter code');
-  fireEvent.changeText(codeInput, '1234');
 
-  const submitButton = getByText('Submit');
-  fireEvent.press(submitButton);
+describe('Code validation tests', () => {
 
-  expect(navigationMock.navigate).toHaveBeenCalledWith('Welcome');
+  test('Valid and invalid code formats', () => {
+    // Valid code formats
+    expect(validateCodeFormat('ABCD')).toBe(true); 
+    expect(validateCodeFormat('WXYZ')).toBe(true); 
+    expect(validateCodeFormat('1234')).toBe(true); 
+    // Invalid code formats
+    expect(validateCodeFormat('ABCD1')).toBe(false); 
+    expect(validateCodeFormat('ABCD!')).toBe(false); 
+    expect(validateCodeFormat('ABC')).toBe(false); 
+  });
 });
 
-test('invalid code alert', () => {
-  const { getByPlaceholderText, getByText } = render(<WelcomeScreen route={undefined} />);
 
-  const codeInput = getByPlaceholderText('Enter code');
-  fireEvent.changeText(codeInput, '5678');
 
-  const submitButton = getByText('Submit');
-  fireEvent.press(submitButton);
 
-  const alertMessage = 'Please enter a valid code.';
-  expect(alertMessage).toBeTruthy();
-});
+
