@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './CompanyDetailsForm.css';
+import {Link, useNavigate} from "react-router-dom";
 
 const SERVER_URL = "http://localhost:8080";
 
@@ -52,7 +53,12 @@ function CompanyDetailsForm() {
       alert('Error: An error occurred while submitting your changes.');
     }
   }
+  const navigate = useNavigate();
 
+  const handleLogout = () => {
+    localStorage.removeItem('userData');
+    navigate('/login');
+  };
   return (
       <>
         <div className='heading2'>
@@ -64,22 +70,22 @@ function CompanyDetailsForm() {
               <div className="form-group-comp">
                 <label className="labels-comp" htmlFor="name" id='Name'>Name</label>
                 <input className="inputs-comp"
-                    type="text"
-                    id="name"
-                    value={name}
-                    onChange = {(e) => setName(e.target.value)}
-                    required
+                       type="text"
+                       id="name"
+                       value={name}
+                       onChange={(e) => setName(e.target.value)}
+                       required
                 />
               </div>
               <div className="form-group-comp">
                 <label className="labels-comp" htmlFor="logo" id='Logo'>Logo</label>
                 <input className="inputs-comp"
-                    type="file"
-                    onChange={handleChange}
-                    accept="image/*"
-                    required
+                       type="file"
+                       onChange={handleChange}
+                       accept="image/*"
+                       required
                 />
-                {file && <img className="logo" src={file} alt="Uploaded Logo" />}
+                {file && <img className="logo" src={file} alt="Uploaded Logo"/>}
               </div>
             </form>
           </div>
@@ -88,27 +94,27 @@ function CompanyDetailsForm() {
               <div className="form-group-comp">
                 <label className="labels-comp" htmlFor="hqAddress">HQ Address</label>
                 <input className="inputs-comp"
-                    type="text"
-                    id="hqAddress"
-                    value={hqAddress}
-                    onChange={(e) => setHQAddress(e.target.value)}
-                    required
+                       type="text"
+                       id="hqAddress"
+                       value={hqAddress}
+                       onChange={(e) => setHQAddress(e.target.value)}
+                       required
                 />
               </div>
               <div className="form-group-comp">
                 <label className="labels-comp" htmlFor="welcomeMessage">Welcome Message</label>
                 <input className="inputs-comp"
-                    type="text"
-                    id="welcomeMessage"
-                    value={welcomeMessage}
-                    onChange={(e) => setWelcomeMessage(e.target.value)}
-                    required
+                       type="text"
+                       id="welcomeMessage"
+                       value={welcomeMessage}
+                       onChange={(e) => setWelcomeMessage(e.target.value)}
+                       required
                 />
-                </div>
-                <div className="welcome-message" style={{ fontFamily: font }} >
-                  <p>{welcomeMessage}</p>
-                </div>
-              
+              </div>
+              <div className="welcome-message" style={{fontFamily: font}}>
+                <p>{welcomeMessage}</p>
+              </div>
+
               <div className='fontSelect'>
                 <label className="labels-comp" htmlFor="font">Font</label>
                 <select
@@ -135,6 +141,9 @@ function CompanyDetailsForm() {
         </div>
 
         <button type="submit" onClick={submitForm}>SUBMIT</button>
+
+        <button id="logout-button" onClick={handleLogout}>LOGOUT</button>
+
       </>
   );
 }

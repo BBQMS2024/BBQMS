@@ -176,3 +176,26 @@ h2{
 .fontSelect{
   margin-top: 30%;
 }
+#logout-button {
+  display: block;
+  width: 10%;
+  padding: 10px;
+  background-color: #334257;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 0;
+  position: absolute;
+  top: 93%;
+  left: 7%;
+  transform: translate(-50%, -50%);
+  font-size: larger;
+  font-family: "Poppins", sans-serif;
+}
+
+#logout-button:hover {
+  background-color: #476072;
+}
+
+
