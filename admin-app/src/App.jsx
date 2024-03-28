@@ -8,10 +8,8 @@ export default function App() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Provjera da li postoji userData u localStorage
         const userData = localStorage.getItem('userData');
 
-        // Ako postoji userData, preusmjeri na /companydetails
         if (userData) {
             console.log(userData);
             navigate('/companydetails', { replace: false});
