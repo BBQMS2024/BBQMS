@@ -11,12 +11,12 @@ export default function App() {
             <Routes>
                 <Route path="/" element={ <LoginScreen /> } />
                 <Route path="/login" element={ <LoginScreen /> } />
-                <Route path="/loginAuth"
+                {/*<Route path="/loginAuth"
                         element={
                             <AuthGuard roles={ ['ROLE_SUPER_ADMIN'] }>
                                 <LoginAuth />
                             </AuthGuard>
-                        } />
+                        } />*/}
                 <Route path="/companydetails"
                        element={
                            <AuthGuard roles={ ['ROLE_SUPER_ADMIN'] }>

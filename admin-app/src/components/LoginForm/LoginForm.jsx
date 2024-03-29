@@ -91,7 +91,8 @@ const LoginForm = () => {
     };
 
     if (isSubmitted) {
-        navigate('/loginAuth');
+        //navigate('/loginAuth');
+        navigate('/companydetails');
     }
 
     return (
