@@ -123,8 +123,9 @@ export default function LoginAuth() {
         dispatch({ type: "VERIFY" });
 
         try {
-            const email = localStorage.getItem('email');
-            if (!email) {
+            const storedUserData =  localStorage.getItem('userData');
+            const userData = storedUserData ? JSON.parse(storedUserData) : null;
+            if (!userData) {
                 throw new Error("Email not found in localStorage");
             }
 
@@ -135,12 +136,12 @@ export default function LoginAuth() {
                 },
                 body: JSON.stringify({
                     code: inputValues.join(""),
-                    email: email
+                    email: userData.email
                 }),
             });
 
             if (response.ok) {
-                dispatch({ type: "VERIFY_SUCCESS" });
+                navigate('/companyDetails')
             } else {
                 throw new Error("Code could not be verified. It is incorrect or expired.");
             }
@@ -157,8 +158,7 @@ export default function LoginAuth() {
     }
     let navigate = useNavigate();
     function routeChange() {
-        let path = `/companydetails`;
-        navigate(path);
+        handleSubmit({});
     }
 
     return (

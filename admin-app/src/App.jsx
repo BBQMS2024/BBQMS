@@ -1,28 +1,29 @@
-import React, { useEffect } from 'react';
-import { Route, Routes, useNavigate } from 'react-router-dom';
+import React from 'react';
+import { Route, Routes} from 'react-router-dom';
+import AuthGuard from './components/AuthGuard/AuthGuard';
 import LoginScreen from './pages/LoginScreen/LoginScreen';
-import RegistrationScreen from './pages/RegistrationScreen/RegistrationScreen';
 import CompanyInfoUpdate from './pages/CompanyInfoUpdate/CompanyInfoUpdate';
+import LoginAuth from './components/LoginAuth/LoginAuth';
 
 export default function App() {
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        const userData = localStorage.getItem('userData');
-
-        if (userData) {
-            console.log(userData);
-            navigate('/companydetails', { replace: false});
-        }
-    }, [navigate]);
-
     return (
         <>
             <Routes>
-                <Route path='/' element={<LoginScreen />} />
-                <Route path='/registration' element={<RegistrationScreen />} />
-                <Route path='/login' element={<LoginScreen />} />
-                <Route path='/companydetails' element={<CompanyInfoUpdate />} />
+                <Route path="/" element={ <LoginScreen /> } />
+                <Route path="/login" element={ <LoginScreen /> } />
+                <Route path="/loginAuth"
+                        element={
+                            <AuthGuard roles={ ['ROLE_SUPER_ADMIN'] }>
+                                <LoginAuth />
+                            </AuthGuard>
+                        } />
+                <Route path="/companydetails"
+                       element={
+                           <AuthGuard roles={ ['ROLE_SUPER_ADMIN'] }>
+                               <CompanyInfoUpdate />
+                           </AuthGuard>
+                       }
+                />
             </Routes>
         </>
     );
