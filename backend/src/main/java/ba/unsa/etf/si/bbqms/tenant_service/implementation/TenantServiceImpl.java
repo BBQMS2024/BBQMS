@@ -80,7 +80,7 @@ public class TenantServiceImpl implements TenantService {
     }
 
     @Override
-    public List<ba.unsa.etf.si.bbqms.domain.Service> getAllServicesByTenant(final String code) throws Exception {
+    public List<ba.unsa.etf.si.bbqms.domain.Service> getAllServicesByTenant(final String code) {
         return serviceRepository.findAllByTenant_Code(code);
     }
 

@@ -1,7 +1,6 @@
 package ba.unsa.etf.si.bbqms.ws.controllers;
 
 import ba.unsa.etf.si.bbqms.auth_service.api.AuthService;
-import ba.unsa.etf.si.bbqms.domain.RoleName;
 import ba.unsa.etf.si.bbqms.domain.User;
 import ba.unsa.etf.si.bbqms.tenant_service.api.TenantService;
 import ba.unsa.etf.si.bbqms.ws.models.ServiceDto;
@@ -12,7 +11,6 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.security.core.GrantedAuthority;
 
 @RestController
 @RequestMapping("/api/v1/tenants")
