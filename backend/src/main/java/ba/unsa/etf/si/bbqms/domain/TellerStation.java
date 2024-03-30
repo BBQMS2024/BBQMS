@@ -24,4 +24,36 @@ public class TellerStation {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "display_id", referencedColumnName = "id")
     private Display display;
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(final long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    public Branch getBranch() {
+        return branch;
+    }
+
+    public void setBranch(final Branch branch) {
+        this.branch = branch;
+    }
+
+    public Display getDisplay() {
+        return display;
+    }
+
+    public void setDisplay(final Display display) {
+        this.display = display;
+    }
 }

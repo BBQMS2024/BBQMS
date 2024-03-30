@@ -23,4 +23,36 @@ public class Display {
     @ManyToOne
     @JoinColumn(name = "branch_id")
     private Branch branch;
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(final long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    public TellerStation getTellerStation() {
+        return tellerStation;
+    }
+
+    public void setTellerStation(final TellerStation tellerStation) {
+        this.tellerStation = tellerStation;
+    }
+
+    public Branch getBranch() {
+        return branch;
+    }
+
+    public void setBranch(final Branch branch) {
+        this.branch = branch;
+    }
 }

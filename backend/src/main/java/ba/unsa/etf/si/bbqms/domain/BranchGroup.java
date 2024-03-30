@@ -34,4 +34,36 @@ public class BranchGroup {
             inverseJoinColumns = @JoinColumn(name = "branch_group_id")
     )
     private Set<Service> services;
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(final long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    public Set<Branch> getBranches() {
+        return branches;
+    }
+
+    public void setBranches(final Set<Branch> branches) {
+        this.branches = branches;
+    }
+
+    public Set<Service> getServices() {
+        return services;
+    }
+
+    public void setServices(final Set<Service> services) {
+        this.services = services;
+    }
 }

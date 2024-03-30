@@ -29,4 +29,44 @@ public class Branch {
 
     @ManyToMany(mappedBy = "branches")
     private Set<BranchGroup> branchGroups;
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(final long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    public Tenant getTenant() {
+        return tenant;
+    }
+
+    public void setTenant(final Tenant tenant) {
+        this.tenant = tenant;
+    }
+
+    public Set<TellerStation> getTellerStations() {
+        return tellerStations;
+    }
+
+    public void setTellerStations(final Set<TellerStation> tellerStations) {
+        this.tellerStations = tellerStations;
+    }
+
+    public Set<BranchGroup> getBranchGroups() {
+        return branchGroups;
+    }
+
+    public void setBranchGroups(final Set<BranchGroup> branchGroups) {
+        this.branchGroups = branchGroups;
+    }
 }

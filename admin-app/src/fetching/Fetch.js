@@ -26,7 +26,10 @@ export async function fetchData(url, method, body) {
     if (res.ok) {
         //na svaki ispravan rezultat treba da dobijemo novi token da refreshamo stari
         const newToken = res.headers.get('Auth-Token');
-        localStorage.setItem('token', newToken);
+        if (newToken) {
+            newToken && localStorage.setItem('token', newToken);
+        }
+
     }
 
     return { data: data, success: res.ok };
