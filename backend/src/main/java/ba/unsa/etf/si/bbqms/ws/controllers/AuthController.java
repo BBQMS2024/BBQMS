@@ -70,7 +70,7 @@ public class AuthController {
         final User user = optionalUser.get();
 
         if (user.isTfa()) {
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok().body(new SimpleMessageDto("Success. Please verify 2FA now."));
             // if user is using 2FA, then we indicate everything is OK, but not give the user their token
             // because they still need to do 2FA
         }
