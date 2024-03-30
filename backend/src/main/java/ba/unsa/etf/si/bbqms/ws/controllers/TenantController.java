@@ -27,6 +27,7 @@ public class TenantController {
     }
 
     @GetMapping("/{code}")
+    @PreAuthorize("hasAnyRole()")
     public ResponseEntity getTenantByCode(@PathVariable(name = "code") final String code) {
         try {
             return ResponseEntity.ok().body(tenantService.findByCode(code));
@@ -45,8 +46,8 @@ public class TenantController {
             return ResponseEntity.notFound().build();
             // User tried to edit a tenant of whom he isn't part of. Not allowed.
         }
-        
-        try{
+
+        try {
             return ResponseEntity.ok().body(tenantService.updateTenant(code, request));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.badRequest().body(new ErrorResponseDto(e.getMessage()));

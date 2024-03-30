@@ -1,5 +1,6 @@
 package ba.unsa.etf.si.bbqms.domain;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,11 +25,24 @@ public class Branch {
     @JoinColumn(name = "tenant_id", referencedColumnName = "id")
     private Tenant tenant;
 
-    @OneToMany(mappedBy = "branch")
+    @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<TellerStation> tellerStations;
 
     @ManyToMany(mappedBy = "branches")
     private Set<BranchGroup> branchGroups;
+
+    public Branch() {
+    }
+
+    public Branch(final String name, final Tenant tenant, final Set<TellerStation> tellerStations) {
+        this.name = name;
+        this.tenant = tenant;
+        this.tellerStations = tellerStations;
+    }
+
+    public Branch(final String name, final Tenant tenant) {
+        this(name, tenant, null);
+    }
 
     public long getId() {
         return id;

@@ -110,8 +110,18 @@ public class DefaultAuthService implements AuthService {
     public boolean verifyUserTfaCode(final User user, final String code) {
         try {
             return this.twoFactorService.isCodeValid(code, user.getTfaSecret());
-        } catch(final Exception e) {
+        } catch (final Exception e) {
             return false;
         }
+    }
+
+    /*
+        ONLY USE THIS METHOD IF 100% SURE USER IS AUTHORIZED
+     */
+    @Override
+    public User getAuthenticatedUser() {
+        final String currentEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        return this.userService.findByEmail(currentEmail)
+                .orElseThrow(() -> new RuntimeException("This should never happen. You should not call this in non-authorized endpoints!"));
     }
 }

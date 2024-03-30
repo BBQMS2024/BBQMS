@@ -3,6 +3,7 @@ package ba.unsa.etf.si.bbqms.domain;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -13,7 +14,7 @@ import jakarta.persistence.Table;
 @Table(name = "teller_station")
 public class TellerStation {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String name;
 
@@ -24,6 +25,19 @@ public class TellerStation {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "display_id", referencedColumnName = "id")
     private Display display;
+
+    public TellerStation() {
+    }
+
+    public TellerStation(final String name, final Branch branch, final Display display) {
+        this.name = name;
+        this.branch = branch;
+        this.display = display;
+    }
+
+    public TellerStation(final String name, final Branch branch) {
+        this(name, branch, null);
+    }
 
     public long getId() {
         return id;
