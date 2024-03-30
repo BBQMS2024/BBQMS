@@ -11,6 +11,7 @@ html, body, #root {
 
 body {
     padding: 0 20px;
+    background-color: ghostwhite;
 }
 
 :root {
