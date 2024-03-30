@@ -1,3 +1,147 @@
-body {
-   background-color: ghostwhite;
+.company-info-update-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
 }
+
+.heading2 {
+    background-color: var(--blue);
+    color: white;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 2px;
+    padding: 15px 0;
+}
+
+.form-container-comp {
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #ffff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+}
+
+
+.form-group-comp {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+}
+
+.labels-comp {
+    font-weight: bold;
+    font-size: 20px;
+    color: #666362;
+    font-family: "Poppins", sans-serif;
+    margin-bottom: 10px;
+}
+
+.inputs-comp[type="text"],
+.inputs-comp[type="file"],
+textarea,
+select {
+    width: 80%;
+    border: 1px solid lightgray;
+    border-radius: 5px;
+    font-size: 16px;
+    box-sizing: border-box;
+    margin-bottom: 20px;
+    text-indent: 5px;
+    padding: 5px 0;
+}
+
+.inputs-comp[type="file"] {
+    width: 80%;
+    border: 1px solid lightgray;
+    border-radius: 5px;
+    font-size: 16px;
+    box-sizing: border-box;
+    margin-bottom: 20px;
+    margin-top: 0.03%;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+    margin: 10px auto 0;
+}
+
+.left-column {
+    width: 50%;
+}
+
+.left-column .labels-comp {
+    text-align: center;
+}
+
+.right-column {
+    width: 50%;
+}
+
+.right-column .form-group-comp {
+    margin-left: 10px;
+}
+
+.right-column .labels-comp {
+    text-align: center;
+}
+
+/*
+?????
+ */
+.right-column .inputs-comp,
+.right-column textarea,
+.right-column select {
+    width: calc(100% - 20px);
+}
+
+
+button[type="submit"]:hover {
+    background-color: #476072;
+/
+}
+
+.logo {
+    width: 250px;
+    height: 250px;
+}
+
+.welcome-message {
+    width: 40%;
+    height: 100px;
+    margin: auto;
+    overflow: auto;
+    max-height: 200px;
+    border: solid 1px black;
+}
+
+.welcome-message > p {
+    padding: 4px;
+    word-wrap: break-word;
+}
+
+.form-select {
+    border: 1px solid lightgray;
+    border-radius: 5px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+.company-info-submit-btn {
+    display: flex;
+    margin: 10px 0 0 auto;
+    background-color: var(--blue);
+    padding: 10px 40px;
+    color: white;
+    border-radius: 8px;
+    border: none;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+}
+

@@ -33,6 +33,7 @@ public class User implements UserDetails {
     private String password;
     private String phoneNumber;
     private boolean oauth;
+    private boolean tfa;
     private String tfaSecret;
 
     @JsonIgnore
@@ -80,6 +81,14 @@ public class User implements UserDetails {
 
     public void setOauth(final boolean oauth) {
         this.oauth = oauth;
+    }
+
+    public boolean isTfa() {
+        return tfa;
+    }
+
+    public void setTfa(final boolean tfa) {
+        this.tfa = tfa;
     }
 
     public String getTfaSecret() {
@@ -171,6 +180,11 @@ public class User implements UserDetails {
 
         public UserBuilder oAuth(final boolean oauth) {
             this.user.setOauth(oauth);
+            return this;
+        }
+
+        public UserBuilder tfa(final boolean tfa) {
+            this.user.setTfa(tfa);
             return this;
         }
 
