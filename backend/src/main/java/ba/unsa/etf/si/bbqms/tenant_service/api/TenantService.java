@@ -12,8 +12,8 @@ public interface TenantService {
     Tenant findByCode(final String code);
     Tenant updateTenant(final String code, final TenantDto request);
     Service getServiceById(final long id);
-    List<Service> getAllServicesByTenant(final Tenant tenant);
-    Service addService(final ServiceDto request);
-    Service updateService(final long id, final ServiceDto request);
+    List<Service> getAllServicesByTenant(final String Code) throws Exception;
+    Service addService(final String code, final ServiceDto request) throws Exception;
+    Service updateService(final String Code, final long id, final ServiceDto request) throws Exception;
     void deleteService(final long id);
 }

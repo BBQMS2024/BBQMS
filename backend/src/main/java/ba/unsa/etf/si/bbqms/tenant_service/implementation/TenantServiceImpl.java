@@ -74,33 +74,46 @@ public class TenantServiceImpl implements TenantService {
     }
 
     @Override
-    public ba.unsa.etf.si.bbqms.domain.Service getServiceById(long id) {
+    public ba.unsa.etf.si.bbqms.domain.Service getServiceById(final long id) {
         return serviceRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("No service found with id: " + id));
     }
 
     @Override
-    public List<ba.unsa.etf.si.bbqms.domain.Service> getAllServicesByTenant(Tenant tenant) {
-        return serviceRepository.findByTenant(tenant);
+    public List<ba.unsa.etf.si.bbqms.domain.Service> getAllServicesByTenant(final String code) throws Exception {
+        return serviceRepository.findAllByTenant_Code(code);
     }
 
     @Override
-    public ba.unsa.etf.si.bbqms.domain.Service addService(final ServiceDto request) {
+    public ba.unsa.etf.si.bbqms.domain.Service addService(final String code, final ServiceDto request) throws Exception {
+        final Tenant tenant= tenantRepository.findByCode(code).
+                orElseThrow(() -> new Exception("Tenant not found") );
+
+        final List<ba.unsa.etf.si.bbqms.domain.Service> services = serviceRepository.findAllByTenant_Code(code);
+        final boolean nameExists = services.stream()
+                .anyMatch(service -> service.getName().equals(request.name()));
+        if(nameExists){
+            throw new Exception("Name already in use!");
+        }
+
         final ba.unsa.etf.si.bbqms.domain.Service service = new ba.unsa.etf.si.bbqms.domain.Service(
                 request.name(),
-                request.tenant()
+                tenant
         );
         return serviceRepository.save(service);
     }
 
     @Override
-    public ba.unsa.etf.si.bbqms.domain.Service updateService(final long id, final ServiceDto request) {
+    public ba.unsa.etf.si.bbqms.domain.Service updateService(final String code, final long id, final ServiceDto request) throws Exception {
+        final List<ba.unsa.etf.si.bbqms.domain.Service> services = serviceRepository.findAllByTenant_Code(code);
+        final boolean nameExists = services.stream()
+                .anyMatch(service -> service.getName().equals(request.name()));
+        if(nameExists){
+            throw new Exception("Name already in use!");
+        }
         final ba.unsa.etf.si.bbqms.domain.Service service = getServiceById(id);
         if (request.name() != null) {
             service.setName(request.name());
-        }
-        if (request.tenant() != null) {
-            service.setTenant(request.tenant());
         }
         return serviceRepository.save(service);
     }
