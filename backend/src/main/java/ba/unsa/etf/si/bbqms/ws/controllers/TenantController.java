@@ -27,7 +27,6 @@ public class TenantController {
     }
 
     @GetMapping("/{code}")
-    @PreAuthorize("hasAnyRole()")
     public ResponseEntity getTenantByCode(@PathVariable(name = "code") final String code) {
         try {
             return ResponseEntity.ok().body(tenantService.findByCode(code));
