@@ -24,6 +24,15 @@ public class Display {
     @JoinColumn(name = "branch_id")
     private Branch branch;
 
+    public Display(){
+    }
+
+    public Display(final String name, final TellerStation tellerStation, final Branch branch) {
+        this.name = name;
+        this.tellerStation = tellerStation;
+        this.branch = branch;
+    }
+
     public long getId() {
         return id;
     }
