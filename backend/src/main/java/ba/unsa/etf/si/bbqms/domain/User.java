@@ -2,6 +2,7 @@ package ba.unsa.etf.si.bbqms.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -10,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -31,6 +33,7 @@ public class User implements UserDetails {
     private String password;
     private String phoneNumber;
     private boolean oauth;
+    private boolean tfa;
     private String tfaSecret;
 
     @JsonIgnore
@@ -39,6 +42,10 @@ public class User implements UserDetails {
                 joinColumns = @JoinColumn(name = "user_id"),
                 inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
+
+    @ManyToOne
+    @JoinColumn(name = "tenant_id")
+    private Tenant tenant;
 
     public long getId() {
         return id;
@@ -76,6 +83,14 @@ public class User implements UserDetails {
         this.oauth = oauth;
     }
 
+    public boolean isTfa() {
+        return tfa;
+    }
+
+    public void setTfa(final boolean tfa) {
+        this.tfa = tfa;
+    }
+
     public String getTfaSecret() {
         return tfaSecret;
     }
@@ -90,6 +105,14 @@ public class User implements UserDetails {
 
     public void setRoles(final Set<Role> roles) {
         this.roles = roles;
+    }
+
+    public Tenant getTenant() {
+        return tenant;
+    }
+
+    public void setTenant(final Tenant tenant) {
+        this.tenant = tenant;
     }
 
     @Override
@@ -133,7 +156,7 @@ public class User implements UserDetails {
     }
 
     public static class UserBuilder {
-        User user = new User();
+        final User user = new User();
 
         public UserBuilder id(final long id) {
             this.user.setId(id);
@@ -160,6 +183,11 @@ public class User implements UserDetails {
             return this;
         }
 
+        public UserBuilder tfa(final boolean tfa) {
+            this.user.setTfa(tfa);
+            return this;
+        }
+
         public UserBuilder tfaSecret(final String tfaSecret) {
             this.user.setTfaSecret(tfaSecret);
             return this;
@@ -167,6 +195,11 @@ public class User implements UserDetails {
 
         public UserBuilder roles(final Set<Role> roles) {
             this.user.setRoles(roles);
+            return this;
+        }
+
+        public UserBuilder tenant(final Tenant tenant) {
+            this.user.setTenant(tenant);
             return this;
         }
 

@@ -19,11 +19,13 @@ spring:
     schemas: ${DB_SCHEMA}
 
 jwt:
-  cookie-title: access-token
+  header-title: Authorization
+  token-prefix: Bearer
   secret-key: ${JWT_KEY}
   authorities-key: USER_AUTHORITIES
   token-validity-time: PT30M
 tfa:
   label: BBQMS
   issuer: BBQMS
-
+tenancy:
+  default-code: DFLT
