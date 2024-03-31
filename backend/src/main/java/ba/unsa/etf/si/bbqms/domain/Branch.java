@@ -1,5 +1,6 @@
 package ba.unsa.etf.si.bbqms.domain;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,7 +25,7 @@ public class Branch {
     @JoinColumn(name = "tenant_id", referencedColumnName = "id")
     private Tenant tenant;
 
-    @OneToMany(mappedBy = "branch")
+    @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<TellerStation> tellerStations;
 
     @ManyToMany(mappedBy = "branches")
