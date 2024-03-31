@@ -22,16 +22,16 @@ public class BranchGroup {
     @ManyToMany
     @JoinTable(
             name = "branch_group_branch",
-            joinColumns = @JoinColumn(name = "branch_id"),
-            inverseJoinColumns = @JoinColumn(name = "branch_group_id")
+            joinColumns = @JoinColumn(name = "branch_group_id"),
+            inverseJoinColumns = @JoinColumn(name = "branch_id")
     )
     private Set<Branch> branches;
 
     @ManyToMany
     @JoinTable(
             name = "branch_group_service",
-            joinColumns = @JoinColumn(name = "service_id"),
-            inverseJoinColumns = @JoinColumn(name = "branch_group_id")
+            joinColumns = @JoinColumn(name = "branch_group_id"),
+            inverseJoinColumns = @JoinColumn(name = "service_id")
     )
     private Set<Service> services;
 

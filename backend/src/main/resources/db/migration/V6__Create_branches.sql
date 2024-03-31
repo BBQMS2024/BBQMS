@@ -58,4 +58,13 @@ CREATE TABLE IF NOT EXISTS branch_group_service
     CONSTRAINT FK_branchgroupservice_service FOREIGN KEY (service_id) REFERENCES service (id)
 );
 
+CREATE TABLE IF NOT EXISTS teller_station_service
+(
+    id                INTEGER PRIMARY KEY AUTO_INCREMENT,
+    teller_station_id INTEGER NOT NULL,
+    service_id        INTEGER NOT NULL,
+    CONSTRAINT FK_tellerstationservice_tellerstation FOREIGN KEY (teller_station_id) REFERENCES teller_station (id),
+    CONSTRAINT FK_tellerstationservice_service FOREIGN KEY (service_id) REFERENCES service (id)
+);
+
 COMMIT;

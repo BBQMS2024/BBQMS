@@ -6,9 +6,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+
+import java.util.Set;
 
 @Entity
 @Table(name = "teller_station")
@@ -25,6 +29,14 @@ public class TellerStation {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "display_id", referencedColumnName = "id")
     private Display display;
+
+    @ManyToMany
+    @JoinTable(
+            name = "teller_station_service",
+            joinColumns = @JoinColumn(name = "teller_station_id"),
+            inverseJoinColumns = @JoinColumn(name = "service_id")
+    )
+    private Set<Service> services;
 
     public TellerStation() {
     }
@@ -69,5 +81,13 @@ public class TellerStation {
 
     public void setDisplay(final Display display) {
         this.display = display;
+    }
+
+    public Set<Service> getServices() {
+        return services;
+    }
+
+    public void setServices(final Set<Service> services) {
+        this.services = services;
     }
 }
