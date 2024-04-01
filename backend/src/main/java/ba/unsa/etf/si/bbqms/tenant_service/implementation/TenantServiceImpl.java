@@ -1,5 +1,6 @@
 package ba.unsa.etf.si.bbqms.tenant_service.implementation;
 
+import ba.unsa.etf.si.bbqms.domain.Service;
 import ba.unsa.etf.si.bbqms.domain.Tenant;
 import ba.unsa.etf.si.bbqms.domain.TenantLogo;
 import ba.unsa.etf.si.bbqms.repository.ServiceRepository;
@@ -10,12 +11,11 @@ import ba.unsa.etf.si.bbqms.ws.models.ServiceDto;
 import ba.unsa.etf.si.bbqms.ws.models.TenantDto;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 
-@Service
+@org.springframework.stereotype.Service
 public class TenantServiceImpl implements TenantService {
     private final TenantRepository tenantRepository;
     private final TenantLogoRepository tenantLogoRepository;
@@ -74,29 +74,29 @@ public class TenantServiceImpl implements TenantService {
     }
 
     @Override
-    public ba.unsa.etf.si.bbqms.domain.Service getServiceById(final long id) {
+    public Service getServiceById(final long id) {
         return serviceRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("No service found with id: " + id));
     }
 
     @Override
-    public List<ba.unsa.etf.si.bbqms.domain.Service> getAllServicesByTenant(final String code) {
+    public List<Service> getAllServicesByTenant(final String code) {
         return serviceRepository.findAllByTenant_Code(code);
     }
 
     @Override
-    public ba.unsa.etf.si.bbqms.domain.Service addService(final String code, final ServiceDto request) throws Exception {
+    public Service addService(final String code, final ServiceDto request) throws Exception {
         final Tenant tenant= tenantRepository.findByCode(code).
                 orElseThrow(() -> new Exception("Tenant not found") );
 
-        final List<ba.unsa.etf.si.bbqms.domain.Service> services = serviceRepository.findAllByTenant_Code(code);
+        final List<Service> services = serviceRepository.findAllByTenant_Code(code);
         final boolean nameExists = services.stream()
                 .anyMatch(service -> service.getName().equals(request.name()));
         if(nameExists){
             throw new Exception("Name already in use!");
         }
 
-        final ba.unsa.etf.si.bbqms.domain.Service service = new ba.unsa.etf.si.bbqms.domain.Service(
+        final Service service = new Service(
                 request.name(),
                 tenant
         );
@@ -104,14 +104,14 @@ public class TenantServiceImpl implements TenantService {
     }
 
     @Override
-    public ba.unsa.etf.si.bbqms.domain.Service updateService(final String code, final long id, final ServiceDto request) throws Exception {
-        final List<ba.unsa.etf.si.bbqms.domain.Service> services = serviceRepository.findAllByTenant_Code(code);
+    public Service updateService(final String code, final long id, final ServiceDto request) throws Exception {
+        final List<Service> services = serviceRepository.findAllByTenant_Code(code);
         final boolean nameExists = services.stream()
                 .anyMatch(service -> service.getName().equals(request.name()));
         if(nameExists){
             throw new Exception("Name already in use!");
         }
-        final ba.unsa.etf.si.bbqms.domain.Service service = getServiceById(id);
+        final Service service = getServiceById(id);
         if (request.name() != null) {
             service.setName(request.name());
         }
