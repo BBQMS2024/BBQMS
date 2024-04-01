@@ -7,7 +7,10 @@ import { fetchData } from './fetching/Fetch.js';
 import AuthGuard from './components/AuthGuard/AuthGuard';
 import LoginScreen from './pages/LoginScreen/LoginScreen';
 import CompanyInfoUpdate from './pages/CompanyInfoUpdate/CompanyInfoUpdate';
+import HomePage from './pages/HomePage/HomePage'
 import NotFound from './pages/NotFound/NotFound.jsx';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 export default function App() {
     const [user, setUser] = useState();
@@ -46,9 +49,11 @@ export default function App() {
                     />
                     <Route exact path="/login" element={ <LoginScreen /> } />
                     <Route exact path="/" element={ <LoginScreen /> } />
+                    <Route exact path = "/home" element = { <HomePage /> } />
                     <Route path="*" element={ <NotFound /> } />
                 </Routes>
             </UserContext.Provider>
         </>
-    );
+
+    )
 }

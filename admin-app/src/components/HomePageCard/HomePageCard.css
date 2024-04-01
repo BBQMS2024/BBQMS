@@ -1,0 +1,21 @@
+.button-hp{
+    width: 80%;
+    display: inline-block;
+}
+.card-hp{
+    width: 14%;
+    border-radius: 10px;
+}
+.card-title-hp{
+    text-align: center;
+    color: #334257;
+}
+.card-text-hp{
+    text-align: center;
+    color: #334257;
+}
+.button-container-hp{
+    text-align: center;
+}
+
+
