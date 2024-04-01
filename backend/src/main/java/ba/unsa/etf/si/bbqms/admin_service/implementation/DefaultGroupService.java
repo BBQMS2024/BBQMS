@@ -20,6 +20,7 @@ public class DefaultGroupService implements GroupService {
     private final BranchGroupRepository branchGroupRepository;
     private final BranchRepository branchRepository;
     private final ServiceRepository serviceRepository;
+
     public DefaultGroupService(final BranchGroupRepository branchGroupRepository,
                                final BranchRepository branchRepository,
                                final ServiceRepository serviceRepository) {
@@ -32,16 +33,20 @@ public class DefaultGroupService implements GroupService {
     public BranchGroup addBranchGroup(final BranchGroupCreateDto request) throws EntityNotFoundException{
         Set<Service> services = new HashSet<>();
         Set<Branch> branches = new HashSet<>();
-        if (request.serviceIds() != null)
+
+        if (request.serviceIds() != null) {
             for (Long serviceId : request.serviceIds()) {
                 Service service = serviceRepository.findById(serviceId).orElseThrow(() -> new EntityNotFoundException("No service found with Id: " + serviceId));
                 services.add(service);
             }
-        if (request.branchIds() != null)
+        }
+        if (request.branchIds() != null) {
             for (Long branchId : request.branchIds()) {
                 Branch branch = branchRepository.findById(branchId).orElseThrow(() -> new EntityNotFoundException("No service found with Id: " + branchId));
                 branches.add(branch);
             }
+        }
+
         BranchGroup branchGroup = new BranchGroup(request.name(),branches,services);
         return branchGroupRepository.save(branchGroup);
     }
@@ -50,8 +55,10 @@ public class DefaultGroupService implements GroupService {
     public BranchGroup updateBranchGroup(final Long branchGroupId, final BranchGroupUpdateDto request) throws EntityNotFoundException{
         final BranchGroup branchGroup = branchGroupRepository.findById(branchGroupId)
                 .orElseThrow(() -> new EntityNotFoundException("No branch group found with Id: " + branchGroupId));
-        if (request.name() != null)
+
+        if (request.name() != null && !request.name().trim().isEmpty()) {
             branchGroup.setName(request.name());
+        }
         return branchGroupRepository.save(branchGroup);
     }
 
@@ -61,16 +68,21 @@ public class DefaultGroupService implements GroupService {
                 .orElseThrow(() -> new EntityNotFoundException("No branch group found with id: " + branchGroupId));
         final Service existingService = serviceRepository.findById(serviceId)
                 .orElseThrow(() -> new EntityNotFoundException("No service found with id: " + serviceId));
+
         branchGroup.getServices().add(existingService);
+
         return branchGroupRepository.save(branchGroup);
     }
+
     @Override
     public BranchGroup addBranchGroupBranch(final Long branchGroupId, final Long branchId) throws EntityNotFoundException{
         final BranchGroup branchGroup = branchGroupRepository.findById(branchGroupId)
                 .orElseThrow(() -> new EntityNotFoundException("No branch group found with id: " + branchGroupId));
         final Branch existingBranch = branchRepository.findById(branchId)
                 .orElseThrow(() -> new EntityNotFoundException("No branch found with id: " + branchId));
+
         branchGroup.getBranches().add(existingBranch);
+
         return branchGroupRepository.save(branchGroup);
     }
 
@@ -81,8 +93,9 @@ public class DefaultGroupService implements GroupService {
 
     @Override
     public void deleteBranchGroup(final Long branchGroupId) throws EntityNotFoundException{
-        final BranchGroup branchGroup = branchGroupRepository.findById(branchGroupId)
+        branchGroupRepository.findById(branchGroupId)
                 .orElseThrow(() -> new EntityNotFoundException("No branch group found with id: " + branchGroupId));
+
         branchGroupRepository.deleteById(branchGroupId);
     }
 
@@ -93,8 +106,9 @@ public class DefaultGroupService implements GroupService {
         final Service existingService = serviceRepository.findById(serviceId)
                 .orElseThrow(() -> new EntityNotFoundException("No service found with id: " + serviceId));
 
-        if (branchGroup.getServices().remove(existingService))
+        if (branchGroup.getServices().remove(existingService)) {
             return branchGroupRepository.save(branchGroup);
+        }
         throw new EntityNotFoundException("Group doesn't contain service with id: " + existingService.getId());
     }
 
@@ -105,8 +119,9 @@ public class DefaultGroupService implements GroupService {
         final Branch existingBranch = branchRepository.findById(branchId)
                 .orElseThrow(() -> new EntityNotFoundException("No branch found with id: " + branchId));
 
-        if (branchGroup.getBranches().remove(existingBranch))
+        if (branchGroup.getBranches().remove(existingBranch)) {
             return branchGroupRepository.save(branchGroup);
+        }
         throw new EntityNotFoundException("Group doesn't contain branch with id: " + existingBranch.getId());
     }
 }

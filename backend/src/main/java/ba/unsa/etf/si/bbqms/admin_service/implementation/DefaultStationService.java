@@ -10,7 +10,7 @@ import jakarta.persistence.EntityNotFoundException;
 
 @org.springframework.stereotype.Service
 public class DefaultStationService implements StationService {
-    final TellerStationRepository tellerStationRepository;
+    private final TellerStationRepository tellerStationRepository;
     private final ServiceRepository serviceRepository;
 
     public DefaultStationService(TellerStationRepository tellerStationRepository,
@@ -27,6 +27,7 @@ public class DefaultStationService implements StationService {
                 .orElseThrow(() -> new EntityNotFoundException("No service found with id: " + serviceId));
 
         tellerStation.getServices().add(service);
+
         return tellerStationRepository.save(tellerStation);
     }
 
@@ -37,8 +38,9 @@ public class DefaultStationService implements StationService {
         final Service service = serviceRepository.findById(serviceId)
                 .orElseThrow(() -> new EntityNotFoundException("No service found with id: " + serviceId));
 
-        if (tellerStation.getServices().remove(service))
+        if (tellerStation.getServices().remove(service)) {
             return tellerStationRepository.save(tellerStation);
+        }
         throw new EntityNotFoundException("Teller station doesn't contain service with id: " + serviceId);
     }
 }
