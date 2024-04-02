@@ -114,4 +114,9 @@ public class DefaultAuthService implements AuthService {
             return false;
         }
     }
+
+    @Override
+    public boolean setTfaUse(final boolean tfa) throws Exception {
+        return this.userService.setUserTfa(tfa);
+    }
 }
