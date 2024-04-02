@@ -92,7 +92,7 @@ public class DefaultGroupService implements GroupService {
 
     @Override
     public List<BranchGroup> getAllByTenant(final String tenantCode) {
-        return this.branchGroupRepository.findGroupsByTenantId(tenantCode);
+        return this.branchGroupRepository.findGroupsByTenantCode(tenantCode);
     }
 
     @Override

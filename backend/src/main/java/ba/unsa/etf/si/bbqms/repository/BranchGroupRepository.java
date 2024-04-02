@@ -8,6 +8,6 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface BranchGroupRepository extends JpaRepository<BranchGroup, Long> {
-    @Query("select distinct bg from BranchGroup bg join bg.branches b where b.tenant.id = :tenantCode")
-    List<BranchGroup> findGroupsByTenantId(@Param("tenantCode") final String tenantCode);
+    @Query("select distinct bg from BranchGroup bg join bg.branches b where b.tenant.code = :tenantCode")
+    List<BranchGroup> findGroupsByTenantCode(@Param("tenantCode") final String tenantCode);
 }
