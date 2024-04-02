@@ -1,0 +1,45 @@
+#account-settings{
+    margin: 50px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#check-box{
+    margin: 20px auto;
+}
+
+#check-box, label{
+    margin-bottom: 20px;
+    padding-right: 10px;
+}
+
+input[type="submit"] {
+    background-color: #548CA8;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+input[type="submit"]:hover {
+    background-color: #334257;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+#QR-code input[type="submit"][disabled] {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+#QR-code img {
+    max-width: 100%;
+    height: auto;
+    margin-top: 10px;
+    display: block; 
+    margin-left: 0; 
+}
