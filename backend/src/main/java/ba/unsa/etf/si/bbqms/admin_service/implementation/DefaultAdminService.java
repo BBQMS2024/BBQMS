@@ -13,7 +13,6 @@ import ba.unsa.etf.si.bbqms.repository.UserRepository;
 import ba.unsa.etf.si.bbqms.tenant_service.api.TenantService;
 import ba.unsa.etf.si.bbqms.tfa_service.api.TwoFactorService;
 import ba.unsa.etf.si.bbqms.utils.UserValidator;
-import ch.qos.logback.classic.encoder.JsonEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -25,21 +24,18 @@ import java.util.Set;
 public class DefaultAdminService implements AdminService {
 
     private final UserRepository userRepository;
-    private final AuthService authService;
     private final UserService userService;
     private final TwoFactorService twoFactorService;
     private final TenantService tenantService;
     private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
     public DefaultAdminService(final UserRepository userRepository,
-                               final AuthService authService,
                                final UserService userService,
                                final TwoFactorService twoFactorService,
                                final TenantService tenantService,
                                final RoleService roleService,
                                final PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-        this.authService = authService;
         this.userService = userService;
         this.twoFactorService = twoFactorService;
         this.tenantService = tenantService;

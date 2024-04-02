@@ -21,7 +21,7 @@ import java.util.List;
 public class AdminController {
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
     private final AdminService adminService;
-    private AuthService authService;
+    private final AuthService authService;
 
     public AdminController(final AdminService adminService, final AuthService authService) {
         this.adminService = adminService;
