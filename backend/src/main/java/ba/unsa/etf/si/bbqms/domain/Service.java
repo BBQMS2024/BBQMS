@@ -20,14 +20,6 @@ public class Service {
     @JoinColumn(name = "tenant_id", referencedColumnName = "id")
     private Tenant tenant;
 
-    public Service() {
-    }
-
-    public Service(String name, Tenant tenant) {
-        this.name = name;
-        this.tenant = tenant;
-    }
-
     public long getId() {
         return id;
     }

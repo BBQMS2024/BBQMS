@@ -114,20 +114,4 @@ public class DefaultAuthService implements AuthService {
             return false;
         }
     }
-
-    /*
-       ONLY USE THIS METHOD IF 100% SURE USER IS AUTHORIZED
-    */
-    @Override
-    public User getAuthenticatedUser() {
-        final String currentEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-        return this.userService.findByEmail(currentEmail)
-                .orElseThrow(() -> new RuntimeException("This should never happen. You should not call this in non-authorized endpoints!"));
-    }
-
-    @Override
-    public boolean canChangeTenant(final String tenantCode) {
-        final User currentUser = getAuthenticatedUser();
-        return (currentUser.getTenant().getCode().equals(tenantCode));
-    }
 }
