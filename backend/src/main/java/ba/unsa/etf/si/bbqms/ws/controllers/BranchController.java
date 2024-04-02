@@ -5,7 +5,7 @@ import ba.unsa.etf.si.bbqms.auth_service.api.AuthService;
 import ba.unsa.etf.si.bbqms.domain.Branch;
 import ba.unsa.etf.si.bbqms.domain.TellerStation;
 import ba.unsa.etf.si.bbqms.domain.User;
-import ba.unsa.etf.si.bbqms.ws.models.BranchDto;
+import ba.unsa.etf.si.bbqms.ws.models.BranchWithStationsDto;
 import ba.unsa.etf.si.bbqms.ws.models.SimpleMessageDto;
 import ba.unsa.etf.si.bbqms.ws.models.TellerStationDto;
 import org.springframework.http.ResponseEntity;
@@ -49,8 +49,8 @@ public class BranchController {
 
         try {
             final Branch created = this.branchService.createBranch(request.name(), request.tellerStations(), tenantCode);
-            return ResponseEntity.ok().body(BranchDto.fromEntity(created));
-        } catch (Exception e) {
+            return ResponseEntity.ok().body(BranchWithStationsDto.fromEntity(created));
+        } catch (final Exception e) {
             System.out.println(e.getMessage());
             return ResponseEntity.badRequest().build();
         }
@@ -64,8 +64,8 @@ public class BranchController {
             return ResponseEntity.badRequest().build();
         }
 
-        final Set<BranchDto> dtos = this.branchService.getBranches(tenantCode).stream()
-                .map(BranchDto::fromEntity)
+        final Set<BranchWithStationsDto> dtos = this.branchService.getBranches(tenantCode).stream()
+                .map(BranchWithStationsDto::fromEntity)
                 .collect(Collectors.toSet());
 
         return ResponseEntity.ok().body(dtos);
@@ -91,11 +91,24 @@ public class BranchController {
                     request.tellerStations(),
                     tenantCode
             );
-            return ResponseEntity.ok().body(BranchDto.fromEntity(updated));
+            return ResponseEntity.ok().body(BranchWithStationsDto.fromEntity(updated));
         } catch (final Exception exception) {
             System.out.println(exception.getMessage());
             return ResponseEntity.badRequest().build();
         }
+    }
+
+    @DeleteMapping("/{tenantCode}/{branchId}")
+    @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN', 'ROLE_BRANCH_ADMIN')")
+    public ResponseEntity removeBranch(@PathVariable final String tenantCode, @PathVariable final String branchId) {
+        final User currentUser = this.authService.getAuthenticatedUser();
+        if (!currentUser.getTenant().getCode().equals(tenantCode)) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        this.branchService.removeBranch(Long.parseLong(branchId));
+
+        return ResponseEntity.ok().body(new SimpleMessageDto("Deleted branch with id: " + branchId));
     }
 
     @PostMapping("/{tenantCode}/{branchId}/stations")

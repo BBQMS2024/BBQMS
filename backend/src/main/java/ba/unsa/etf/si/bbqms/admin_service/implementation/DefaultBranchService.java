@@ -79,6 +79,11 @@ public class DefaultBranchService implements BranchService {
     }
 
     @Override
+    public void removeBranch(final long branchId) {
+        this.branchRepository.deleteById(branchId);
+    }
+
+    @Override
     public TellerStation addStation(final String name, final long branchId) throws Exception {
         final Branch branch = this.branchRepository.findById(branchId)
                 .orElseThrow(() -> new Exception("Branch with id: " + branchId + " not found."));
