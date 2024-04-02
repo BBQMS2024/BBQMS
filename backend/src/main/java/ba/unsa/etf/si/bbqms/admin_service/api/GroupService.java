@@ -7,12 +7,12 @@ import ba.unsa.etf.si.bbqms.ws.models.BranchGroupUpdateDto;
 import java.util.List;
 
 public interface GroupService {
-    BranchGroup addBranchGroup(final BranchGroupCreateDto name);
-    BranchGroup updateBranchGroup(final Long branchGroupId, final BranchGroupUpdateDto request);
-    BranchGroup addBranchGroupService(final Long branchGroupId, final Long serviceId);
-    BranchGroup addBranchGroupBranch(final Long branchGroupId, final Long branchId);
-    BranchGroup deleteBranchGroupBranch(final Long branchGroupId, final Long branchId);
-    BranchGroup deleteBranchGroupService(final Long branchGroupId, final Long serviceId);
-    List<BranchGroup> getAll();
-    void deleteBranchGroup(final Long branchGroupId);
+    BranchGroup addBranchGroup(final BranchGroupCreateDto name) throws Exception;
+    BranchGroup updateBranchGroup(final long branchGroupId, final BranchGroupUpdateDto request);
+    BranchGroup addBranchGroupService(final long branchGroupId, final long serviceId);
+    BranchGroup addBranchGroupBranch(final long branchGroupId, final long branchId);
+    BranchGroup deleteBranchGroupBranch(final long branchGroupId, final long branchId);
+    BranchGroup deleteBranchGroupService(final long branchGroupId, final long serviceId);
+    List<BranchGroup> getAllByTenant(final String tenantCode);
+    void deleteBranchGroup(final long branchGroupId);
 }

@@ -14,4 +14,5 @@ public interface AuthService {
     String generateUserQrCode(final User user);
     boolean verifyUserTfaCode(final User user, final String code);
     User getAuthenticatedUser();
+    boolean canChangeTenant(final String tenantCode);
 }

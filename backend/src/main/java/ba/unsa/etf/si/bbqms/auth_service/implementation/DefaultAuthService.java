@@ -124,4 +124,10 @@ public class DefaultAuthService implements AuthService {
         return this.userService.findByEmail(currentEmail)
                 .orElseThrow(() -> new RuntimeException("This should never happen. You should not call this in non-authorized endpoints!"));
     }
+
+    @Override
+    public boolean canChangeTenant(final String tenantCode) {
+        final User currentUser = getAuthenticatedUser();
+        return (currentUser.getTenant().getCode().equals(tenantCode));
+    }
 }

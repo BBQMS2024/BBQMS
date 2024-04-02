@@ -21,7 +21,6 @@ public class Service {
     private Tenant tenant;
 
     public Service() {
-
     }
 
     public Service(String name, Tenant tenant) {

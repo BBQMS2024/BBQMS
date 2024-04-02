@@ -13,33 +13,33 @@ public class DefaultStationService implements StationService {
     private final TellerStationRepository tellerStationRepository;
     private final ServiceRepository serviceRepository;
 
-    public DefaultStationService(TellerStationRepository tellerStationRepository,
-                                 ServiceRepository serviceRepository) {
+    public DefaultStationService(final TellerStationRepository tellerStationRepository,
+                                 final ServiceRepository serviceRepository) {
         this.tellerStationRepository = tellerStationRepository;
         this.serviceRepository = serviceRepository;
     }
 
     @Override
-    public TellerStation addTellerStationService(final Long stationId, final Long serviceId) {
-        final TellerStation tellerStation = tellerStationRepository.findById(stationId)
+    public TellerStation addTellerStationService(final long stationId, final long serviceId) {
+        final TellerStation tellerStation = this.tellerStationRepository.findById(stationId)
                 .orElseThrow(() -> new EntityNotFoundException("No station found with id: " + stationId ));
-        final Service service = serviceRepository.findById(serviceId)
+        final Service service = this.serviceRepository.findById(serviceId)
                 .orElseThrow(() -> new EntityNotFoundException("No service found with id: " + serviceId));
 
         tellerStation.getServices().add(service);
 
-        return tellerStationRepository.save(tellerStation);
+        return this.tellerStationRepository.save(tellerStation);
     }
 
     @Override
-    public TellerStation deleteTellerStationService(Long stationId, Long serviceId) {
-        final TellerStation tellerStation = tellerStationRepository.findById(stationId)
+    public TellerStation deleteTellerStationService(final long stationId, final long serviceId) {
+        final TellerStation tellerStation = this.tellerStationRepository.findById(stationId)
                 .orElseThrow(() -> new EntityNotFoundException("No station found with id: " + stationId ));
-        final Service service = serviceRepository.findById(serviceId)
+        final Service service = this.serviceRepository.findById(serviceId)
                 .orElseThrow(() -> new EntityNotFoundException("No service found with id: " + serviceId));
 
         if (tellerStation.getServices().remove(service)) {
-            return tellerStationRepository.save(tellerStation);
+            return this.tellerStationRepository.save(tellerStation);
         }
         throw new EntityNotFoundException("Teller station doesn't contain service with id: " + serviceId);
     }
