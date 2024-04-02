@@ -47,8 +47,8 @@ public class TenantController {
             return ResponseEntity.notFound().build();
             // User tried to edit a tenant of whom he isn't part of. Not allowed.
         }
-        
-        try{
+
+        try {
             return ResponseEntity.ok().body(tenantService.updateTenant(code, request));
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();

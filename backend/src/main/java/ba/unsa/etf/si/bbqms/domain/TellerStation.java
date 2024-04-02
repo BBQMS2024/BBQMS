@@ -38,6 +38,19 @@ public class TellerStation {
     )
     private Set<Service> services;
 
+    public TellerStation() {
+    }
+
+    public TellerStation(final String name, final Branch branch, final Display display) {
+        this.name = name;
+        this.branch = branch;
+        this.display = display;
+    }
+
+    public TellerStation(final String name, final Branch branch) {
+        this(name, branch, null);
+    }
+
     public long getId() {
         return id;
     }
