@@ -67,4 +67,10 @@ CREATE TABLE IF NOT EXISTS teller_station_service
     CONSTRAINT FK_tellerstationservice_service FOREIGN KEY (service_id) REFERENCES service (id)
 );
 
+INSERT INTO branch (name, tenant_id) VALUES ('Dummy Branch 1', 1);
+INSERT INTO branch (name, tenant_id) VALUES ('Dummy Branch 2', 1);
+
+INSERT INTO service (name, tenant_id) VALUES ('Dummy Service 1', 1);
+INSERT INTO service (name, tenant_id) VALUES ('Dummy Service 2', 1);
+
 COMMIT;
