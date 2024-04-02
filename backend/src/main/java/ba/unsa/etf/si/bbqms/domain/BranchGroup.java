@@ -35,15 +35,6 @@ public class BranchGroup {
     )
     private Set<Service> services;
 
-    public BranchGroup() {
-    }
-
-    public BranchGroup(String name, Set<Branch> branches, Set<Service> services) {
-        this.name = name;
-        this.branches = branches;
-        this.services = services;
-    }
-
     public long getId() {
         return id;
     }
