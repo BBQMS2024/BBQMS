@@ -22,12 +22,10 @@ public class Service {
 
     public Service() {
     }
-
-    public Service(String name, Tenant tenant) {
+    public Service(final String name, final Tenant tenant) {
         this.name = name;
         this.tenant = tenant;
     }
-
     public long getId() {
         return id;
     }
