@@ -1,38 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Table, Modal, Form, Dropdown, DropdownButton } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { fetchData } from '../../fetching/Fetch.js'; // Import fetchData function
-import { useLocation } from 'react-router-dom';
+import { fetchData } from '../../fetching/Fetch.js';
+import { useParams } from 'react-router-dom';
+import { SERVER_URL } from '../../constants.js';
 
 const ManageGroupsScreen = () => {
-    const location = useLocation();
     const [showModal, setShowModal] = useState(false);
     const [deleteConfirmation, setDeleteConfirmation] = useState(false);
     const [groups, setGroups] = useState([]);
     const [groupName, setGroupName] = useState('');
     const [selectedBranches, setSelectedBranches] = useState([]);
     const [selectedServices, setSelectedServices] = useState([]);
-    const [availableBranches, setAvailableBranches] = useState([
-        { id: 1, name: 'Branch 1' },
-        { id: 2, name: 'Branch 2' },
-        { id: 3, name: 'Branch 3' },
-        { id: 4, name: 'Branch 4' },
-        { id: 5, name: 'Branch 5' }
-    ]);
-    const [availableServices, setAvailableServices] = useState([
-        { id: 1, name: 'Service 1' },
-        { id: 2, name: 'Service 2' },
-        { id: 3, name: 'Service 3' },
-        { id: 4, name: 'Service 4' }
-    ]);
+    const [availableBranches, setAvailableBranches] = useState([]);
+    const [availableServices, setAvailableServices] = useState([]);
     const [selectedGroupIndex, setSelectedGroupIndex] = useState(null);
     const [errorMessage, setErrorMessage] = useState('');
+    const { tenantCode } = useParams();
+
+    const url = `${SERVER_URL}/api/v1/`;
 
     useEffect(() => {
         async function fetchGroups() {
             try {
-                const tenantCode = location.pathname.split('/')[1];
-                const response = await fetchData(`http://localhost:8080/api/v1/groups/${tenantCode}`, 'GET');
+                const response = await fetchData(`${url}groups/${tenantCode}`, 'GET');
                 if (response.success) {
                     setGroups(response.data);
                 } else {
@@ -45,9 +36,8 @@ const ManageGroupsScreen = () => {
 
         async function fetchBranchesAndServices() {
             try {
-                const tenantCode = location.pathname.split('/')[1];
-                const branchResponse = await fetchData(`http://localhost:8080/api/v1/branches/${tenantCode}`, 'GET');
-                const serviceResponse = await fetchData(`http://localhost:8080/api/v1/tenants/${tenantCode}/services`, 'GET');
+                const branchResponse = await fetchData(`${url}branches/${tenantCode}`, 'GET');
+                const serviceResponse = await fetchData(`${url}tenants/${tenantCode}/services`, 'GET');
 
                 if (branchResponse.success) {
                     setAvailableBranches(branchResponse.data);
@@ -67,7 +57,7 @@ const ManageGroupsScreen = () => {
 
         fetchGroups();
         fetchBranchesAndServices();
-    }, [location]);
+    }, [SERVER_URL, url]);
 
     useEffect(() => {
         if (!showModal) {
@@ -87,13 +77,12 @@ const ManageGroupsScreen = () => {
         }
 
         try {
-            const tenantCode = location.pathname.split('/')[1];
             const groupData = {
                 name: groupName,
                 branchIds: selectedBranches.map(branch => branch.id),
                 serviceIds: selectedServices.map(service => service.id)
             };
-            const response = await fetchData(`http://localhost:8080/api/v1/groups/${tenantCode}`, 'POST', groupData);
+            const response = await fetchData(`${url}groups/${tenantCode}`, 'POST', groupData);
             if (response.success) {
                 const newGroup = response.data;
                 setGroups([...groups, newGroup]);
@@ -121,7 +110,7 @@ const ManageGroupsScreen = () => {
                 branches: selectedBranches,
                 services: selectedServices
             };
-            const response = await fetchData(`http://localhost:8080/api/v1/groups/${tenantCode}/${groupToUpdate.id}`, 'PUT', updatedGroup);
+            const response = await fetchData(`${url}groups/${tenantCode}/${groupToUpdate.id}`, 'PUT', updatedGroup);
             if (response.success) {
                 const updatedGroups = [...groups];
                 updatedGroups[selectedGroupIndex] = updatedGroup;
@@ -136,12 +125,16 @@ const ManageGroupsScreen = () => {
     };
 
     const handleDeleteGroup = async (index) => {
+        setSelectedGroupIndex(index);
+        setDeleteConfirmation(true);
+    };
+
+    const confirmDeleteGroup = async () => {
         try {
-            const tenantCode = location.pathname.split('/')[1];
-            const groupToDelete = groups[index];
-            const response = await fetchData(`http://localhost:8080/api/v1/groups/${tenantCode}/${groupToDelete.id}`, 'DELETE');
+            const groupToDelete = groups[selectedGroupIndex];
+            const response = await fetchData(`${url}groups/${tenantCode}/${groupToDelete.id}`, 'DELETE');
             if (response.success) {
-                const updatedGroups = groups.filter((_, i) => i !== index);
+                const updatedGroups = groups.filter((_, i) => i !== selectedGroupIndex);
                 setGroups(updatedGroups);
             } else {
                 console.error('Error deleting group:', response.error);
@@ -149,14 +142,10 @@ const ManageGroupsScreen = () => {
         } catch (error) {
             console.error('Error deleting group:', error);
         }
-    };
-
-    const confirmDeleteGroup = () => {
-        const updatedGroups = [...groups];
-        updatedGroups.splice(selectedGroupIndex, 1);
-        setGroups(updatedGroups);
+        setSelectedGroupIndex(null);
         setDeleteConfirmation(false);
     };
+
 
     const handleEditClick = (index) => {
         setSelectedGroupIndex(index);
@@ -171,9 +160,8 @@ const ManageGroupsScreen = () => {
         if (selectedBranch && !selectedBranches.some(branch => branch.id === selectedBranch.id)) {
             setSelectedBranches([...selectedBranches, selectedBranch]);
             try {
-                const tenantCode = location.pathname.split('/')[1];
                 const groupToUpdate = groups[selectedGroupIndex];
-                const response = await fetchData(`http://localhost:8080/api/v1/groups/${tenantCode}/${groupToUpdate.id}/branches/${branchId}`, 'PUT');
+                const response = await fetchData(`${url}groups/${tenantCode}/${groupToUpdate.id}/branches/${branchId}`, 'PUT');
                 if (!response.success) {
                     console.error('Error adding branch to group:', response.error);
                 }
@@ -187,9 +175,8 @@ const ManageGroupsScreen = () => {
         const updatedBranches = selectedBranches.filter(selectedBranch => selectedBranch.id !== branch.id);
         setSelectedBranches(updatedBranches);
         try {
-            const tenantCode = location.pathname.split('/')[1];
             const groupToUpdate = groups[selectedGroupIndex];
-            const response = await fetchData(`http://localhost:8080/api/v1/groups/${tenantCode}/${groupToUpdate.id}/branches/${branch.id}`, 'DELETE');
+            const response = await fetchData(`${url}groups/${tenantCode}/${groupToUpdate.id}/branches/${branch.id}`, 'DELETE');
             if (!response.success) {
                 console.error('Error removing branch from group:', response.error);
             }
@@ -203,9 +190,8 @@ const ManageGroupsScreen = () => {
         if (selectedService && !selectedServices.some(service => service.id === selectedService.id)) {
             setSelectedServices([...selectedServices, selectedService]);
             try {
-                const tenantCode = location.pathname.split('/')[1];
                 const groupToUpdate = groups[selectedGroupIndex];
-                const response = await fetchData(`http://localhost:8080/api/v1/groups/${tenantCode}/${groupToUpdate.id}/services/${serviceId}`, 'PUT');
+                const response = await fetchData(`${url}groups/${tenantCode}/${groupToUpdate.id}/services/${serviceId}`, 'PUT');
                 if (!response.success) {
                     console.error('Error adding service to group:', response.error);
                 }
@@ -221,7 +207,7 @@ const ManageGroupsScreen = () => {
         try {
             const tenantCode = location.pathname.split('/')[1];
             const groupToUpdate = groups[selectedGroupIndex];
-            const response = await fetchData(`http://localhost:8080/api/v1/groups/${tenantCode}/${groupToUpdate.id}/services/${service.id}`, 'DELETE');
+            const response = await fetchData(`${url}groups/${tenantCode}/${groupToUpdate.id}/services/${service.id}`, 'DELETE');
             if (!response.success) {
                 console.error('Error removing service from group:', response.error);
             }
