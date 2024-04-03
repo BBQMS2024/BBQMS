@@ -11,6 +11,8 @@ import ba.unsa.etf.si.bbqms.repository.TenantRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -40,10 +42,16 @@ public class DefaultDisplayService implements DisplayService {
 
     @Override
     public Set<Display> getDisplays(final long branchId) throws Exception {
-        final Branch branch = this.branchRepository.findById(branchId)
+        this.branchRepository.findById(branchId)
                 .orElseThrow(() -> new Exception("Branch with id: " + branchId + " doesn't exist."));
 
         return this.displayRepository.findByBranchId(branchId);
+    }
+
+    @Override
+    public Set<Display> getAllDisplays() {
+        List<Display> displayList = this.displayRepository.findAll();
+        return new HashSet<>(displayList);
     }
 
     @Override
