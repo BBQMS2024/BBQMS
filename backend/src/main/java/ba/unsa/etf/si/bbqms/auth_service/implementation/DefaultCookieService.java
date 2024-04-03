@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Service
 public class DefaultCookieService implements CookieService {
-    @Value("${jwt.cookie-title}")
+
     public String cookieJwtTitle;
 
     @Override

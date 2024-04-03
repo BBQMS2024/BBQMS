@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useReducer, useState } from "react";
 import "./LoginAuth.css";
 import { SERVER_URL } from "../../constants.js";
+import { useNavigate } from "react-router-dom";
 
 function doSubmit(submittedValues) {
     console.log(`Submitted: ${submittedValues.join("")}`);
@@ -116,16 +117,15 @@ export default function LoginAuth() {
     }
 
     async function handleSubmit(e) {
+
         e.preventDefault();
 
         dispatch({ type: "VERIFY" });
 
         try {
-            const userDataString = localStorage.getItem('userData');
-            const userData = JSON.parse(userDataString);
-            const email = userData.email;
-            console.log(email);
-            if (!email) {
+            const storedUserData =  localStorage.getItem('userData');
+            const userData = storedUserData ? JSON.parse(storedUserData) : null;
+            if (!userData) {
                 throw new Error("Email not found in localStorage");
             }
 
@@ -136,12 +136,12 @@ export default function LoginAuth() {
                 },
                 body: JSON.stringify({
                     code: inputValues.join(""),
-                    email: email
+                    email: userData.email
                 }),
             });
 
             if (response.ok) {
-                dispatch({ type: "VERIFY_SUCCESS" });
+                navigate('/companyDetails')
             } else {
                 throw new Error("Code could not be verified. It is incorrect or expired.");
             }
@@ -155,6 +155,10 @@ export default function LoginAuth() {
 
     function resetInputs() {
         dispatch({ type: "RESET_INPUTS" });
+    }
+    let navigate = useNavigate();
+    function routeChange() {
+        handleSubmit({});
     }
 
     return (
@@ -177,7 +181,7 @@ export default function LoginAuth() {
                         );
                     })}
                 </div>
-                <button disabled={status === "pending"}>
+                <button disabled={status === "pending"}   onClick={routeChange}>
                     {status === "pending" ? "VERIFYING..." : "VERIFY"}
                 </button>
             </form>

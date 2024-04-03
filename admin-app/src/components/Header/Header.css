@@ -1,0 +1,33 @@
+header.main-header {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin: 10px 0;
+}
+
+.header-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.header-logo-png {
+    width: 50px;
+    height: 50px;
+}
+
+.header-logout-btn {
+    background-color: var(--blue);
+    color: white;
+    padding: 10px 30px;
+    border-radius: 6px;
+    border: none;
+    box-shadow: 3px 8px 10px 0 rgba(0,0,0,0.2);
+    cursor: pointer;
+}
+
+.header-logout-btn:hover {
+    background-color: var(--light-blue);
+    transition-duration: 300ms;
+}
