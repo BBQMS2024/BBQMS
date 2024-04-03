@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Table, Modal, Form, ListGroup } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { fetchData } from '../../fetching/Fetch.js';
+import { useParams } from 'react-router-dom';
+import { SERVER_URL } from '../../constants.js';
 
 const styles = {
     primaryButton: {
@@ -24,49 +27,37 @@ const ManageBranchesScreen = () => {
     const [branchName, setBranchName] = useState('');
     const [selectedBranchIndex, setSelectedBranchIndex] = useState(null);
     const [tellerStations, setTellerStations] = useState([]);
+    const [newStationName, setNewStationName] = useState('');
+    const [deleteConfirmation, setDeleteConfirmation] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+    const { tenantCode } = useParams();
 
-    // Dummy podaci za testiranje, kasnije ce se prilagoditi
-    const dummyData = [
-        { id: 1, name: 'Branch 1', tellerStations: [{ id: 1, name: 'Station 1' }, { id: 2, name: 'Station 2' }] },
-        { id: 2, name: 'Branch 2', tellerStations: [{ id: 3, name: 'Station 3' }, { id: 4, name: 'Station 4' }] }
-    ];
+    const url = `${SERVER_URL}/api/v1/branches/${tenantCode}`;
 
     useEffect(() => {
-        // Simulacija...
-        setManageBranches(dummyData);
-    }, []);
-
-    const handleAddBranch = () => {
-        const newBranch = {
-            id: manageBranches.length + 1,
-            name: branchName,
-            tellerStations: tellerStations.map(station => ({ ...station }))
+        const fetchBranches = async () => {
+            try {
+                const response = await fetchData(url, 'GET');
+                if (!response.success) {
+                    throw new Error('Network response was not ok');
+                }
+                setManageBranches(response.data);
+            } catch (error) {
+                console.error('Error:', error);
+                setErrorMessage('Failed to fetch branches.');
+            }
         };
-        setManageBranches([...manageBranches, newBranch]);
-        setShowModal(false);
-        setBranchName('');
-        setTellerStations([]);
-    };
+        fetchBranches();
+    }, [SERVER_URL, url]);
 
-    const handleEditBranch = () => {
-        const updatedBranches = [...manageBranches];
-        updatedBranches[selectedBranchIndex] = {
-            ...updatedBranches[selectedBranchIndex],
-            name: branchName,
-            tellerStations: tellerStations.map(station => ({ ...station }))
-        };
-        setManageBranches(updatedBranches);
-        setShowModal(false);
-        setBranchName('');
-        setTellerStations([]);
-        setSelectedBranchIndex(null);
-    };
-
-    const handleDeleteBranch = (index) => {
-        const updatedBranches = [...manageBranches];
-        updatedBranches.splice(index, 1);
-        setManageBranches(updatedBranches);
-    };
+    useEffect(() => {
+        if (!showModal) {
+            setBranchName('');
+            setTellerStations([]);
+            setSelectedBranchIndex(null);
+            setErrorMessage('');
+        }
+    }, [showModal]);
 
     const handleEditClick = (index) => {
         const branch = manageBranches[index];
@@ -76,15 +67,136 @@ const ManageBranchesScreen = () => {
         setShowModal(true);
     };
 
+    const handleAddBranch = async () => {
+        if (branchName.trim() === '' || tellerStations.length === 0) {
+            setErrorMessage('Please fill out all fields.');
+            return;
+        }
+
+        const newBranch = {
+            name: branchName,
+            tellerStations: tellerStations.map(station => station.name)
+        };
+
+        try {
+            const response = await fetchData(url, 'POST', newBranch);
+            if (!response.success) {
+                throw new Error('Network response was not ok');
+            }
+            setManageBranches([...manageBranches, response.data]);
+            setShowModal(false);
+        } catch (error) {
+            console.error('Error:', error);
+            setErrorMessage('Failed to create branch.');
+        }
+    };
+
     const handleAddTellerStation = () => {
-        const newStation = { id: tellerStations.length + 1, name: `Station ${tellerStations.length + 1}` };
+        if (newStationName.trim() === '') {
+            return;
+        }
+
+        const newStation = { id: tellerStations.length + 1, name: newStationName };
         setTellerStations([...tellerStations, newStation]);
+        setNewStationName('');
+    };
+
+    const handleEditTellerStation = async () => {
+        if (newStationName.trim() === '' || selectedBranchIndex === null) {
+            return;
+        }
+
+        const branchId = manageBranches[selectedBranchIndex].id;
+        const newStation = { name: newStationName };
+
+        try {
+            const response = await fetchData(`${url}/${branchId}/stations`, 'POST', newStation);
+            if (!response.success) {
+                throw new Error('Network response was not ok');
+            }
+            const updatedStations = [...tellerStations, response.data];
+            setTellerStations(updatedStations);
+            setNewStationName('');
+        } catch (error) {
+            console.error('Error:', error);
+            setErrorMessage('Failed to add teller station.');
+        }
     };
 
     const handleRemoveTellerStation = (index) => {
         const updatedStations = [...tellerStations];
         updatedStations.splice(index, 1);
         setTellerStations(updatedStations);
+    };
+
+    const handleEditRemoveTellerStation = async (index) => {
+        const stationToRemove = tellerStations[index];
+        const branchId = manageBranches[selectedBranchIndex].id;
+        const stationId = stationToRemove.id;
+
+        try {
+            const response = await fetchData(`${url}/${branchId}/stations/${stationId}`, 'DELETE');
+            if (!response.success) {
+                throw new Error('Network response was not ok');
+            }
+
+            const updatedStations = [...tellerStations];
+            updatedStations.splice(index, 1);
+            setTellerStations(updatedStations);
+        } catch (error) {
+            console.error('Error:', error);
+            setErrorMessage('Failed to remove teller station.');
+        }
+    };
+
+    const handleDeleteBranch = (index) => {
+        setDeleteConfirmation(true);
+        setSelectedBranchIndex(index);
+    };
+
+    const confirmDeleteBranch = async () => {
+        const branchId = manageBranches[selectedBranchIndex].id;
+        const urlToDelete = `${url}/${branchId}`;
+
+        try {
+            const response = await fetchData(urlToDelete, 'DELETE');
+            if (!response.success) {
+                throw new Error('Network response was not ok');
+            }
+            const updatedBranches = [...manageBranches];
+            updatedBranches.splice(selectedBranchIndex, 1);
+            setManageBranches(updatedBranches);
+            setDeleteConfirmation(false);
+        } catch (error) {
+            console.error('Error:', error);
+            setErrorMessage('Failed to delete branch.');
+        }
+    };
+
+    const handleEditBranch = async () => {
+        if (branchName.trim() === '' || tellerStations.length === 0 || selectedBranchIndex === null) {
+            setErrorMessage('Please fill out all fields.');
+            return;
+        }
+
+        const branchId = manageBranches[selectedBranchIndex].id;
+        const updatedBranch = {
+            name: branchName
+        };
+
+        try {
+            const response = await fetchData(`${url}/${branchId}`, 'PUT', updatedBranch);
+            if (!response.success) {
+                throw new Error('Network response was not ok');
+            }
+            const updatedBranches = [...manageBranches];
+            updatedBranches[selectedBranchIndex] = response.data;
+            setManageBranches(updatedBranches);
+            setShowModal(false);
+        } catch (error) {
+            console.error('Error:', error);
+            setErrorMessage('Failed to update branch.');
+        }
     };
 
     return (
@@ -126,17 +238,26 @@ const ManageBranchesScreen = () => {
                             <Form.Label>Name</Form.Label>
                             <Form.Control type="text" placeholder="Enter branch name" value={branchName} onChange={(e) => setBranchName(e.target.value)} />
                         </Form.Group>
+                        <Form.Group controlId="formNewStation" className="mb-3">
+                            <Form.Label>New Teller Station</Form.Label>
+                            <div className="d-flex align-items-center">
+                                <Form.Control type="text" placeholder="Enter new station name" value={newStationName} onChange={(e) => setNewStationName(e.target.value)} />
+                                <Button variant="primary" onClick={selectedBranchIndex !== null ? handleEditTellerStation : handleAddTellerStation} style={{ backgroundColor: '#548CA8', color: 'white', borderColor: '#548CA8', marginLeft: '10px' }}>Add</Button>
+                            </div>
+                        </Form.Group>
                         <Form.Group controlId="formTellerStations" className="mb-3">
                             <Form.Label>Teller Stations</Form.Label>
                             <ListGroup>
                                 {tellerStations.map((station, index) => (
                                     <ListGroup.Item key={index}>
                                         {station.name}{' '}
-                                        <Button variant="danger" size="sm" onClick={() => handleRemoveTellerStation(index)}>Remove</Button>
+                                        {selectedBranchIndex !== null ?
+                                            <Button variant="danger" size="sm" onClick={() => handleEditRemoveTellerStation(index)}>X</Button> :
+                                            <Button variant="danger" size="sm" onClick={() => handleRemoveTellerStation(index)}>X</Button>
+                                        }
                                     </ListGroup.Item>
                                 ))}
                             </ListGroup>
-                            <Button variant="primary" size="sm" style={styles.primaryButton} onClick={handleAddTellerStation} className="mt-2">Add Teller Station</Button>
                         </Form.Group>
                     </Form>
                 </Modal.Body>
@@ -148,6 +269,32 @@ const ManageBranchesScreen = () => {
                     }
                 </Modal.Footer>
             </Modal>
+
+            <Modal show={deleteConfirmation} onHide={() => setDeleteConfirmation(false)}>
+                <Modal.Header closeButton style={{ backgroundColor: '#334257', color: 'white' }}>
+                    <Modal.Title>CONFIRMATION</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <p>Are you sure you want to delete this branch?</p>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setDeleteConfirmation(false)}>Cancel</Button>
+                    <Button variant="danger" onClick={confirmDeleteBranch}>Delete</Button>
+                </Modal.Footer>
+            </Modal>
+
+            <Modal show={errorMessage !== ''} onHide={() => setErrorMessage('')} backdrop="static" keyboard={false}>
+                <Modal.Header closeButton style={{ backgroundColor: '#dc3545', color: 'white' }}>
+                    <Modal.Title>ERROR</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <p>{errorMessage}</p>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setErrorMessage('')}>Close</Button>
+                </Modal.Footer>
+            </Modal>
+
         </div>
     );
 };
