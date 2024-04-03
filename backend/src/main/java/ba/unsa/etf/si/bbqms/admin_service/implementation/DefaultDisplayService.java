@@ -10,6 +10,7 @@ import ba.unsa.etf.si.bbqms.repository.TenantRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class DefaultDisplayService implements DisplayService {
@@ -45,6 +46,13 @@ public class DefaultDisplayService implements DisplayService {
                 .orElseThrow(() -> new Exception("Display with id: " + displayId + " doesn't exist."));
 
         return display;
+    }
+
+    @Override
+    public Set<Display> getUnassignedDisplays() {
+        final Set<Display> unassignedDisplays= this.displayRepository.findByTellerStationIsNull();
+
+        return unassignedDisplays;
     }
 
     @Override

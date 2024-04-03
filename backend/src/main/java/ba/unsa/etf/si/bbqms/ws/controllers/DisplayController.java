@@ -9,6 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @RestController
 @RequestMapping("/api/v1/displays")
 public class DisplayController {
@@ -53,6 +56,21 @@ public class DisplayController {
             System.out.println(exception.getMessage());
             return ResponseEntity.badRequest().build();
         }
+    }
+
+    @GetMapping("/unassigned/{tenantCode}")
+    //@PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN', 'ROLE_BRANCH_ADMIN')")
+    public ResponseEntity getUnassignedDisplays(@PathVariable final String tenantCode) {
+        /*
+        if (!this.authService.canChangeTenant(tenantCode)) {
+            return ResponseEntity.badRequest().build();
+        }
+*/
+        final Set<DisplayDto> displays = this.displayService.getUnassignedDisplays().stream()
+                .map(DisplayDto::fromEntity)
+                .collect(Collectors.toSet());
+
+        return ResponseEntity.ok().body(displays);
     }
 
     @PutMapping("/{tenantCode}/{displayId}")
