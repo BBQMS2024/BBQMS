@@ -6,6 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Set;
 
 public interface DisplayRepository extends JpaRepository<Display, Long> {
-    Set<Display> findByTellerStationIsNull();
     Set<Display> findByBranchId(final long branchId);
 }

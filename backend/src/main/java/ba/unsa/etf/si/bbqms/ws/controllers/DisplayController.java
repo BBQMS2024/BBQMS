@@ -57,8 +57,6 @@ public class DisplayController {
             System.out.println(exception.getMessage());
             return ResponseEntity.badRequest().build();
         }
-
-
     }
 
     @PutMapping("/{tenantCode}/{displayId}")
