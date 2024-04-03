@@ -48,11 +48,17 @@ public class DisplayController {
             return ResponseEntity.badRequest().build();
         }
 
-        final Set<DisplayDto> displays = this.displayService.getDisplays(Long.parseLong(branchId)).stream()
-                .map(DisplayDto::fromEntity)
-                .collect(Collectors.toSet());
+        try {
+            final Set<DisplayDto> displays = this.displayService.getDisplays(Long.parseLong(branchId)).stream()
+                    .map(DisplayDto::fromEntity)
+                    .collect(Collectors.toSet());
+            return ResponseEntity.ok().body(displays);
+        } catch (final Exception exception) {
+            System.out.println(exception.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
 
-        return ResponseEntity.ok().body(displays);
+
     }
 
     @PutMapping("/{tenantCode}/{displayId}")

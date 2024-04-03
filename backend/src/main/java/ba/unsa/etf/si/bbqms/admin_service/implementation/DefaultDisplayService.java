@@ -38,7 +38,9 @@ public class DefaultDisplayService implements DisplayService {
     }
 
     @Override
-    public Set<Display> getDisplays(final long branchId) {
+    public Set<Display> getDisplays(final long branchId) throws Exception {
+        final Branch branch = this.branchRepository.findById(branchId)
+                .orElseThrow(() -> new Exception("Branch with id: " + branchId + " doesn't exist."));
         return this.displayRepository.findByBranchId(branchId);
     }
 
