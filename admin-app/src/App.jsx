@@ -9,6 +9,8 @@ import LoginScreen from './pages/LoginScreen/LoginScreen';
 import CompanyInfoUpdate from './pages/CompanyInfoUpdate/CompanyInfoUpdate';
 import HomePage from './pages/HomePage/HomePage'
 import NotFound from './pages/NotFound/NotFound.jsx';
+import CanAccess from './components/CanAccess/CanAccess';
+import HomePageCard from './components/HomePageCard/HomePageCard'
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 
@@ -49,7 +51,17 @@ export default function App() {
                     />
                     <Route exact path="/login" element={ <LoginScreen /> } />
                     <Route exact path="/" element={ <LoginScreen /> } />
-                    <Route exact path = "/home" element = { <HomePage /> } />
+                    <Route exact path = "/home" element = {
+                        <CanAccess roles={ ['ROLE_SUPER_ADMIN'] }>
+                            <HomePageCard title = "Manage groups" backgroundColor = "#476072" textColor = "white" buttonColor = "#548CA8"></HomePageCard>
+                            <HomePageCard title = "Manage displays"></HomePageCard>
+                            <HomePageCard title = "Manage branches"></HomePageCard>
+                            <HomePageCard title = "Manage services offered by a company"></HomePageCard>
+                            <HomePageCard title = "Manage teller stations"></HomePageCard>
+                            <HomePageCard title = "Manage administrators"></HomePageCard>
+                        </CanAccess>
+
+                    } />
                     <Route path="*" element={ <NotFound /> } />
                 </Routes>
             </UserContext.Provider>

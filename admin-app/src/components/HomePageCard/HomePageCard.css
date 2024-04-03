@@ -1,14 +1,22 @@
 .button-hp{
-    width: 80%;
+    height: 80%;
     display: inline-block;
+    margin-top: 50%;
 }
+
 .card-hp{
     width: 14%;
     border-radius: 10px;
+    float: left;
+    margin-right: 5%;
+    margin-left: 5%;
+    margin-top: 6%;
 }
 .card-title-hp{
     text-align: center;
     color: #334257;
+    height: 10%;
+    max-height: 10%;
 }
 .card-text-hp{
     text-align: center;
