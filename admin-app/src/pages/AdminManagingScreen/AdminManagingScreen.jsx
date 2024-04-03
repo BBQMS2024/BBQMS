@@ -25,6 +25,8 @@ const AdminManageScreen = () => {
     const [adminPassword, setAdminPassword] = useState('');
     const [selectedAdminIndex, setSelectedAdminIndex] = useState(null);
     const [token, setToken] = useState('');
+    const [emailError, setEmailError] = useState('');
+    const [passwordError, setPasswordError] = useState('');
 
     useEffect(() => {
         const storedToken = localStorage.getItem('token');
@@ -59,6 +61,12 @@ const AdminManageScreen = () => {
         }
     };
 
+    const validateEmail = (email) => {
+        // Regular expression for email validation
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(String(email).toLowerCase());
+    };
+
     const handleAddAdmin = async () => {
         const requestBody = {
             email: adminEmail,
@@ -90,6 +98,13 @@ const AdminManageScreen = () => {
     };
 
     const handleEditAdmin = async () => {
+        if (!validateEmail(adminEmail)) {
+            setEmailError('Invalid email address');
+            return;
+        }
+
+        setEmailError('');
+
         try {
             const updatedAdmin = {
                 email: adminEmail
@@ -180,7 +195,15 @@ const AdminManageScreen = () => {
                         <Form.Group controlId="formAdminEmail" className="mb-3">
                             <Form.Label>Email</Form.Label>
                             <Form.Control type="email" placeholder="Enter admin email" value={adminEmail} onChange={(e) => setAdminEmail(e.target.value)} />
+                            {emailError && <div style={{ color: 'red' }}>{emailError}</div>}
                         </Form.Group>
+                        {selectedAdminIndex === null && (
+                            <Form.Group controlId="formAdminPassword" className="mb-3">
+                                <Form.Label>Password</Form.Label>
+                                <Form.Control type="password" placeholder="Enter admin password" value={adminPassword} onChange={(e) => setAdminPassword(e.target.value)} />
+                                {passwordError && <div style={{ color: 'red' }}>{passwordError}</div>}
+                            </Form.Group>
+                        )}
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
