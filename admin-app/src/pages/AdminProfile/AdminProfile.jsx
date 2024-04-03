@@ -20,15 +20,24 @@ export default function AdminProfile(){
         setIsQRCodeEnabled(isTfa);
     }, []);
 
-    const handleSaveChanges = () =>{
+    const handleSaveChanges = async () =>{
         const url = `${ SERVER_URL }/api/v1/auth/tfa`;
-        fetchData(url, 'PUT', {
+        const { data, success } = await fetchData(url, 'PUT', {
             isTfa: isChecked
         });
         localStorage.setItem('isTfa', isChecked);       
         setIsQRCodeEnabled(isChecked);
         if(!isChecked){
             setQrCodeSrc('');
+        }
+        if(success){
+            let message = 'Success: Your changes have been successfully submitted.';
+            if(isChecked){
+                message = message + '\nPlease scan QR code.';
+            }
+            alert(message);
+        }else{
+            alert('An error occurred. Please try again.');
         }
     }
 
