@@ -19,19 +19,62 @@ public class DisplayController {
         this.authService = authService;
     }
 
-    @PostMapping()
+    @PostMapping("/{tenantCode}")
     @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN', 'ROLE_BRANCH_ADMIN')")
-    public ResponseEntity createDisplay(@RequestBody final DisplayRequest displayRequest){
-        try{
-            final Display createdDisplay = this.displayService.createDisplay(displayRequest.name(),
-                    displayRequest.tellerStationId());
+    public ResponseEntity createDisplay(@PathVariable final String tenantCode,
+                                        @RequestBody final DisplayCreateRequest request) {
+        if (!this.authService.canChangeTenant(tenantCode)) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        try {
+            final Display createdDisplay = this.displayService.createDisplay(request.name(),
+                    request.tellerStationId());
             return ResponseEntity.ok().body(DisplayDto.fromEntity(createdDisplay));
-        } catch (Exception exception) {
+        } catch (final Exception exception) {
             System.out.println(exception.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
 
-    public record DisplayRequest(String name, Long tellerStationId){
+    @GetMapping("/{tenantCode}/{displayId}")
+    @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN', 'ROLE_BRANCH_ADMIN')")
+    public ResponseEntity getDisplay(@PathVariable final String tenantCode,
+                                     @PathVariable final String displayId) {
+        if (!this.authService.canChangeTenant(tenantCode)) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        try{
+            Display display = this.displayService.getDisplay(Long.parseLong(displayId));
+            return ResponseEntity.ok().body(DisplayDto.fromEntity(display));
+        } catch (final Exception exception) {
+            System.out.println(exception.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @PutMapping("/{tenantCode}/{displayId}")
+    @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN', 'ROLE_BRANCH_ADMIN')")
+    public ResponseEntity updateDisplay(@PathVariable final String tenantCode,
+                                        @PathVariable final String displayId,
+                                        @RequestBody final DisplayUpdateRequest request) {
+        if (!this.authService.canChangeTenant(tenantCode)) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        try{
+            Display updated = this.displayService.updateDisplay(Long.parseLong(displayId), request.name());
+            return ResponseEntity.ok().body(DisplayDto.fromEntity(updated));
+        } catch (final Exception exception) {
+            System.out.println(exception.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    public record DisplayCreateRequest(String name, Long tellerStationId){
+    }
+
+    public record DisplayUpdateRequest(String name){
     }
 }

@@ -15,25 +15,45 @@ import org.springframework.stereotype.Service;
 public class DefaultDisplayService implements DisplayService {
     private final DisplayRepository displayRepository;
     private final TellerStationRepository tellerStationRepository;
-    private final TenantRepository tenantRepository;
 
     public DefaultDisplayService(final DisplayRepository displayRepository,
                                  final TellerStationRepository tellerStationRepository,
                                  final TenantRepository tenantRepository) {
         this.displayRepository = displayRepository;
         this.tellerStationRepository = tellerStationRepository;
-        this.tenantRepository = tenantRepository;
     }
 
     @Override
-    public Display createDisplay(final String name, final Long tellerStationId) throws Exception {
-        TellerStation tellerStation = tellerStationRepository.findById(tellerStationId)
+    public Display createDisplay(final String name, final long tellerStationId) throws Exception {
+        final TellerStation tellerStation = tellerStationRepository.findById(tellerStationId)
                 .orElseThrow(() -> new Exception("Teller station with id: " + tellerStationId + " doesn't exist."));
 
-        Branch branch = tellerStation.getBranch();
+        if(tellerStation.getDisplay() != null)
+            throw new Exception("Teller station with id: " + tellerStationId + " already has a display assigned to it.");
+
+        final Branch branch = tellerStation.getBranch();
 
         final Display newDisplay = new Display(name, tellerStation, branch);
+        tellerStation.setDisplay(newDisplay);
 
         return this.displayRepository.save(newDisplay);
+    }
+
+    @Override
+    public Display getDisplay(final long displayId) throws Exception {
+        Display display = displayRepository.findById(displayId)
+                .orElseThrow(() -> new Exception("Display with id: " + displayId + " doesn't exist."));
+
+        return display;
+    }
+
+    @Override
+    public Display updateDisplay(final long displayId, final String name) throws Exception {
+        Display existingDisplay = displayRepository.findById(displayId)
+                .orElseThrow(() -> new Exception("Display with id: " + displayId + " doesn't exist."));
+
+        existingDisplay.setName(name);
+
+        return this.displayRepository.save(existingDisplay);
     }
 }
