@@ -4,6 +4,7 @@ import ba.unsa.etf.si.bbqms.admin_service.api.DisplayService;
 import ba.unsa.etf.si.bbqms.domain.Branch;
 import ba.unsa.etf.si.bbqms.domain.Display;
 import ba.unsa.etf.si.bbqms.domain.TellerStation;
+import ba.unsa.etf.si.bbqms.repository.BranchRepository;
 import ba.unsa.etf.si.bbqms.repository.DisplayRepository;
 import ba.unsa.etf.si.bbqms.repository.TellerStationRepository;
 import ba.unsa.etf.si.bbqms.repository.TenantRepository;
@@ -16,26 +17,22 @@ import java.util.Set;
 public class DefaultDisplayService implements DisplayService {
     private final DisplayRepository displayRepository;
     private final TellerStationRepository tellerStationRepository;
+    private final BranchRepository branchRepository;
 
     public DefaultDisplayService(final DisplayRepository displayRepository,
                                  final TellerStationRepository tellerStationRepository,
-                                 final TenantRepository tenantRepository) {
+                                 final BranchRepository branchRepository) {
         this.displayRepository = displayRepository;
         this.tellerStationRepository = tellerStationRepository;
+        this.branchRepository = branchRepository;
     }
 
     @Override
-    public Display createDisplay(final String name, final long tellerStationId) throws Exception {
-        final TellerStation tellerStation = tellerStationRepository.findById(tellerStationId)
-                .orElseThrow(() -> new Exception("Teller station with id: " + tellerStationId + " doesn't exist."));
+    public Display createDisplay(final String name, final long branchId) throws Exception {
+        final Branch branch = this.branchRepository.findById(branchId)
+                .orElseThrow(() -> new Exception("Branch with id: " + branchId + " doesn't exist."));
 
-        if(tellerStation.getDisplay() != null)
-            throw new Exception("Teller station with id: " + tellerStationId + " already has a display assigned to it.");
-
-        final Branch branch = tellerStation.getBranch();
-
-        final Display newDisplay = new Display(name, tellerStation, branch);
-        tellerStation.setDisplay(newDisplay);
+        final Display newDisplay = new Display(name, null, branch);
 
         return this.displayRepository.save(newDisplay);
     }

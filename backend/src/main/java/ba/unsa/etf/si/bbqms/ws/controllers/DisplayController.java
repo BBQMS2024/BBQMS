@@ -32,8 +32,7 @@ public class DisplayController {
         }
 
         try {
-            final Display createdDisplay = this.displayService.createDisplay(request.name(),
-                    request.tellerStationId());
+            final Display createdDisplay = this.displayService.createDisplay(request.name(), request.branchId());
             return ResponseEntity.ok().body(DisplayDto.fromEntity(createdDisplay));
         } catch (final Exception exception) {
             System.out.println(exception.getMessage());
@@ -50,7 +49,7 @@ public class DisplayController {
         }
 
         try{
-            Display display = this.displayService.getDisplay(Long.parseLong(displayId));
+            final Display display = this.displayService.getDisplay(Long.parseLong(displayId));
             return ResponseEntity.ok().body(DisplayDto.fromEntity(display));
         } catch (final Exception exception) {
             System.out.println(exception.getMessage());
@@ -59,13 +58,13 @@ public class DisplayController {
     }
 
     @GetMapping("/unassigned/{tenantCode}")
-    //@PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN', 'ROLE_BRANCH_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN', 'ROLE_BRANCH_ADMIN')")
     public ResponseEntity getUnassignedDisplays(@PathVariable final String tenantCode) {
-        /*
+
         if (!this.authService.canChangeTenant(tenantCode)) {
             return ResponseEntity.badRequest().build();
         }
-*/
+
         final Set<DisplayDto> displays = this.displayService.getUnassignedDisplays().stream()
                 .map(DisplayDto::fromEntity)
                 .collect(Collectors.toSet());
@@ -83,8 +82,8 @@ public class DisplayController {
         }
 
         try{
-            Display updated = this.displayService.updateDisplay(Long.parseLong(displayId), request.name());
-            return ResponseEntity.ok().body(DisplayDto.fromEntity(updated));
+            final Display updatedDisplay = this.displayService.updateDisplay(Long.parseLong(displayId), request.name());
+            return ResponseEntity.ok().body(DisplayDto.fromEntity(updatedDisplay));
         } catch (final Exception exception) {
             System.out.println(exception.getMessage());
             return ResponseEntity.badRequest().build();
@@ -104,7 +103,7 @@ public class DisplayController {
         return ResponseEntity.ok().body(new SimpleMessageDto("Deleted display with id: " + displayId));
     }
 
-    public record DisplayCreateRequest(String name, long tellerStationId){
+    public record DisplayCreateRequest(String name, long branchId){
     }
 
     public record DisplayUpdateRequest(String name){
