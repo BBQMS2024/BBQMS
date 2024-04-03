@@ -8,6 +8,7 @@ import ba.unsa.etf.si.bbqms.repository.BranchRepository;
 import ba.unsa.etf.si.bbqms.repository.DisplayRepository;
 import ba.unsa.etf.si.bbqms.repository.TellerStationRepository;
 import ba.unsa.etf.si.bbqms.repository.TenantRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -57,15 +58,14 @@ public class DefaultDisplayService implements DisplayService {
 
     @Override
     public void removeDisplay(long displayId) {
-        final Optional<TellerStation> optionalTellerStation = this.tellerStationRepository.findByDisplayId(displayId);
+        final Display display = this.displayRepository.findById(displayId)
+                .orElseThrow(EntityNotFoundException::new);
 
-        if(optionalTellerStation.isEmpty())
-            return;
-
-        final TellerStation tellerStation = optionalTellerStation.get();
-        tellerStation.setDisplay(null);
-
-        this.tellerStationRepository.save(tellerStation);
+        if (display.getTellerStation() != null) {
+            final TellerStation tellerStation = display.getTellerStation();
+            tellerStation.setDisplay(null);
+            this.tellerStationRepository.save(tellerStation);
+        }
 
         this.displayRepository.deleteById(displayId);
     }

@@ -1,8 +1,10 @@
 package ba.unsa.etf.si.bbqms.admin_service.implementation;
 
 import ba.unsa.etf.si.bbqms.admin_service.api.StationService;
+import ba.unsa.etf.si.bbqms.domain.Display;
 import ba.unsa.etf.si.bbqms.domain.Service;
 import ba.unsa.etf.si.bbqms.domain.TellerStation;
+import ba.unsa.etf.si.bbqms.repository.DisplayRepository;
 import ba.unsa.etf.si.bbqms.repository.ServiceRepository;
 import ba.unsa.etf.si.bbqms.repository.TellerStationRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -14,11 +16,14 @@ import java.util.List;
 public class DefaultStationService implements StationService {
     private final TellerStationRepository tellerStationRepository;
     private final ServiceRepository serviceRepository;
+    private final DisplayRepository displayRepository;
 
     public DefaultStationService(final TellerStationRepository tellerStationRepository,
-                                 final ServiceRepository serviceRepository) {
+                                 final ServiceRepository serviceRepository,
+                                 final DisplayRepository displayRepository) {
         this.tellerStationRepository = tellerStationRepository;
         this.serviceRepository = serviceRepository;
+        this.displayRepository = displayRepository;
     }
 
     @Override
@@ -49,5 +54,37 @@ public class DefaultStationService implements StationService {
             return this.tellerStationRepository.save(tellerStation);
         }
         throw new EntityNotFoundException("Teller station doesn't contain service with id: " + serviceId);
+    }
+
+    @Override
+    public TellerStation addTellerStationDisplay(final long stationId, final long displayId) {
+        final TellerStation tellerStation = this.tellerStationRepository.findById(stationId)
+                .orElseThrow(() -> new EntityNotFoundException("No station found with id: " + stationId ));
+
+        final Display display = this.displayRepository.findById(displayId)
+                .orElseThrow(() -> new EntityNotFoundException("No display with id: " + displayId));
+
+        tellerStation.setDisplay(display);
+        display.setTellerStation(tellerStation);
+        this.displayRepository.save(display);
+        return this.tellerStationRepository.save(tellerStation);
+    }
+
+    @Override
+    public TellerStation deleteTellerStationDisplay(final long stationId, final long displayId) {
+        final TellerStation tellerStation = this.tellerStationRepository.findById(stationId)
+                .orElseThrow(() -> new EntityNotFoundException("No station found with id: " + stationId ));
+
+        if (tellerStation.getDisplay().getId() != displayId) {
+            throw new RuntimeException("Display is not assigned to station: " + stationId);
+        }
+
+        final Display display = this.displayRepository.findById(displayId)
+                .orElseThrow(() -> new EntityNotFoundException("No display with id: " + displayId));
+
+        tellerStation.setDisplay(null);
+        display.setTellerStation(null);
+        this.displayRepository.save(display);
+        return this.tellerStationRepository.save(tellerStation);
     }
 }

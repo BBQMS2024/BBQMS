@@ -26,6 +26,7 @@ public class TellerStationController {
         this.stationService = stationService;
         this.authService = authService;
     }
+
     @GetMapping("/{tenantCode}")
     @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN', 'ROLE_BRANCH_ADMIN')")
     public ResponseEntity getAll(@PathVariable final String tenantCode){
@@ -43,6 +44,7 @@ public class TellerStationController {
             return ResponseEntity.badRequest().body(new ErrorResponseDto(e.getMessage()));
         }
     }
+
     @PutMapping("/{tenantCode}/{stationId}/services/{serviceId}")
     @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN', 'ROLE_BRANCH_ADMIN')")
     public ResponseEntity addTellerStationService(@PathVariable final String tenantCode, @PathVariable final String stationId, @PathVariable final String serviceId) {
@@ -76,4 +78,39 @@ public class TellerStationController {
             return ResponseEntity.badRequest().body(new ErrorResponseDto(e.getMessage()));
         }
     }
+
+    @PutMapping("/{tenantCode}/{stationId}/displays/{displayId}")
+    @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN', 'ROLE_BRANCH_ADMIN')")
+    public ResponseEntity addDisplayToStation(@PathVariable final String tenantCode,
+                                              @PathVariable final String stationId,
+                                              @PathVariable final String displayId) {
+        if (!this.authService.canChangeTenant(tenantCode)) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        try {
+            final TellerStation updatedTellerStation = this.stationService.addTellerStationDisplay(Long.parseLong(stationId), Long.parseLong(displayId));
+            return ResponseEntity.ok().body(TellerStationResponseDto.fromEntity(updatedTellerStation));
+        } catch(final Exception exception) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @DeleteMapping("/{tenantCode}/{stationId}/displays/{displayId}")
+    @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN', 'ROLE_BRANCH_ADMIN')")
+    public ResponseEntity removeDisplayFromStation(@PathVariable final String tenantCode,
+                                                   @PathVariable final String stationId,
+                                                   @PathVariable final String displayId) {
+        if (!this.authService.canChangeTenant(tenantCode)) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        try {
+            final TellerStation updatedTellerStation = this.stationService.deleteTellerStationDisplay(Long.parseLong(stationId), Long.parseLong(displayId));
+            return ResponseEntity.ok().body(TellerStationResponseDto.fromEntity(updatedTellerStation));
+        } catch(final Exception exception) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
 }

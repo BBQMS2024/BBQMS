@@ -10,4 +10,8 @@ public interface StationService {
     TellerStation addTellerStationService(final long stationId, final long serviceId);
 
     TellerStation deleteTellerStationService(final long stationId, final long serviceId);
+
+    TellerStation addTellerStationDisplay(final long stationId, final long displayId);
+
+    TellerStation deleteTellerStationDisplay(final long stationId, final long displayId);
 }
