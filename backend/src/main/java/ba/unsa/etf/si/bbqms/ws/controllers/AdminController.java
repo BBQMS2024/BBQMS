@@ -35,7 +35,8 @@ public class AdminController {
         final User currentUser = this.authService.getAuthenticatedUser();
 
         if (!currentUser.getTenant().getCode().equals(tenantCode)) {
-            return ResponseEntity.badRequest().build();
+            logger.warn("Super admin does not belong to the specified tenant");
+            return ResponseEntity.badRequest().body(new ErrorMessage("Couldn't get admins"));
         }
         try {
             final List<User> admins = this.adminService.findAdminsByCode(tenantCode);
@@ -56,7 +57,8 @@ public class AdminController {
         final User currentUser = this.authService.getAuthenticatedUser();
 
         if (!currentUser.getTenant().getCode().equals(tenantCode)) {
-            return ResponseEntity.badRequest().build();
+            logger.warn("Super admin does not belong to the specified tenant");
+            return ResponseEntity.badRequest().body(new ErrorMessage("Couldn't add admin"));
         }
         final User newAdmin = User.builder()
                 .password(request.password())
@@ -77,15 +79,16 @@ public class AdminController {
         final User currentUser = this.authService.getAuthenticatedUser();
 
         if (!currentUser.getTenant().getCode().equals(tenantCode)) {
-            return ResponseEntity.badRequest().build();
+            logger.warn("Super admin does not belong to the specified tenant");
+            return ResponseEntity.badRequest().body(new ErrorMessage("Couldn't update admin"));
         }
 
         try {
-            this.adminService.updateAdmin(admin, tenantCode, adminId);
-            return ResponseEntity.ok().body(new SimpleMessageDto("Updated admin."));
+            final User user = this.adminService.updateAdmin(admin, tenantCode, adminId);
+            return ResponseEntity.ok().body(new SimpleMessageDto("Updated admin: " + user.getUsername()));
         } catch (Exception exception) {
             logger.warn(exception.getMessage());
-            return ResponseEntity.badRequest().body(new ErrorMessage("Couldn't update admin."));
+            return ResponseEntity.badRequest().body(new ErrorMessage("Couldn't update admin"));
         }
     }
 
@@ -95,15 +98,16 @@ public class AdminController {
         final User currentUser = this.authService.getAuthenticatedUser();
 
         if (!currentUser.getTenant().getCode().equals(tenantCode)) {
-            return ResponseEntity.badRequest().build();
+            logger.warn("Super admin does not belong to the specified tenant");
+            return ResponseEntity.badRequest().body(new ErrorMessage("Couldn't remove admin"));
         }
 
         try {
             this.adminService.removeAdmin(tenantCode, adminId);
-            return ResponseEntity.ok().body(new SimpleMessageDto("Removed admin."));
+            return ResponseEntity.ok().body(new SimpleMessageDto("Removed admin"));
         } catch (Exception exception) {
             logger.warn(exception.getMessage());
-            return ResponseEntity.badRequest().body(new ErrorMessage("Couldn't remove admin user."));
+            return ResponseEntity.badRequest().body(new ErrorMessage("Couldn't remove admin user"));
         }
     }
 
