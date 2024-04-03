@@ -12,7 +12,6 @@ export default function AdminProfile(){
     useEffect(() => {
         const storedUserData = localStorage.getItem('userData');
         setUserData(JSON.parse(storedUserData));
-        console.log(userData);
 
         const storedIsTfa =  localStorage.getItem('isTfa');
         let isTfa = JSON.parse(storedIsTfa);
@@ -26,10 +25,9 @@ export default function AdminProfile(){
         fetchData(url, 'PUT', {
             isTfa: isChecked
         });
-        localStorage.setItem('isTfa', isChecked);
-        if(isChecked){
-            setIsQRCodeEnabled(isChecked);
-        }else{
+        localStorage.setItem('isTfa', isChecked);       
+        setIsQRCodeEnabled(isChecked);
+        if(!isChecked){
             setQrCodeSrc('');
         }
     }

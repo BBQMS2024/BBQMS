@@ -61,7 +61,6 @@ export default function LoginScreen() {
             if (success) {
                 if(data.userData == undefined){
                     localStorage.setItem('userData', JSON.stringify(data));
-                    setUser(data.userData);
                 }else{
                     localStorage.setItem('userData', JSON.stringify(data.userData));
                     localStorage.setItem('token', data.token);

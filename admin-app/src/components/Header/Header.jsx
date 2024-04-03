@@ -17,6 +17,10 @@ export default function Header() {
         navigate('/');
     }
 
+    function handleSettings(){
+        navigate('/adminprofile')
+    }
+
     return (
         <header className="main-header">
 
@@ -26,9 +30,14 @@ export default function Header() {
             </div>
             <div className="header-logout">
                 { !!user && (
-                    <button className="header-logout-btn" onClick={ handleLogout }>
+                    <>
+                        <button className="header-logout-btn" onClick={ handleLogout }>
                         Logout
+                        </button>
+                        <button className="header-logout-btn" onClick={ handleSettings }>
+                        Settings
                     </button>
+                    </>
                 ) }
 
             </div>
