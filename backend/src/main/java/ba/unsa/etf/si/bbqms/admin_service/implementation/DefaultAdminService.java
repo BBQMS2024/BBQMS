@@ -12,10 +12,12 @@ import ba.unsa.etf.si.bbqms.repository.UserRepository;
 import ba.unsa.etf.si.bbqms.tenant_service.api.TenantService;
 import ba.unsa.etf.si.bbqms.tfa_service.api.TwoFactorService;
 import ba.unsa.etf.si.bbqms.utils.UserValidator;
+import ba.unsa.etf.si.bbqms.ws.models.UserDto;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 
@@ -70,5 +72,35 @@ public class DefaultAdminService implements AdminService {
         admin.setTfaSecret(this.twoFactorService.generateNewSecret());
         admin.setPassword(this.passwordEncoder.encode(admin.getPassword().trim()));
         return userRepository.save(admin);
+    }
+
+    @Override
+    public User updateAdmin(final UserDto request, final String tenantCode, final Long adminId) throws Exception {
+        final User admin = userRepository.findById(adminId)
+                .orElseThrow(() -> new NoSuchElementException("Admin user not found"));
+
+        if (!admin.getTenant().getCode().equals(tenantCode)) {
+            throw new IllegalArgumentException("Admin user does not belong to the specified tenant");
+        }
+
+        if (request.email() != null) {
+            admin.setEmail(request.email());
+        }
+
+        if (request.phoneNumber() != null) {
+            admin.setPhoneNumber(request.phoneNumber());
+        }
+
+        return userRepository.save(admin);
+    }
+
+    @Override
+    public void removeAdmin(final String tenantCode, final Long adminId) throws Exception {
+        final Optional<User> admin = this.userRepository.findById(adminId);
+
+        if (admin.isEmpty() || !admin.get().getTenant().getCode().equals(tenantCode)) {
+            throw new Exception();
+        }
+        this.userRepository.deleteById(adminId);
     }
 }

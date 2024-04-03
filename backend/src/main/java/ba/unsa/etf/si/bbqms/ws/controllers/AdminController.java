@@ -5,6 +5,7 @@ import ba.unsa.etf.si.bbqms.auth_service.api.AuthService;
 import ba.unsa.etf.si.bbqms.domain.User;
 import ba.unsa.etf.si.bbqms.ws.models.ErrorMessage;
 import ba.unsa.etf.si.bbqms.ws.models.ErrorResponseDto;
+import ba.unsa.etf.si.bbqms.ws.models.SimpleMessageDto;
 import ba.unsa.etf.si.bbqms.ws.models.UserDto;
 import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
@@ -66,7 +67,43 @@ public class AdminController {
             return ResponseEntity.ok(UserDto.fromEntity(user));
         } catch (Exception exception) {
             logger.warn(exception.getMessage());
-            return ResponseEntity.badRequest().body(new ErrorMessage("Couldn't add admin user: " + newAdmin.getUsername()));
+            return ResponseEntity.badRequest().body(new ErrorMessage("Couldn't add admin: " + newAdmin.getUsername()));
+        }
+    }
+
+    @PutMapping("/{code}/user/{userId}")
+    @PreAuthorize("hasRole('ROLE_SUPER_ADMIN')")
+    public ResponseEntity updateAdmin(@RequestBody final UserDto admin, @PathVariable(name = "code") final String tenantCode, @PathVariable(name = "userId") final long adminId) {
+        final User currentUser = this.authService.getAuthenticatedUser();
+
+        if (!currentUser.getTenant().getCode().equals(tenantCode)) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        try {
+            this.adminService.updateAdmin(admin, tenantCode, adminId);
+            return ResponseEntity.ok().body(new SimpleMessageDto("Updated admin."));
+        } catch (Exception exception) {
+            logger.warn(exception.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorMessage("Couldn't update admin."));
+        }
+    }
+
+    @DeleteMapping("/{code}/user/{userId}")
+    @PreAuthorize("hasRole('ROLE_SUPER_ADMIN')")
+    public ResponseEntity removeAdmin(@PathVariable(name = "code") final String tenantCode, @PathVariable(name = "userId") final long adminId) {
+        final User currentUser = this.authService.getAuthenticatedUser();
+
+        if (!currentUser.getTenant().getCode().equals(tenantCode)) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        try {
+            this.adminService.removeAdmin(tenantCode, adminId);
+            return ResponseEntity.ok().body(new SimpleMessageDto("Removed admin."));
+        } catch (Exception exception) {
+            logger.warn(exception.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorMessage("Couldn't remove admin user."));
         }
     }
 
