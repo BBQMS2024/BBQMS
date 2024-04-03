@@ -1,6 +1,7 @@
 package ba.unsa.etf.si.bbqms.admin_service.implementation;
 
 import ba.unsa.etf.si.bbqms.admin_service.api.StationService;
+import ba.unsa.etf.si.bbqms.domain.BranchGroup;
 import ba.unsa.etf.si.bbqms.domain.Display;
 import ba.unsa.etf.si.bbqms.domain.Service;
 import ba.unsa.etf.si.bbqms.domain.TellerStation;
@@ -9,7 +10,9 @@ import ba.unsa.etf.si.bbqms.repository.ServiceRepository;
 import ba.unsa.etf.si.bbqms.repository.TellerStationRepository;
 import jakarta.persistence.EntityNotFoundException;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 @org.springframework.stereotype.Service
@@ -86,5 +89,27 @@ public class DefaultStationService implements StationService {
         display.setTellerStation(null);
         this.displayRepository.save(display);
         return this.tellerStationRepository.save(tellerStation);
+    }
+
+    @Override
+    public Set<Service> getServicesByAssigned(final long stationId, final boolean assigned) {
+        final TellerStation tellerStation = this.tellerStationRepository.findById(stationId)
+                .orElseThrow(() -> new EntityNotFoundException("No station found with id: " + stationId ));
+
+        if (assigned) {
+            return tellerStation.getServices();
+        }
+        else {
+            final Set<Service> assignedServices = tellerStation.getServices();
+            final Set<Service> allServicesForGroup = new HashSet<>();
+            final Set<BranchGroup> branchGroupSet = tellerStation.getBranch().getBranchGroups();
+
+            for (BranchGroup branchGroup : branchGroupSet) {
+                allServicesForGroup.addAll(branchGroup.getServices());
+            }
+
+            allServicesForGroup.removeAll(assignedServices);
+            return allServicesForGroup;
+        }
     }
 }
