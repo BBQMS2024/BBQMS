@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { fetchData } from '../../fetching/Fetch.js';
+import { SERVER_URL } from '../../constants';
 import "./AdminProfile.css"
 
 export default function AdminProfile(){
@@ -8,15 +10,28 @@ export default function AdminProfile(){
     const [userData, setUserData] = useState('');
 
     useEffect(() => {
-        let isTfa = false; //dummy data, treba se dobaviti iz localStorage
+        const storedUserData = localStorage.getItem('userData');
+        setUserData(JSON.parse(storedUserData));
+        console.log(userData);
+
+        const storedIsTfa =  localStorage.getItem('isTfa');
+        let isTfa = JSON.parse(storedIsTfa);
+
         setIsChecked(isTfa);
         setIsQRCodeEnabled(isTfa);
     }, []);
 
     const handleSaveChanges = () =>{
-        //--poziva se save changes endpoint, vrsi se update localStorage
-        setIsQRCodeEnabled(isChecked);
-        //window.location.reload();
+        const url = `${ SERVER_URL }/api/v1/auth/tfa`;
+        fetchData(url, 'PUT', {
+            isTfa: isChecked
+        });
+        localStorage.setItem('isTfa', isChecked);
+        if(isChecked){
+            setIsQRCodeEnabled(isChecked);
+        }else{
+            setQrCodeSrc('');
+        }
     }
 
     const handleCheckBoxChange = () =>{
@@ -25,8 +40,13 @@ export default function AdminProfile(){
 
     const handleGenerateQRCode = () =>{
         if(isQRCodeEnabled){
-            //poziva se get QRCode
-            setQrCodeSrc('https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg');
+            const url = `${ SERVER_URL }/api/v1/auth/tfa?email=${userData.email}`;
+            fetchData(url, 'GET')
+            .then(({ data, success }) => {
+                if (success) {
+                    setQrCodeSrc(data.qrCode);
+                }
+            });
         }
     }
 
@@ -35,7 +55,7 @@ export default function AdminProfile(){
             <h1>Account settings</h1>
             <div id="check-box">
                 <form>
-                    <label htmlForfor="2fa">Use two-factor authentication:</label>
+                    <label htmlFor="2fa">Use two-factor authentication:</label>
                     <input type="checkbox" id="2fa" name="2fa" checked={isChecked} onChange={handleCheckBoxChange}></input>
                 </form>
             </div>
@@ -44,7 +64,7 @@ export default function AdminProfile(){
                 <img src={qrCodeSrc}></img>
             </div>
             <div>
-                <input type="submit" value="Save changes" on onClick={handleSaveChanges}/>
+                <input type="submit" value="Save changes" onClick={handleSaveChanges}/>
             </div>
         </div>
     );

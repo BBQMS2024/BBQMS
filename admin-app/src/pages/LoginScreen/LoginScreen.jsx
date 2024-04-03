@@ -59,13 +59,23 @@ export default function LoginScreen() {
             });
 
             if (success) {
-                localStorage.setItem('userData', JSON.stringify(data.userData));
-                localStorage.setItem('token', data.token);
+                if(data.userData == undefined){
+                    localStorage.setItem('userData', JSON.stringify(data));
+                    setUser(data.userData);
+                }else{
+                    localStorage.setItem('userData', JSON.stringify(data.userData));
+                    localStorage.setItem('token', data.token);
+                    setUser(data.userData);
+                }
                 setIsSubmitted(true);
-
-                setUser(data.userData);
-
-                navigate(`/${ data.userData.tenantCode }/companydetails`);
+                
+                if(data.token){
+                    localStorage.setItem('isTfa', false);
+                    navigate(`/${ data.userData.tenantCode }/companydetails`);
+                }else{
+                    localStorage.setItem('isTfa', true);
+                    navigate('/loginauth');
+                }
             } else {
                 setError('Your credentials are incorrect.');
             }
@@ -84,11 +94,11 @@ export default function LoginScreen() {
         setPassword(event.target.value);
         setError('');
     };
-
+/*
     if (isSubmitted) {
         //navigate('/loginAuth');
         navigate('/companydetails');
-    }
+    }*/
 
     return (
         <div id="login-form">
