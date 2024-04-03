@@ -7,6 +7,8 @@ import ba.unsa.etf.si.bbqms.repository.ServiceRepository;
 import ba.unsa.etf.si.bbqms.repository.TellerStationRepository;
 import jakarta.persistence.EntityNotFoundException;
 
+import java.util.List;
+
 
 @org.springframework.stereotype.Service
 public class DefaultStationService implements StationService {
@@ -17,6 +19,11 @@ public class DefaultStationService implements StationService {
                                  final ServiceRepository serviceRepository) {
         this.tellerStationRepository = tellerStationRepository;
         this.serviceRepository = serviceRepository;
+    }
+
+    @Override
+    public List<TellerStation> getAllByTenant(final String tenantCode) {
+        return this.tellerStationRepository.findByBranch_Tenant_Code(tenantCode);
     }
 
     @Override
