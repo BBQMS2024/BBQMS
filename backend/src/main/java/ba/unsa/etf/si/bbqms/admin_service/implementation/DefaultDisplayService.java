@@ -59,13 +59,12 @@ public class DefaultDisplayService implements DisplayService {
     public void removeDisplay(long displayId) {
         final Optional<TellerStation> optionalTellerStation = this.tellerStationRepository.findByDisplayId(displayId);
 
-        if(optionalTellerStation.isEmpty())
-            return;
+        if(optionalTellerStation.isPresent()) {
+            final TellerStation tellerStation = optionalTellerStation.get();
+            tellerStation.setDisplay(null);
 
-        final TellerStation tellerStation = optionalTellerStation.get();
-        tellerStation.setDisplay(null);
-
-        this.tellerStationRepository.save(tellerStation);
+            this.tellerStationRepository.save(tellerStation);
+        }
 
         this.displayRepository.deleteById(displayId);
     }
