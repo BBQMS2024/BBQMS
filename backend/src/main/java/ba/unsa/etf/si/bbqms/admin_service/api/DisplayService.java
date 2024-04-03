@@ -6,8 +6,7 @@ import java.util.Set;
 
 public interface DisplayService {
     Display createDisplay(final String name, final long branchId) throws Exception;
-    Display getDisplay(final long displayId) throws Exception;
-    Set<Display> getUnassignedDisplays();
+    Set<Display> getDisplays(final long branchId);
     Display updateDisplay(final long displayId, final String name) throws Exception;
     void removeDisplay(final long displayId);
 }

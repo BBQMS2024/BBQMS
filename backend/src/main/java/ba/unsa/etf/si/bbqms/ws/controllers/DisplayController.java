@@ -40,32 +40,15 @@ public class DisplayController {
         }
     }
 
-    @GetMapping("/{tenantCode}/{displayId}")
+    @GetMapping("/{tenantCode}/{branchId}")
     @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN', 'ROLE_BRANCH_ADMIN')")
-    public ResponseEntity getDisplay(@PathVariable final String tenantCode,
-                                     @PathVariable final String displayId) {
+    public ResponseEntity getDisplays(@PathVariable final String tenantCode,
+                                      @PathVariable final String branchId) {
         if (!this.authService.canChangeTenant(tenantCode)) {
             return ResponseEntity.badRequest().build();
         }
 
-        try{
-            final Display display = this.displayService.getDisplay(Long.parseLong(displayId));
-            return ResponseEntity.ok().body(DisplayDto.fromEntity(display));
-        } catch (final Exception exception) {
-            System.out.println(exception.getMessage());
-            return ResponseEntity.badRequest().build();
-        }
-    }
-
-    @GetMapping("/unassigned/{tenantCode}")
-    @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN', 'ROLE_BRANCH_ADMIN')")
-    public ResponseEntity getUnassignedDisplays(@PathVariable final String tenantCode) {
-
-        if (!this.authService.canChangeTenant(tenantCode)) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        final Set<DisplayDto> displays = this.displayService.getUnassignedDisplays().stream()
+        final Set<DisplayDto> displays = this.displayService.getDisplays(Long.parseLong(branchId)).stream()
                 .map(DisplayDto::fromEntity)
                 .collect(Collectors.toSet());
 

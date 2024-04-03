@@ -38,18 +38,8 @@ public class DefaultDisplayService implements DisplayService {
     }
 
     @Override
-    public Display getDisplay(final long displayId) throws Exception {
-        final Display display = displayRepository.findById(displayId)
-                .orElseThrow(() -> new Exception("Display with id: " + displayId + " doesn't exist."));
-
-        return display;
-    }
-
-    @Override
-    public Set<Display> getUnassignedDisplays() {
-        final Set<Display> unassignedDisplays= this.displayRepository.findByTellerStationIsNull();
-
-        return unassignedDisplays;
+    public Set<Display> getDisplays(final long branchId) {
+        return this.displayRepository.findByBranchId(branchId);
     }
 
     @Override
