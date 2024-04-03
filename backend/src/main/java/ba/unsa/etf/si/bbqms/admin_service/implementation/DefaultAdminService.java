@@ -1,7 +1,6 @@
 package ba.unsa.etf.si.bbqms.admin_service.implementation;
 
 import ba.unsa.etf.si.bbqms.admin_service.api.AdminService;
-import ba.unsa.etf.si.bbqms.auth_service.api.AuthService;
 import ba.unsa.etf.si.bbqms.auth_service.api.RoleService;
 import ba.unsa.etf.si.bbqms.auth_service.api.UserService;
 import ba.unsa.etf.si.bbqms.domain.Role;
