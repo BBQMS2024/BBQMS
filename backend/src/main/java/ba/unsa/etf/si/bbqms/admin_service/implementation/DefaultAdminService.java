@@ -53,17 +53,16 @@ public class DefaultAdminService implements AdminService {
     @Override
     public User addAdmin(final User admin, final String tenantCode) throws AuthException {
         if (!UserValidator.validateData(admin)) {
-            throw new AuthException("Invalid email/password format.");
+            throw new AuthException("Invalid email/password format");
         }
 
         final Optional<User> optionalExistingUser = this.userService.findByEmail(admin.getEmail());
         if (optionalExistingUser.isPresent()) {
-            throw new AuthException("Tried making a user that already exists.");
+            throw new AuthException("Tried making a user that already exists");
         }
 
         final Role role = this.roleService.getRoleByName(RoleName.ROLE_BRANCH_ADMIN)
-                .orElseThrow(() -> new AuthException("Tried setting a role that doesn't exist."));//nek za sad svi budu super admin
-
+                .orElseThrow(() -> new AuthException("Tried setting a role that doesn't exist"));
         final Tenant tenant = this.tenantService.findByCode(tenantCode);
 
         admin.setRoles(Set.of(role));
@@ -96,10 +95,11 @@ public class DefaultAdminService implements AdminService {
 
     @Override
     public void removeAdmin(final String tenantCode, final Long adminId) throws Exception {
-        final Optional<User> admin = this.userRepository.findById(adminId);
+        final User admin = userRepository.findById(adminId)
+                .orElseThrow(() -> new NoSuchElementException("Admin user not found"));
 
-        if (admin.isEmpty() || !admin.get().getTenant().getCode().equals(tenantCode)) {
-            throw new Exception();
+        if (!admin.getTenant().getCode().equals(tenantCode)) {
+            throw new IllegalArgumentException("Admin user does not belong to the specified tenant");
         }
         this.userRepository.deleteById(adminId);
     }

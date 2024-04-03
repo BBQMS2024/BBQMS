@@ -24,10 +24,6 @@ public class Role {
 
     public Role() {
     }
-
-    @ManyToMany(mappedBy = "roles")
-    private Set<User> users;
-
     public long getId() {
         return id;
     }
@@ -44,12 +40,5 @@ public class Role {
         this.name = name;
     }
 
-    public Set<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(final Set<User> users) {
-        this.users = users;
-    }
 }
 
