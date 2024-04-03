@@ -4,12 +4,12 @@ import ba.unsa.etf.si.bbqms.admin_service.api.DisplayService;
 import ba.unsa.etf.si.bbqms.domain.Branch;
 import ba.unsa.etf.si.bbqms.domain.Display;
 import ba.unsa.etf.si.bbqms.domain.TellerStation;
-import ba.unsa.etf.si.bbqms.domain.Tenant;
 import ba.unsa.etf.si.bbqms.repository.DisplayRepository;
 import ba.unsa.etf.si.bbqms.repository.TellerStationRepository;
 import ba.unsa.etf.si.bbqms.repository.TenantRepository;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class DefaultDisplayService implements DisplayService {
@@ -41,7 +41,7 @@ public class DefaultDisplayService implements DisplayService {
 
     @Override
     public Display getDisplay(final long displayId) throws Exception {
-        Display display = displayRepository.findById(displayId)
+        final Display display = displayRepository.findById(displayId)
                 .orElseThrow(() -> new Exception("Display with id: " + displayId + " doesn't exist."));
 
         return display;
@@ -49,11 +49,24 @@ public class DefaultDisplayService implements DisplayService {
 
     @Override
     public Display updateDisplay(final long displayId, final String name) throws Exception {
-        Display existingDisplay = displayRepository.findById(displayId)
+        final Display existingDisplay = displayRepository.findById(displayId)
                 .orElseThrow(() -> new Exception("Display with id: " + displayId + " doesn't exist."));
 
         existingDisplay.setName(name);
 
         return this.displayRepository.save(existingDisplay);
+    }
+
+    @Override
+    public void removeDisplay(long displayId) {
+        final Optional<TellerStation> optionalTellerStation = this.tellerStationRepository.findByDisplayId(displayId);
+
+        if(optionalTellerStation.isEmpty())
+            return;
+
+        final TellerStation tellerStation = optionalTellerStation.get();
+        tellerStation.setDisplay(null);
+
+        this.displayRepository.deleteById(displayId);
     }
 }
