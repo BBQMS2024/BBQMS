@@ -67,6 +67,8 @@ public class DefaultDisplayService implements DisplayService {
         final TellerStation tellerStation = optionalTellerStation.get();
         tellerStation.setDisplay(null);
 
+        this.tellerStationRepository.save(tellerStation);
+
         this.displayRepository.deleteById(displayId);
     }
 }
