@@ -13,9 +13,8 @@ import CanAccess from './components/CanAccess/CanAccess';
 import HomePageCard from './components/HomePageCard/HomePageCard';
 import AdminProfile from './pages/AdminProfile/AdminProfile'
 import LoginAuth from './components/LoginAuth/LoginAuth'
+import ManageAdmins from './pages/AdminManagingScreen/AdminManagingScreen';
 import { ROLES } from './constants.js';
-import 'bootstrap/dist/css/bootstrap.min.css';
-
 
 export default function App() {
     const [user, setUser] = useState();
@@ -47,17 +46,23 @@ export default function App() {
                 <Routes>
                     <Route exact path="/:tenantCode/companydetails"
                            element={
-                               <AuthGuard roles={ [ROLES.ROLE_SUPER_ADMIN] }>
+                               <AuthGuard roles={ [ROLES.ROLE_SUPER_ADMIN, ROLES.ROLE_BRANCH_ADMIN] }>
                                    <CompanyInfoUpdate />
                                </AuthGuard>
                            }
                     />
                     <Route exact path="/login" element={ <LoginScreen /> } />
-                    <Route exact path="/profile" element={ <AdminProfile /> } />
+                    <Route exact path="/:tenantCode/manage/admins" element={
+                        <AuthGuard roles={ [ROLES.ROLE_SUPER_ADMIN] }>
+                            <ManageAdmins />
+                        </AuthGuard>} />
+                    <Route exact path="/profile" element={ <AuthGuard roles={ [ROLES.ROLE_SUPER_ADMIN, ROLES.ROLE_BRANCH_ADMIN] }>
+                        <AdminProfile />
+                    </AuthGuard>} />
                     <Route exact path="/" element={ <LoginScreen /> } />
                     <Route exact path="/loginauth"
                            element={
-                               <AuthGuard roles={ ['ROLE_SUPER_ADMIN'] }>
+                               <AuthGuard roles={ [ROLES.ROLE_SUPER_ADMIN, ROLES.ROLE_BRANCH_ADMIN] }>
                                    <LoginAuth />
                                </AuthGuard>
                            }
@@ -75,7 +80,7 @@ export default function App() {
                             <HomePageCard title = "Manage company details" backgroundColor = "var(--light-blue)" buttonColor = "var(--dark-blue)" url = "/:tenantCode/companydetails"></HomePageCard>
                         </CanAccess>
                             <CanAccess roles={ [ROLES.ROLE_SUPER_ADMIN] }>
-                                <HomePageCard title = "Manage administrators" backgroundColor = "var(--dark-blue)" buttonColor = "var(--light-blue)"></HomePageCard>
+                                <HomePageCard title = "Manage administrators" backgroundColor = "var(--dark-blue)" buttonColor = "var(--light-blue)" url = "/:tenantCode/manage/admins"></HomePageCard>
                             </CanAccess>
             </AuthGuard>
                     } />

@@ -116,6 +116,13 @@ public class DefaultAuthService implements AuthService {
     }
 
     @Override
+    public User getAuthenticatedUser() {
+        final String currentEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        return this.userService.findByEmail(currentEmail)
+                .orElseThrow(() -> new RuntimeException("This should never happen. You should not call this in non-authorized endpoints!"));
+    }
+
+    @Override
     public boolean setTfaUse(final boolean tfa) throws Exception {
         return this.userService.setUserTfa(tfa);
     }

@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { SERVER_URL } from "../../constants";
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 import './HomePage.css'
 export default function HomePage() {
 
