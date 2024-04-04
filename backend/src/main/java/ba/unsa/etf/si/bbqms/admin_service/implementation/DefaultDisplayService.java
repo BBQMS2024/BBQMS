@@ -48,9 +48,8 @@ public class DefaultDisplayService implements DisplayService {
     }
 
     @Override
-    public Set<Display> getAllDisplays() {
-        List<Display> displayList = this.displayRepository.findAll();
-        return new HashSet<>(displayList);
+    public Set<Display> getDisplaysByTenant(String tenantCode) {
+        return this.displayRepository.findByBranch_Tenant_Code(tenantCode);
     }
 
     @Override
