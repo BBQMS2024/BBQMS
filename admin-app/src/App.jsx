@@ -10,7 +10,7 @@ import CompanyInfoUpdate from './pages/CompanyInfoUpdate/CompanyInfoUpdate';
 import HomePage from './pages/HomePage/HomePage'
 import NotFound from './pages/NotFound/NotFound.jsx';
 import CanAccess from './components/CanAccess/CanAccess';
-import HomePageCard from './components/HomePageCard/HomePageCard'
+import HomePageCard from './components/HomePageCard/HomePageCard';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 
@@ -52,15 +52,20 @@ export default function App() {
                     <Route exact path="/login" element={ <LoginScreen /> } />
                     <Route exact path="/" element={ <LoginScreen /> } />
                     <Route exact path = "/home" element = {
-                        <CanAccess roles={ ['ROLE_SUPER_ADMIN'] }>
-                            <HomePageCard title = "Manage groups" backgroundColor = "#476072" textColor = "white" buttonColor = "#548CA8"></HomePageCard>
-                            <HomePageCard title = "Manage displays"></HomePageCard>
-                            <HomePageCard title = "Manage branches"></HomePageCard>
-                            <HomePageCard title = "Manage services offered by a company"></HomePageCard>
-                            <HomePageCard title = "Manage teller stations"></HomePageCard>
-                            <HomePageCard title = "Manage administrators"></HomePageCard>
+                        <>
+                        <HomePage></HomePage>
+                        <CanAccess roles={ ['ROLE_SUPER_ADMIN', 'ROLE_BRANCH_ADMIN'] }>
+                            <HomePageCard title = "Manage groups" backgroundColor = "#476072" buttonColor = "#548CA8"></HomePageCard>
+                            <HomePageCard title = "Manage displays" backgroundColor = "#548CA8" buttonColor = "#476072"></HomePageCard>
+                            <HomePageCard title = "Manage branches" backgroundColor = "#476072" buttonColor = "#548CA8"></HomePageCard>
+                            <HomePageCard title = "Manage services offered by a company" backgroundColor = "#548CA8" buttonColor = "#476072"></HomePageCard>
+                            <HomePageCard title = "Manage teller stations" backgroundColor = "#476072" buttonColor = "#548CA8"></HomePageCard>
+                            <HomePageCard title = "Manage company details" backgroundColor = "#476072" buttonColor = "#548CA8"></HomePageCard>
                         </CanAccess>
-
+                            <CanAccess roles={ ['ROLE_SUPER_ADMIN'] }>
+                                <HomePageCard title = "Manage administrators" backgroundColor = "#548CA8" buttonColor = "#476072"></HomePageCard>
+                            </CanAccess>
+            </>
                     } />
                     <Route path="*" element={ <NotFound /> } />
                 </Routes>

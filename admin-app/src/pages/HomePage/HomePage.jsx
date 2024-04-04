@@ -6,12 +6,8 @@ import './HomePage.css'
 export default function HomePage() {
 
     return (
-        <main>
-            <h1 className="h1-hp">Admin panel</h1>
-            <HomePageCard/>
-            <HomePageCardLight/>
-            <div className="center">
-            </div>
+        <main className="background-hp">
+            <h1 className="h1-hp">Dashboard</h1>
         </main>
     )
 }

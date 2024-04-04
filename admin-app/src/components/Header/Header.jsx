@@ -20,10 +20,8 @@ export default function Header() {
 
     return (
         <header className="main-header">
+            <h2 className="header-logo" onClick={() => navigate('/')}>BBQMS</h2>
 
-            <div className="header-logo" onClick={() => navigate('/')}>
-                <img src={logoImage} className="header-logo-png" alt="BBQMS logo"/>
-            </div>
             <div className="header-logout">
                 {!!user && (
                     <button className="header-logout-btn" onClick={handleLogout}>
