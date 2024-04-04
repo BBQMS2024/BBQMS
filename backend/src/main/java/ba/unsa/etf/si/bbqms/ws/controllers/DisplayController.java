@@ -61,13 +61,14 @@ public class DisplayController {
 
     @GetMapping("/{tenantCode}")
     @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN', 'ROLE_BRANCH_ADMIN')")
-    public ResponseEntity getAllDisplays(@PathVariable final String tenantCode) {
+    public ResponseEntity getDisplaysFromTenant(@PathVariable final String tenantCode) {
+
         if (!this.authService.canChangeTenant(tenantCode)) {
             return ResponseEntity.badRequest().build();
         }
 
         try {
-            final Set<DisplayDto> displays = this.displayService.getAllDisplays().stream()
+            final Set<DisplayDto> displays = this.displayService.getDisplaysByTenant(tenantCode).stream()
                     .map(DisplayDto::fromEntity)
                     .collect(Collectors.toSet());
             return ResponseEntity.ok().body(displays);
