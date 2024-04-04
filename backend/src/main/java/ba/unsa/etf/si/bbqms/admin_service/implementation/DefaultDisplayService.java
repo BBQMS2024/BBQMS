@@ -54,6 +54,11 @@ public class DefaultDisplayService implements DisplayService {
     }
 
     @Override
+    public Set<Display> getUnassignedDisplaysByTenant(String tenantCode) {
+        return this.displayRepository.findByBranchTenantCodeAndTellerStationIsNull(tenantCode);
+    }
+
+    @Override
     public Display updateDisplay(final long displayId, final String name) throws Exception {
         final Display existingDisplay = displayRepository.findById(displayId)
                 .orElseThrow(() -> new Exception("Display with id: " + displayId + " doesn't exist."));

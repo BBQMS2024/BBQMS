@@ -8,4 +8,5 @@ import java.util.Set;
 public interface DisplayRepository extends JpaRepository<Display, Long> {
     Set<Display> findByBranchId(final long branchId);
     Set<Display> findByBranchTenantCode(String tenantCode);
+    Set<Display> findByBranchTenantCodeAndTellerStationIsNull(String tenantCode);
 }
