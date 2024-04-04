@@ -49,7 +49,7 @@ public class DefaultDisplayService implements DisplayService {
 
     @Override
     public Set<Display> getDisplaysByTenant(String tenantCode) {
-        return this.displayRepository.findByBranch_Tenant_Code(tenantCode);
+        return this.displayRepository.findByBranchTenantCode(tenantCode);
     }
 
     @Override

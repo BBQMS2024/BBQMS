@@ -61,8 +61,7 @@ public class DisplayController {
 
     @GetMapping("/{tenantCode}")
     @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN', 'ROLE_BRANCH_ADMIN')")
-    public ResponseEntity getDisplaysFromTenant(@PathVariable final String tenantCode) {
-
+    public ResponseEntity getDisplaysByTenant(@PathVariable final String tenantCode) {
         if (!this.authService.canChangeTenant(tenantCode)) {
             return ResponseEntity.badRequest().build();
         }
