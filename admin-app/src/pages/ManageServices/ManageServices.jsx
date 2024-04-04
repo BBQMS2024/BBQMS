@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Header from "../../components/Header/Header";
 import Table from "react-bootstrap/Table";
@@ -6,12 +7,16 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import "./ManageServices.css";
+import { fetchData } from "../../fetching/Fetch";
 
 const ManageServices = () => {
+    const { tenantCode } = useParams();
     const [services, setServices] = useState([]);
     const [showAdd, setShowAdd] = useState(false);
     const [showEdit, setShowEdit] = useState(false);
     const [showDelete, setShowDelete] = useState(false);
+    const [selectedServiceId, setSelectedServiceId] = useState(-1);
+    const [serviceNameInput, setServiceNameInput] = useState("");
 
     const staticServices = [
         {
@@ -28,8 +33,54 @@ const ManageServices = () => {
         },
     ];
 
+    const getServices = () => {
+        fetchData(
+            `http://localhost:8080/api/v1/tenants/${tenantCode}/services`,
+            "GET"
+        ).then((res) => {
+            if (res.success) {
+                setServices(res.data);
+            }
+        });
+    };
+
+    const addService = (serviceName) => {
+        fetchData(
+            `http://localhost:8080/api/v1/tenants/${tenantCode}/services`,
+            "POST",
+            { name: serviceName }
+        ).then((res) => {
+            if (res.success) {
+                getServices();
+            }
+        });
+    };
+
+    const editService = (serviceName) => {
+        fetchData(
+            `http://localhost:8080/api/v1/tenants/${tenantCode}/services/${selectedServiceId}`,
+            "PUT",
+            { name: serviceName }
+        ).then((res) => {
+            if (res.success) {
+                getServices();
+            }
+        });
+    };
+
+    const deleteService = () => {
+        fetchData(
+            `http://localhost:8080/api/v1/tenants/${tenantCode}/services/${selectedServiceId}`,
+            "DELETE"
+        ).then((res) => {
+            if (res.success) {
+                getServices();
+            }
+        });
+    };
+
     useEffect(() => {
-        setServices(staticServices);
+        getServices();
     }, []);
 
     return (
@@ -54,7 +105,11 @@ const ManageServices = () => {
                                         id="button-edit"
                                         className="button-custom button-custom-blue"
                                         variant="primary"
-                                        onClick={() => setShowEdit(true)}
+                                        onClick={() => {
+                                            setServiceNameInput(service.name);
+                                            setShowEdit(true);
+                                            setSelectedServiceId(service.id);
+                                        }}
                                     >
                                         Edit
                                     </Button>
@@ -62,7 +117,10 @@ const ManageServices = () => {
                                         id="button-delete"
                                         className="button-custom"
                                         variant="danger"
-                                        onClick={() => setShowDelete(true)}
+                                        onClick={() => {
+                                            setShowDelete(true);
+                                            setSelectedServiceId(service.id);
+                                        }}
                                     >
                                         Delete
                                     </Button>
@@ -93,6 +151,10 @@ const ManageServices = () => {
                             >
                                 <Form.Label>Service Name</Form.Label>
                                 <Form.Control
+                                    value={serviceNameInput}
+                                    onChange={(e) =>
+                                        setServiceNameInput(e.target.value)
+                                    }
                                     type="text"
                                     placeholder="Enter Service Name"
                                 />
@@ -103,6 +165,7 @@ const ManageServices = () => {
                         <Button
                             variant="secondary"
                             onClick={() => {
+                                setServiceNameInput("");
                                 setShowAdd(false);
                             }}
                         >
@@ -111,6 +174,15 @@ const ManageServices = () => {
                         <Button
                             className="button-custom-blue"
                             variant="primary"
+                            onClick={() => {
+                                if(serviceNameInput === "") {
+                                    alert("Service name cannot be empty!");
+                                    return;
+                                }
+                                setShowAdd(false);
+                                addService(serviceNameInput);
+                                setServiceNameInput("");
+                            }}
                         >
                             Add Service
                         </Button>
@@ -131,6 +203,10 @@ const ManageServices = () => {
                                 <Form.Control
                                     type="text"
                                     placeholder="Enter Service Name"
+                                    value={serviceNameInput}
+                                    onChange={(e) =>
+                                        setServiceNameInput(e.target.value)
+                                    }
                                 />
                             </Form.Group>
                         </Form>
@@ -139,6 +215,7 @@ const ManageServices = () => {
                         <Button
                             variant="secondary"
                             onClick={() => {
+                                setServiceNameInput("");
                                 setShowEdit(false);
                             }}
                         >
@@ -147,6 +224,15 @@ const ManageServices = () => {
                         <Button
                             className="button-custom-blue"
                             variant="primary"
+                            onClick={() => {
+                                if(serviceNameInput === "") {
+                                    alert("Service name cannot be empty!");
+                                    return;
+                                }
+                                setShowEdit(false);
+                                editService(serviceNameInput);
+                                setServiceNameInput("");
+                            }}
                         >
                             Edit Service
                         </Button>
@@ -164,12 +250,21 @@ const ManageServices = () => {
                         <Button
                             variant="secondary"
                             onClick={() => {
+                                setServiceNameInput("");
                                 setShowDelete(false);
                             }}
                         >
                             Close
                         </Button>
-                        <Button variant="danger">Delete Service</Button>
+                        <Button
+                            variant="danger"
+                            onClick={() => {
+                                setShowDelete(false);
+                                deleteService();
+                            }}
+                        >
+                            Delete Service
+                        </Button>
                     </Modal.Footer>
                 </Modal>
             </div>
