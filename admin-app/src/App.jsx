@@ -11,6 +11,7 @@ import HomePage from './pages/HomePage/HomePage'
 import NotFound from './pages/NotFound/NotFound.jsx';
 import CanAccess from './components/CanAccess/CanAccess';
 import HomePageCard from './components/HomePageCard/HomePageCard';
+import { ROLES } from './constants.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 
@@ -44,7 +45,7 @@ export default function App() {
                 <Routes>
                     <Route exact path="/:tenantCode/companydetails"
                            element={
-                               <AuthGuard roles={ ['ROLE_SUPER_ADMIN'] }>
+                               <AuthGuard roles={ [ROLES.ROLE_SUPER_ADMIN] }>
                                    <CompanyInfoUpdate />
                                </AuthGuard>
                            }
@@ -52,18 +53,18 @@ export default function App() {
                     <Route exact path="/login" element={ <LoginScreen /> } />
                     <Route exact path="/" element={ <LoginScreen /> } />
                     <Route exact path = "/:tenantCode/home" element = {
-                        <AuthGuard roles={ ['ROLE_SUPER_ADMIN', 'ROLE_BRANCH_ADMIN'] }>
+                        <AuthGuard roles={ [ROLES.ROLE_SUPER_ADMIN, ROLES.ROLE_BRANCH_ADMIN] }>
                         <HomePage></HomePage>
-                        <CanAccess roles={ ['ROLE_SUPER_ADMIN', 'ROLE_BRANCH_ADMIN'] }>
-                            <HomePageCard title = "Manage groups" backgroundColor = "#476072" buttonColor = "#548CA8"></HomePageCard>
-                            <HomePageCard title = "Manage displays" backgroundColor = "#548CA8" buttonColor = "#476072"></HomePageCard>
-                            <HomePageCard title = "Manage branches" backgroundColor = "#476072" buttonColor = "#548CA8"></HomePageCard>
-                            <HomePageCard title = "Manage services offered by a company" backgroundColor = "#548CA8" buttonColor = "#476072"></HomePageCard>
-                            <HomePageCard title = "Manage teller stations" backgroundColor = "#476072" buttonColor = "#548CA8"></HomePageCard>
-                            <HomePageCard title = "Manage company details" backgroundColor = "#476072" buttonColor = "#548CA8" url = "/:tenantCode/companydetails"></HomePageCard>
+                        <CanAccess roles={ [ROLES.ROLE_SUPER_ADMIN, ROLES.ROLE_BRANCH_ADMIN] }>
+                            <HomePageCard title = "Manage groups" backgroundColor = "var(--dark-blue)" buttonColor = "var(--light-blue)" ></HomePageCard>
+                            <HomePageCard title = "Manage displays" backgroundColor = "var(--light-blue)" buttonColor = "var(--dark-blue)"></HomePageCard>
+                            <HomePageCard title = "Manage branches" backgroundColor = "var(--dark-blue)" buttonColor = "var(--light-blue)"></HomePageCard>
+                            <HomePageCard title = "Manage services offered by a company" backgroundColor = "var(--light-blue)" buttonColor = "var(--dark-blue)"></HomePageCard>
+                            <HomePageCard title = "Manage teller stations" backgroundColor = "var(--dark-blue)" buttonColor = "var(--light-blue)"></HomePageCard>
+                            <HomePageCard title = "Manage company details" backgroundColor = "var(--light-blue)" buttonColor = "var(--dark-blue)" url = "/:tenantCode/companydetails"></HomePageCard>
                         </CanAccess>
-                            <CanAccess roles={ ['ROLE_SUPER_ADMIN'] }>
-                                <HomePageCard title = "Manage administrators" backgroundColor = "#548CA8" buttonColor = "#476072"></HomePageCard>
+                            <CanAccess roles={ [ROLES.ROLE_SUPER_ADMIN] }>
+                                <HomePageCard title = "Manage administrators" backgroundColor = "var(--dark-blue)" buttonColor = "var(--light-blue)"></HomePageCard>
                             </CanAccess>
             </AuthGuard>
                     } />
