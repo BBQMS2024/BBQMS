@@ -6,10 +6,16 @@ import { UserContext } from './context/UserContext.jsx';
 import { fetchData } from './fetching/Fetch.js';
 import AuthGuard from './components/AuthGuard/AuthGuard';
 import LoginScreen from './pages/LoginScreen/LoginScreen';
-import LoginAuth from './components/LoginAuth/LoginAuth.jsx';
 import CompanyInfoUpdate from './pages/CompanyInfoUpdate/CompanyInfoUpdate';
-import AdminProfile from './pages/AdminProfile/AdminProfile.jsx';
+import HomePage from './pages/HomePage/HomePage'
 import NotFound from './pages/NotFound/NotFound.jsx';
+import CanAccess from './components/CanAccess/CanAccess';
+import HomePageCard from './components/HomePageCard/HomePageCard';
+import AdminProfile from './pages/AdminProfile/AdminProfile'
+import LoginAuth from './components/LoginAuth/LoginAuth'
+import { ROLES } from './constants.js';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 export default function App() {
     const [user, setUser] = useState();
@@ -41,30 +47,42 @@ export default function App() {
                 <Routes>
                     <Route exact path="/:tenantCode/companydetails"
                            element={
-                               <AuthGuard roles={ ['ROLE_SUPER_ADMIN'] }>
+                               <AuthGuard roles={ [ROLES.ROLE_SUPER_ADMIN] }>
                                    <CompanyInfoUpdate />
                                </AuthGuard>
                            }
                     />
                     <Route exact path="/login" element={ <LoginScreen /> } />
-                    <Route exact path="/loginauth" 
-                                element={
-                                    <AuthGuard roles={ ['ROLE_SUPER_ADMIN'] }>
-                                        <LoginAuth />
-                                    </AuthGuard>
-                                } 
-                    />
+                    <Route exact path="/profile" element={ <AdminProfile /> } />
                     <Route exact path="/" element={ <LoginScreen /> } />
-                    <Route exact path="/adminprofile" 
-                            element={
-                                <AuthGuard roles={ ['ROLE_SUPER_ADMIN'] }>
-                                    <AdminProfile />
-                                </AuthGuard>
-                            }
+                    <Route exact path="/loginauth"
+                           element={
+                               <AuthGuard roles={ ['ROLE_SUPER_ADMIN'] }>
+                                   <LoginAuth />
+                               </AuthGuard>
+                           }
                     />
+
+                    <Route exact path = "/:tenantCode/home" element = {
+                        <AuthGuard roles={ [ROLES.ROLE_SUPER_ADMIN, ROLES.ROLE_BRANCH_ADMIN] }>
+                        <HomePage></HomePage>
+                        <CanAccess roles={ [ROLES.ROLE_SUPER_ADMIN, ROLES.ROLE_BRANCH_ADMIN] }>
+                            <HomePageCard title = "Manage groups" backgroundColor = "var(--dark-blue)" buttonColor = "var(--light-blue)" ></HomePageCard>
+                            <HomePageCard title = "Manage displays" backgroundColor = "var(--light-blue)" buttonColor = "var(--dark-blue)"></HomePageCard>
+                            <HomePageCard title = "Manage branches" backgroundColor = "var(--dark-blue)" buttonColor = "var(--light-blue)"></HomePageCard>
+                            <HomePageCard title = "Manage services offered by a company" backgroundColor = "var(--light-blue)" buttonColor = "var(--dark-blue)"></HomePageCard>
+                            <HomePageCard title = "Manage teller stations" backgroundColor = "var(--dark-blue)" buttonColor = "var(--light-blue)"></HomePageCard>
+                            <HomePageCard title = "Manage company details" backgroundColor = "var(--light-blue)" buttonColor = "var(--dark-blue)" url = "/:tenantCode/companydetails"></HomePageCard>
+                        </CanAccess>
+                            <CanAccess roles={ [ROLES.ROLE_SUPER_ADMIN] }>
+                                <HomePageCard title = "Manage administrators" backgroundColor = "var(--dark-blue)" buttonColor = "var(--light-blue)"></HomePageCard>
+                            </CanAccess>
+            </AuthGuard>
+                    } />
                     <Route path="*" element={ <NotFound /> } />
                 </Routes>
             </UserContext.Provider>
         </>
-    );
+
+    )
 }

@@ -2,7 +2,9 @@ header.main-header {
     display: flex;
     justify-content: space-around;
     align-items: center;
-    margin: 10px 0;
+    margin: 0 0 3% -2%;
+    background-color: #d3e2f8;
+    width: 101vw;
 }
 
 .header-logo {
@@ -10,11 +12,13 @@ header.main-header {
     align-items: center;
     gap: 10px;
     cursor: pointer;
+    margin-right: auto;
+    margin-left: 2%;
 }
 
 .header-logo-png {
-    width: 50px;
-    height: 50px;
+    width: 200px;
+    height: 60px;
 }
 
 
@@ -26,9 +30,27 @@ header.main-header {
     border: none;
     box-shadow: 3px 8px 10px 0 rgba(0,0,0,0.2);
     cursor: pointer;
+    display: flex;
+    height: 40px;
 }
 
 .header-logout-btn:hover {
     background-color: var(--light-blue);
     transition-duration: 300ms;
+}
+
+.header-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    margin-left: 20px;
+    margin-right: 2%;
+    margin-bottom: 0.5%;
+
+}
+
+.header-profile-png {
+    width: 46px;
+    height: 46px;
 }

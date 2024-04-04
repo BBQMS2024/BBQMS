@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import logoImage from '../../../assets/bbqms-logo.png';
+import logoImage from '../../../assets/logo-image.jpg';
+import profileImage from '../../../assets/profile-user.png'
 
 import './Header.css';
 import { UserContext } from '../../context/UserContext.jsx';
@@ -19,19 +20,21 @@ export default function Header() {
 
     return (
         <header className="main-header">
+            <h2 className="header-logo" onClick={() => navigate('/:tenantCode/home')}>BBQMS</h2>
 
-            <div className="header-logo" onClick={ () => navigate('/') }>
-                <h1>BBQMS</h1>
-                <img src={ logoImage } className="header-logo-png" alt="BBQMS logo" />
-            </div>
             <div className="header-logout">
-                { !!user && (
-                        <button className="header-logout-btn" onClick={ handleLogout }>
+                {!!user && (
+                    <button className="header-logout-btn" onClick={handleLogout}>
                         Logout
-                        </button>
-                ) }
-
+                    </button>
+                )}
             </div>
+
+            <div className="header-profile" onClick={() => navigate('/profile')}>
+                <img src={profileImage} className="header-profile-png" alt="Profile image"/>
+            </div>
+
+
         </header>
     );
 }

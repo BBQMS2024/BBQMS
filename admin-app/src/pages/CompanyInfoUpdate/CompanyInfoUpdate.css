@@ -134,7 +134,7 @@ button[type="submit"]:hover {
 
 .company-info-submit-btn {
     display: flex;
-    margin: 10px 0 0 auto;
+    margin: 10px auto;
     background-color: var(--blue);
     padding: 10px 40px;
     color: white;
@@ -143,5 +143,6 @@ button[type="submit"]:hover {
     font-size: 20px;
     font-weight: bold;
     cursor: pointer;
+    width: 12%;
 }
 

@@ -141,7 +141,7 @@ export default function LoginAuth() {
             if (success) {
                 localStorage.setItem('token', data.token);
                 setUser(data.userData);
-                navigate(`/${ data.userData.tenantCode }/companydetails`);
+                navigate(`/${ data.userData.tenantCode }/home`);
             } else {
                 throw new Error("Code could not be verified. It is incorrect or expired.");
             }

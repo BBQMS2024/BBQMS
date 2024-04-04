@@ -30,7 +30,7 @@ export default function LoginScreen() {
             return;
         }
         localStorage.setItem('userData', JSON.stringify(data));
-        navigate('/companydetails');
+        navigate('/home');
     }
 
     const handleSubmit = async (event) => {
@@ -67,10 +67,10 @@ export default function LoginScreen() {
                     setUser(data.userData);
                 }
                 setIsSubmitted(true);
-                
+
                 if(data.token){
                     localStorage.setItem('isTfa', false);
-                    navigate(`/${ data.userData.tenantCode }/companydetails`);
+                    navigate(`/${ data.userData.tenantCode }/home`);
                 }else{
                     localStorage.setItem('isTfa', true);
                     navigate('/loginauth');
@@ -93,11 +93,11 @@ export default function LoginScreen() {
         setPassword(event.target.value);
         setError('');
     };
-/*
-    if (isSubmitted) {
-        //navigate('/loginAuth');
-        navigate('/companydetails');
-    }*/
+    /*
+        if (isSubmitted) {
+            //navigate('/loginAuth');
+            navigate('/companydetails');
+        }*/
 
     return (
         <div id="login-form">
