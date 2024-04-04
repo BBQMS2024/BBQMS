@@ -17,10 +17,6 @@ header.main-header {
     height: 50px;
 }
 
-.header-logout{
-    display: flex;
-    align-items: center;
-}
 
 .header-logout-btn {
     background-color: var(--blue);
@@ -30,7 +26,6 @@ header.main-header {
     border: none;
     box-shadow: 3px 8px 10px 0 rgba(0,0,0,0.2);
     cursor: pointer;
-    margin-left: 10px; 
 }
 
 .header-logout-btn:hover {
