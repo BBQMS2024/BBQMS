@@ -14,6 +14,7 @@
     "bootstrap": "^5.3.3",
     "formik": "^2.4.5",
     "react": "^18.2.0",
+    "react-bootstrap": "^2.10.2",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.22.3",
     "validator": "^13.11.0",
