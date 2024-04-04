@@ -35,7 +35,8 @@ const ManageServices = () => {
     return (
         <>
             <div id="root">
-                <Table className="table-custom" striped bordered hover>
+                <h2>Manage Services</h2>
+                <Table id="table-custom" variant="light" striped bordered hover>
                     <thead>
                         <tr>
                             <th>Id</th>
@@ -50,19 +51,19 @@ const ManageServices = () => {
                                 <td>{service.name}</td>
                                 <td>
                                     <Button
-                                        className="button-custom"
+                                        id="button-edit"
+                                        className="button-custom button-custom-blue"
                                         variant="primary"
                                         onClick={() => setShowEdit(true)}
                                     >
-                                        <img src="../../assets/database-gear.svg" />
-                                        Update
+                                        Edit
                                     </Button>
                                     <Button
+                                        id="button-delete"
                                         className="button-custom"
                                         variant="danger"
                                         onClick={() => setShowDelete(true)}
                                     >
-                                        <img src="../../assets/database-x.svg" />
                                         Delete
                                     </Button>
                                 </td>
@@ -71,16 +72,17 @@ const ManageServices = () => {
                     </tbody>
                 </Table>
                 <Button
-                    className="button-custom-add button-custom"
+                    id="button-add"
+                    className="button-custom button-custom-blue"
                     variant="success"
                     onClick={() => {
                         setShowAdd(true);
                     }}
                 >
-                    <img src="../../assets/database-add.svg" /> New
+                    Add Service
                 </Button>
                 <Modal show={showAdd}>
-                    <Modal.Header>
+                    <Modal.Header className="modal-custom-header">
                         <Modal.Title>Add Service</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
@@ -106,12 +108,17 @@ const ManageServices = () => {
                         >
                             Close
                         </Button>
-                        <Button variant="primary">Add Service</Button>
+                        <Button
+                            className="button-custom-blue"
+                            variant="primary"
+                        >
+                            Add Service
+                        </Button>
                     </Modal.Footer>
                 </Modal>
 
                 <Modal show={showEdit}>
-                    <Modal.Header>
+                    <Modal.Header className="modal-custom-header">
                         <Modal.Title>Edit Service</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
@@ -137,12 +144,17 @@ const ManageServices = () => {
                         >
                             Close
                         </Button>
-                        <Button variant="primary">Edit Service</Button>
+                        <Button
+                            className="button-custom-blue"
+                            variant="primary"
+                        >
+                            Edit Service
+                        </Button>
                     </Modal.Footer>
                 </Modal>
 
                 <Modal show={showDelete}>
-                    <Modal.Header>
+                    <Modal.Header className="modal-custom-header">
                         <Modal.Title>Delete Service</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>

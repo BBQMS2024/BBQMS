@@ -1,31 +1,39 @@
-#root{
+#root {
+    width: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: center;
-    box-sizing: border-box;
+    align-items: center;
 }
 
-.table-custom{
-    width: 500px;
+#table-custom {
+    width: 100%;
+    max-width: 1000px;
     text-align: center;
 }
 
-td{
-    vertical-align: middle;
-}
-
-.button-custom{
+.button-custom {
     margin: 0 5px;
 }
 
-.button-custom img{
-    width: 30px;
-    margin: 0;
-    vertical-align: center;
-    display: inline;
+.button-custom-blue {
+    background-color: var(--light-blue);
 }
 
-.button-custom-add{
+.button-custom-blue:hover {
+    background-color: #476072;
+}
+
+.button-custom-blue:active {
+    background-color: var(--blue) !important;
+}
+
+#button-add {
     width: 100%;
+    max-width: 175px;
+}
+
+.modal-custom-header {
+    background-color: var(--blue);
+    color: white;
 }
