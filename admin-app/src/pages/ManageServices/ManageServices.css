@@ -1,0 +1,39 @@
+#root-services {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#table-custom-services {
+    width: 100%;
+    max-width: 1000px;
+    text-align: center;
+}
+
+.button-custom-services {
+    margin: 0 5px;
+}
+
+.button-custom-blue-services {
+    background-color: var(--light-blue);
+}
+
+.button-custom-blue-services:hover {
+    background-color: #476072;
+}
+
+.button-custom-blue-services:active {
+    background-color: var(--blue) !important;
+}
+
+#button-add-services {
+    width: 100%;
+    max-width: 175px;
+}
+
+.modal-custom-header-services {
+    background-color: var(--blue);
+    color: white;
+}
