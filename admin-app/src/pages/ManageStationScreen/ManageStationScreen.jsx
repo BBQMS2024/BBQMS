@@ -3,6 +3,9 @@ import { Button, Table, Modal, Form, Dropdown, DropdownButton } from 'react-boot
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { fetchData } from '../../fetching/Fetch.js';
 import { useLocation } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { SERVER_URL } from '../../constants.js';
+
 
 const ManageStationScreen = () => {
     const location = useLocation();
@@ -15,12 +18,14 @@ const ManageStationScreen = () => {
     const [availableServices, setAvailableServices] = useState([]);
     const [availableDisplays, setAvailableDisplays] = useState([]);
     const [errorMessage, setErrorMessage] = useState('');
+    const { tenantCode } = useParams();
+
+    const url = `${SERVER_URL}/api/v1/`;
 
     useEffect(() => {
         async function fetchStations() {
             try {
-                const tenantCode = location.pathname.split('/')[1];
-                const response = await fetchData(`http://localhost:8080/api/v1/stations/${tenantCode}`, 'GET');
+                const response = await fetchData(`${url}stations/${tenantCode}`, 'GET');
                 if (response.success) {
                     setStations(response.data);
                 } else {
@@ -33,8 +38,7 @@ const ManageStationScreen = () => {
 
         async function fetchAvailableServices() {
             try {
-                const tenantCode = location.pathname.split('/')[1];
-                const response = await fetchData(`http://localhost:8080/api/v1/tenants/${tenantCode}/services`, 'GET');
+                const response = await fetchData(`${url}tenants/${tenantCode}/services`, 'GET');
                 if (response.success) {
                     setAvailableServices(response.data);
                 } else {
@@ -47,8 +51,7 @@ const ManageStationScreen = () => {
 
         async function fetchAvailableDisplays() {
             try {
-                const tenantCode = location.pathname.split('/')[1];
-                const response = await fetchData(`http://localhost:8080/api/v1/displays/unassigned/${tenantCode}`, 'GET');
+                const response = await fetchData(`${url}displays/unassigned/${tenantCode}`, 'GET');
                 if (response.success) {
                     setAvailableDisplays(response.data);
                 } else {
@@ -73,8 +76,7 @@ const ManageStationScreen = () => {
 
     const saveServiceToStation = async (service) => {
         try {
-            const tenantCode = location.pathname.split('/')[1];
-            const response = await fetchData(`http://localhost:8080/api/v1/stations/${tenantCode}/${selectedStation.id}/services/${service.id}`, 'PUT');
+            const response = await fetchData(`${url}stations/${tenantCode}/${selectedStation.id}/services/${service.id}`, 'PUT');
             if (response.success) {
                 console.log('Service added to station successfully');
 
@@ -98,8 +100,7 @@ const ManageStationScreen = () => {
 
     const addDisplayToStation = async (display) => {
         try {
-            const tenantCode = location.pathname.split('/')[1];
-            const response = await fetchData(`http://localhost:8080/api/v1/stations/${tenantCode}/${selectedStation.id}/displays/${display.id}`, 'PUT');
+            const response = await fetchData(`${url}stations/${tenantCode}/${selectedStation.id}/displays/${display.id}`, 'PUT');
             if (response.success) {
                 console.log('Display added to station successfully');
 
@@ -116,7 +117,7 @@ const ManageStationScreen = () => {
                     return station;
                 });
                 setStations(updatedStations);
-                setAvailableDisplays(prevDisplays => prevDisplays.filter(d => d.id !== display.id)); // Remove the added display from availableDisplays
+                setAvailableDisplays(prevDisplays => prevDisplays.filter(d => d.id !== display.id));
                 setSelectedStation(updatedStations.find(station => station.id === selectedStation.id));
                 setShowDisplayModal(true);
             } else {
@@ -129,8 +130,7 @@ const ManageStationScreen = () => {
 
     const removeServiceFromStation = async (serviceId) => {
         try {
-            const tenantCode = location.pathname.split('/')[1];
-            const response = await fetchData(`http://localhost:8080/api/v1/stations/${tenantCode}/${selectedStation.id}/services/${serviceId}`, 'DELETE');
+            const response = await fetchData(`${url}stations/${tenantCode}/${selectedStation.id}/services/${serviceId}`, 'DELETE');
             if (response.success) {
                 const updatedStations = stations.map(station => {
                     if (station.id === selectedStation.id) {
@@ -158,8 +158,7 @@ const ManageStationScreen = () => {
 
     const removeDisplayFromStation = async () => {
         try {
-            const tenantCode = location.pathname.split('/')[1];
-            const response = await fetchData(`http://localhost:8080/api/v1/stations/${tenantCode}/${selectedStation.id}/displays/${selectedStation.display.id}`, 'DELETE');
+            const response = await fetchData(`${url}stations/${tenantCode}/${selectedStation.id}/displays/${selectedStation.display.id}`, 'DELETE');
             if (response.success) {
                 console.log('Display removed from station successfully');
 
@@ -282,10 +281,7 @@ const ManageStationScreen = () => {
                             )}
                         </div>
                         <Form.Group controlId="formGroupService" className="mb-3">
-                            <DropdownButton
-                                title={'Select Service'}
-                                variant="btn btn-outline-secondary"
-                            >
+                            <DropdownButton title={'Select Service'} variant="btn btn-outline-secondary">
                                 {availableServices.map((service, index) => {
                                     const isAssigned = selectedServices.some(selectedService => selectedService.id === service.id);
                                     if (!isAssigned) {
@@ -323,7 +319,6 @@ const ManageStationScreen = () => {
                             ) : (
                                 <span> No display selected</span>
                             )}
-
                         </div>
                         <Form>
                             <Form.Group controlId="formGroupDisplay" className="mb-3">
