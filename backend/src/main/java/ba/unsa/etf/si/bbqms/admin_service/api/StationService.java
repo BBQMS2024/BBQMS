@@ -8,14 +8,9 @@ import java.util.Set;
 
 public interface StationService {
     List<TellerStation> getAllByTenant(final String tenantCode);
-
     TellerStation addTellerStationService(final long stationId, final long serviceId);
-
     TellerStation deleteTellerStationService(final long stationId, final long serviceId);
-
     TellerStation addTellerStationDisplay(final long stationId, final long displayId);
-
     TellerStation deleteTellerStationDisplay(final long stationId, final long displayId);
-
     Set<Service> getServicesByAssigned(final long stationId, final boolean assigned);
 }
