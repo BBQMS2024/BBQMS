@@ -26,9 +26,9 @@ export default function Header() {
             </div>
             <div className="header-logout">
                 { !!user && (
-                    <button className="header-logout-btn" onClick={ handleLogout }>
+                        <button className="header-logout-btn" onClick={ handleLogout }>
                         Logout
-                    </button>
+                        </button>
                 ) }
 
             </div>

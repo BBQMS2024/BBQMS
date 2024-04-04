@@ -17,6 +17,7 @@ header.main-header {
     height: 50px;
 }
 
+
 .header-logout-btn {
     background-color: var(--blue);
     color: white;

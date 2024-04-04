@@ -6,7 +6,9 @@ import { UserContext } from './context/UserContext.jsx';
 import { fetchData } from './fetching/Fetch.js';
 import AuthGuard from './components/AuthGuard/AuthGuard';
 import LoginScreen from './pages/LoginScreen/LoginScreen';
+import LoginAuth from './components/LoginAuth/LoginAuth.jsx';
 import CompanyInfoUpdate from './pages/CompanyInfoUpdate/CompanyInfoUpdate';
+import AdminProfile from './pages/AdminProfile/AdminProfile.jsx';
 import NotFound from './pages/NotFound/NotFound.jsx';
 
 export default function App() {
@@ -45,7 +47,21 @@ export default function App() {
                            }
                     />
                     <Route exact path="/login" element={ <LoginScreen /> } />
+                    <Route exact path="/loginauth" 
+                                element={
+                                    <AuthGuard roles={ ['ROLE_SUPER_ADMIN'] }>
+                                        <LoginAuth />
+                                    </AuthGuard>
+                                } 
+                    />
                     <Route exact path="/" element={ <LoginScreen /> } />
+                    <Route exact path="/adminprofile" 
+                            element={
+                                <AuthGuard roles={ ['ROLE_SUPER_ADMIN'] }>
+                                    <AdminProfile />
+                                </AuthGuard>
+                            }
+                    />
                     <Route path="*" element={ <NotFound /> } />
                 </Routes>
             </UserContext.Provider>
