@@ -51,8 +51,8 @@ export default function App() {
                     />
                     <Route exact path="/login" element={ <LoginScreen /> } />
                     <Route exact path="/" element={ <LoginScreen /> } />
-                    <Route exact path = "/home" element = {
-                        <>
+                    <Route exact path = "/:tenantCode/home" element = {
+                        <AuthGuard roles={ ['ROLE_SUPER_ADMIN', 'ROLE_BRANCH_ADMIN'] }>
                         <HomePage></HomePage>
                         <CanAccess roles={ ['ROLE_SUPER_ADMIN', 'ROLE_BRANCH_ADMIN'] }>
                             <HomePageCard title = "Manage groups" backgroundColor = "#476072" buttonColor = "#548CA8"></HomePageCard>
@@ -60,12 +60,12 @@ export default function App() {
                             <HomePageCard title = "Manage branches" backgroundColor = "#476072" buttonColor = "#548CA8"></HomePageCard>
                             <HomePageCard title = "Manage services offered by a company" backgroundColor = "#548CA8" buttonColor = "#476072"></HomePageCard>
                             <HomePageCard title = "Manage teller stations" backgroundColor = "#476072" buttonColor = "#548CA8"></HomePageCard>
-                            <HomePageCard title = "Manage company details" backgroundColor = "#476072" buttonColor = "#548CA8"></HomePageCard>
+                            <HomePageCard title = "Manage company details" backgroundColor = "#476072" buttonColor = "#548CA8" url = "/:tenantCode/companydetails"></HomePageCard>
                         </CanAccess>
                             <CanAccess roles={ ['ROLE_SUPER_ADMIN'] }>
                                 <HomePageCard title = "Manage administrators" backgroundColor = "#548CA8" buttonColor = "#476072"></HomePageCard>
                             </CanAccess>
-            </>
+            </AuthGuard>
                     } />
                     <Route path="*" element={ <NotFound /> } />
                 </Routes>

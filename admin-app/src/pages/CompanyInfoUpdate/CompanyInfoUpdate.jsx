@@ -4,11 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { SERVER_URL } from '../../constants.js';
 import { UserContext } from '../../context/UserContext.jsx';
 import { fetchData } from '../../fetching/Fetch.js';
-/*
-Pogledati css za ovaj fajl
-Uklonjeno je 90% cssa a ostao isti izgled
-NE KORISTITE POSITION:ABSOLUTE !
- */
+
 export default function CompanyInfoUpdate() {
     const navigate = useNavigate();
     const { tenantCode } = useParams();
@@ -151,7 +147,7 @@ export default function CompanyInfoUpdate() {
                     </form>
                 </div>
             </div>
-            <button type="submit" onClick={ submitForm } className="company-info-submit-btn">SUBMIT</button>
+            <button type="submit" onClick={ submitForm } className="company-info-submit-btn">Submit</button>
         </div>
     );
 }

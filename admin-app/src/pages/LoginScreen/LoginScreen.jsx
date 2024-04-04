@@ -30,7 +30,7 @@ export default function LoginScreen() {
             return;
         }
         localStorage.setItem('userData', JSON.stringify(data));
-        navigate('/companydetails');
+        navigate('/home');
     }
 
     const handleSubmit = async (event) => {
@@ -65,7 +65,7 @@ export default function LoginScreen() {
 
                 setUser(data.userData);
 
-                navigate(`/${ data.userData.tenantCode }/companydetails`);
+                navigate(`/${ data.userData.tenantCode }/home`);
             } else {
                 setError('Your credentials are incorrect.');
             }
@@ -87,7 +87,7 @@ export default function LoginScreen() {
 
     if (isSubmitted) {
         //navigate('/loginAuth');
-        navigate('/companydetails');
+        navigate('/home');
     }
 
     return (

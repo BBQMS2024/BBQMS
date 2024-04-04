@@ -20,7 +20,7 @@ export default function Header() {
 
     return (
         <header className="main-header">
-            <h2 className="header-logo" onClick={() => navigate('/')}>BBQMS</h2>
+            <h2 className="header-logo" onClick={() => navigate('/:tenantCode/home')}>BBQMS</h2>
 
             <div className="header-logout">
                 {!!user && (
