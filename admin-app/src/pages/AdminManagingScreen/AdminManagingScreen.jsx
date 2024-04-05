@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Table, Modal, Form } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { SERVER_URL } from '../../constants.js';
+import { UserContext } from '../../context/UserContext.jsx';
+import { useNavigate, useParams } from "react-router-dom";
 
 const styles = {
     primaryButton: {
@@ -19,6 +22,8 @@ const styles = {
 };
 
 const AdminManageScreen = () => {
+    const { tenantCode } = useParams();
+
     const [showModal, setShowModal] = useState(false);
     const [admins, setAdmins] = useState([]);
     const [adminEmail, setAdminEmail] = useState('');
@@ -43,7 +48,7 @@ const AdminManageScreen = () => {
 
     const fetchAdmins = async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/v1/admin/DFLT', {
+            const response = await fetch(`${ SERVER_URL }/api/v1/admin/${tenantCode}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -74,7 +79,7 @@ const AdminManageScreen = () => {
         };
 
         try {
-            const response = await fetch(`http://localhost:8080/api/v1/admin/DFLT/user`, {
+            const response = await fetch(`${ SERVER_URL }/api/v1/admin/${tenantCode}/user`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -109,7 +114,7 @@ const AdminManageScreen = () => {
             const updatedAdmin = {
                 email: adminEmail
             };
-            const response = await fetch(`http://localhost:8080/api/v1/admin/DFLT/user/${admins[selectedAdminIndex].id}`, {
+            const response = await fetch(`${ SERVER_URL }/api/v1/admin/${tenantCode}/user/${admins[selectedAdminIndex].id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -134,7 +139,7 @@ const AdminManageScreen = () => {
 
     const handleDeleteAdmin = async (userId) => {
         try {
-            const response = await fetch(`http://localhost:8080/api/v1/admin/DFLT/user/${userId}`, {
+            const response = await fetch(`${ SERVER_URL }/api/v1/admin/${tenantCode}/user/${userId}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',

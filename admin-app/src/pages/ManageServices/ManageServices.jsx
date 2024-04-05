@@ -8,6 +8,7 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import "./ManageServices.css";
+import { SERVER_URL } from '../../constants.js';
 import { fetchData } from "../../fetching/Fetch";
 
 const ManageServices = () => {
@@ -36,7 +37,7 @@ const ManageServices = () => {
 
     const getServices = () => {
         fetchData(
-            `http://localhost:8080/api/v1/tenants/${tenantCode}/services`,
+            `${SERVER_URL}/api/v1/tenants/${tenantCode}/services`,
             "GET"
         ).then((res) => {
             if (res.success) {
@@ -47,7 +48,7 @@ const ManageServices = () => {
 
     const addService = (serviceName) => {
         fetchData(
-            `http://localhost:8080/api/v1/tenants/${tenantCode}/services`,
+            `${SERVER_URL}/api/v1/tenants/${tenantCode}/services`,
             "POST",
             { name: serviceName }
         ).then((res) => {
@@ -59,7 +60,7 @@ const ManageServices = () => {
 
     const editService = (serviceName) => {
         fetchData(
-            `http://localhost:8080/api/v1/tenants/${tenantCode}/services/${selectedServiceId}`,
+            `${SERVER_URL}/api/v1/tenants/${tenantCode}/services/${selectedServiceId}`,
             "PUT",
             { name: serviceName }
         ).then((res) => {
@@ -71,7 +72,7 @@ const ManageServices = () => {
 
     const deleteService = () => {
         fetchData(
-            `http://localhost:8080/api/v1/tenants/${tenantCode}/services/${selectedServiceId}`,
+            `${SERVER_URL}/api/v1/tenants/${tenantCode}/services/${selectedServiceId}`,
             "DELETE"
         ).then((res) => {
             if (res.success) {

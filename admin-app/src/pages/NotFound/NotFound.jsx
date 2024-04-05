@@ -1,7 +1,9 @@
 import { useNavigate } from 'react-router-dom';
-
+import { UserContext } from '../../context/UserContext.jsx';
+import {useContext} from "react";
 export default function NotFound() {
     const navigate = useNavigate();
+    const { user, setUser } = useContext(UserContext);
 
     return (
         <div style={ {
@@ -22,7 +24,7 @@ export default function NotFound() {
                 padding: '5px 30px',
                 cursor: 'pointer'
             } }
-                    onClick={ () => navigate(('/')) }>
+                    onClick={ () => navigate((`${user.tenantCode}/home`)) }>
                 Go back home?
             </button>
         </div>
