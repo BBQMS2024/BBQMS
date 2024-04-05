@@ -6,6 +6,7 @@ import ba.unsa.etf.si.bbqms.domain.Service;
 import ba.unsa.etf.si.bbqms.domain.TellerStation;
 import ba.unsa.etf.si.bbqms.ws.models.ErrorResponseDto;
 import ba.unsa.etf.si.bbqms.ws.models.ServiceResponseDto;
+import ba.unsa.etf.si.bbqms.ws.models.TellerStationDto;
 import ba.unsa.etf.si.bbqms.ws.models.TellerStationResponseDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -130,6 +131,25 @@ public class TellerStationController {
             final TellerStation updatedTellerStation = this.stationService.deleteTellerStationDisplay(Long.parseLong(stationId), Long.parseLong(displayId));
             return ResponseEntity.ok().body(TellerStationResponseDto.fromEntity(updatedTellerStation));
         } catch(final Exception exception) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping("/{tenantCode}/{branchId}")
+    @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN', 'ROLE_BRANCH_ADMIN')")
+    public ResponseEntity getBranchStations(@PathVariable final String tenantCode,
+                                            @PathVariable final String branchId) {
+        if (!this.authService.canChangeTenant(tenantCode)) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        try{
+            return ResponseEntity.ok().body(
+                    this.stationService.getAllByBranch(Long.parseLong(branchId)).stream()
+                            .map(TellerStationDto::fromEntity)
+                            .collect(Collectors.toList())
+            );
+        } catch (final Exception exception) {
             return ResponseEntity.badRequest().build();
         }
     }

@@ -13,4 +13,5 @@ public interface StationService {
     TellerStation addTellerStationDisplay(final long stationId, final long displayId);
     TellerStation deleteTellerStationDisplay(final long stationId, final long displayId);
     Set<Service> getServicesByAssigned(final long stationId, final boolean assigned);
+    Set<TellerStation> getAllByBranch(final long branchId);
 }

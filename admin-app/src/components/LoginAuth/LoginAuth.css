@@ -32,7 +32,7 @@
     line-height: 1;
 }
 
-button {
+.button-auth {
     width: 100%;
     margin-top: 20px;
     padding: 24px;
@@ -47,7 +47,7 @@ button {
     transition: background-color 0.3s ease;
 }
 
-button:hover {
+.button-auth:hover {
     background-color: #334257;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }

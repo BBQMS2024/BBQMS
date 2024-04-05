@@ -34,7 +34,7 @@ header.main-header {
     height: 40px;
     width: 130px;
     font-size: 20px;
-    margin-bottom: 18px;
+    margin-bottom: 2px;
 }
 
 .header-logout-btn:hover {

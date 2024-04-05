@@ -6,7 +6,6 @@ import { useLocation } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import { SERVER_URL } from '../../constants.js';
 
-
 const ManageStationScreen = () => {
     const location = useLocation();
     const [showServiceModal, setShowServiceModal] = useState(false);
@@ -20,12 +19,12 @@ const ManageStationScreen = () => {
     const [errorMessage, setErrorMessage] = useState('');
     const { tenantCode } = useParams();
 
-    const url = `${SERVER_URL}/api/v1/`;
+    const url = `${ SERVER_URL }/api/v1/`;
 
     useEffect(() => {
         async function fetchStations() {
             try {
-                const response = await fetchData(`${url}stations/${tenantCode}`, 'GET');
+                const response = await fetchData(`${ url }stations/${ tenantCode }`, 'GET');
                 if (response.success) {
                     setStations(response.data);
                 } else {
@@ -36,22 +35,9 @@ const ManageStationScreen = () => {
             }
         }
 
-        async function fetchAvailableServices() {
-            try {
-                const response = await fetchData(`${url}tenants/${tenantCode}/services`, 'GET');
-                if (response.success) {
-                    setAvailableServices(response.data);
-                } else {
-                    console.error('Error fetching available services:', response.error);
-                }
-            } catch (error) {
-                console.error('Error fetching available services:', error);
-            }
-        }
-
         async function fetchAvailableDisplays() {
             try {
-                const response = await fetchData(`${url}displays/unassigned/${tenantCode}`, 'GET');
+                const response = await fetchData(`${ url }displays/unassigned/${ tenantCode }`, 'GET');
                 if (response.success) {
                     setAvailableDisplays(response.data);
                 } else {
@@ -63,12 +49,27 @@ const ManageStationScreen = () => {
         }
 
         fetchStations();
-        fetchAvailableServices();
         fetchAvailableDisplays();
     }, [location]);
 
+    async function fetchAvailableServices(station) {
+        try {
+            const response = await fetchData(`${ url }stations/${ tenantCode }/${station.id}/services?assigned=false`, 'GET');
+            if (response.success) {
+                setAvailableServices(response.data);
+            } else {
+                console.error('Error fetching available services:', response.error);
+            }
+        } catch (error) {
+            console.error('Error fetching available services:', error);
+        }
+    }
+
     useEffect(() => {
         setSelectedServices(selectedStation ? selectedStation.services : []);
+        if (selectedStation) {
+            fetchAvailableServices(selectedStation);
+        }
     }, [selectedStation]);
 
     const confirmDeleteStation = () => {
@@ -76,10 +77,8 @@ const ManageStationScreen = () => {
 
     const saveServiceToStation = async (service) => {
         try {
-            const response = await fetchData(`${url}stations/${tenantCode}/${selectedStation.id}/services/${service.id}`, 'PUT');
+            const response = await fetchData(`${ url }stations/${ tenantCode }/${ selectedStation.id }/services/${ service.id }`, 'PUT');
             if (response.success) {
-                console.log('Service added to station successfully');
-
                 const updatedStations = stations.map(station => {
                     if (station.id === selectedStation.id) {
                         return {
@@ -100,10 +99,8 @@ const ManageStationScreen = () => {
 
     const addDisplayToStation = async (display) => {
         try {
-            const response = await fetchData(`${url}stations/${tenantCode}/${selectedStation.id}/displays/${display.id}`, 'PUT');
+            const response = await fetchData(`${ url }stations/${ tenantCode }/${ selectedStation.id }/displays/${ display.id }`, 'PUT');
             if (response.success) {
-                console.log('Display added to station successfully');
-
                 const updatedStations = stations.map(station => {
                     if (station.id === selectedStation.id) {
                         if (station.display) {
@@ -130,7 +127,7 @@ const ManageStationScreen = () => {
 
     const removeServiceFromStation = async (serviceId) => {
         try {
-            const response = await fetchData(`${url}stations/${tenantCode}/${selectedStation.id}/services/${serviceId}`, 'DELETE');
+            const response = await fetchData(`${ url }stations/${ tenantCode }/${ selectedStation.id }/services/${ serviceId }`, 'DELETE');
             if (response.success) {
                 const updatedStations = stations.map(station => {
                     if (station.id === selectedStation.id) {
@@ -158,10 +155,8 @@ const ManageStationScreen = () => {
 
     const removeDisplayFromStation = async () => {
         try {
-            const response = await fetchData(`${url}stations/${tenantCode}/${selectedStation.id}/displays/${selectedStation.display.id}`, 'DELETE');
+            const response = await fetchData(`${ url }stations/${ tenantCode }/${ selectedStation.id }/displays/${ selectedStation.display.id }`, 'DELETE');
             if (response.success) {
-                console.log('Display removed from station successfully');
-
                 const updatedStations = stations.map(station => {
                     if (station.id === selectedStation.id) {
                         return {
@@ -208,77 +203,83 @@ const ManageStationScreen = () => {
                 </tr>
                 </thead>
                 <tbody>
-                {stations.map((station, index) => (
-                    <tr key={index}>
-                        <td>{station.id}</td>
-                        <td>{station.name}</td>
+                { stations.map((station, index) => (
+                    <tr key={ index }>
+                        <td>{ station.id }</td>
+                        <td>{ station.name }</td>
                         <td>
-                            {station.services && station.services.length > 0 ? (
+                            { station.services && station.services.length > 0 ? (
                                 station.services.map((service, serviceIndex) => (
-                                    <span key={serviceIndex} style={{ marginRight: '5px' }}>
-                                            {serviceIndex > 0 && ', '}
-                                        {service.name}
+                                    <span key={ serviceIndex } style={ { marginRight: '5px' } }>
+                                            { serviceIndex > 0 && ', ' }
+                                        { service.name }
                                         </span>
                                 ))
                             ) : (
                                 <span>No services</span>
-                            )}
+                            ) }
                         </td>
                         <td>
                             <Button
                                 variant="primary"
-                                style={{ backgroundColor: '#548CA8', color: 'white', borderColor: '#548CA8' }}
-                                onClick={() => {
+                                style={ { backgroundColor: '#548CA8', color: 'white', borderColor: '#548CA8' } }
+                                onClick={ () => {
                                     setShowServiceModal(true);
                                     setSelectedStation(station);
-                                }}
+                                } }
                             >
                                 Edit
                             </Button>
                         </td>
                         <td>
-                            {station.display ? (
-                                <span>{station.display.name}</span>
+                            { station.display ? (
+                                <span>{ station.display.name }</span>
                             ) : (
                                 <span>No display</span>
-                            )}
+                            ) }
                         </td>
                         <td>
                             <Button
                                 variant="primary"
-                                style={{ backgroundColor: '#548CA8', color: 'white', borderColor: '#548CA8' }}
-                                onClick={() => {
+                                style={ { backgroundColor: '#548CA8', color: 'white', borderColor: '#548CA8' } }
+                                onClick={ () => {
                                     setShowDisplayModal(true);
                                     setSelectedStation(station);
-                                }}
+                                } }
                             >
                                 Edit
                             </Button>
                         </td>
                     </tr>
-                ))}
+                )) }
                 </tbody>
             </Table>
 
-            <Modal show={showServiceModal} onHide={handleCloseModal}>
-                <Modal.Header closeButton style={{ backgroundColor: '#334257', color: 'white' }}>
+            <Modal show={ showServiceModal } onHide={ handleCloseModal }>
+                <Modal.Header closeButton style={ { backgroundColor: '#334257', color: 'white' } }>
                     <Modal.Title>Manage Services for Station</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <p><strong>Teller Station:</strong> {selectedStation && selectedStation.name}</p>
+                    <p><strong>Teller Station:</strong> { selectedStation && selectedStation.name }</p>
                     <div>
-                        <div style={{ marginBottom: '10px' }}>
+                        <div style={ { marginBottom: '10px' } }>
                             <strong>Selected Services:</strong>
-                            {selectedServices.length > 0 ? (
+                            { selectedServices.length > 0 ? (
                                 selectedServices.map((service, index) => (
-                                    <span key={index} className="badge bg-secondary m-1" style={{ display: 'inline-flex', alignItems: 'center' }}>
-                        {service.name}
-                                        <Button variant="danger" size="sm" style={{ marginLeft: '5px', padding: '2px 5px', backgroundColor: '#dc3545', borderColor: '#dc3545' }} onClick={() => removeSelectedService(service.id)}>X</Button>
+                                    <span key={ index } className="badge bg-secondary m-1"
+                                          style={ { display: 'inline-flex', alignItems: 'center' } }>
+                        { service.name }
+                                        <Button variant="danger" size="sm" style={ {
+                                            marginLeft: '5px',
+                                            padding: '2px 5px',
+                                            backgroundColor: '#dc3545',
+                                            borderColor: '#dc3545'
+                                        } } onClick={ () => removeSelectedService(service.id) }>X</Button>
                                 </span>
                                 ))
                             ) : (
                                 <span> No service selected</span>
-                            )}
+                            ) }
                         </div>
                         <Form.Group controlId="formGroupService" className="mb-3">
                             <DropdownButton title={'Select Service'} variant="btn btn-outline-secondary">
@@ -295,63 +296,72 @@ const ManageStationScreen = () => {
                             </DropdownButton>
                         </Form.Group>
 
-                        {errorMessage && <p className="text-danger">{errorMessage}</p>}
+                        { errorMessage && <p className="text-danger">{ errorMessage }</p> }
                     </div>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={handleCloseModal}>Close</Button>
+                    <Button variant="secondary" onClick={ handleCloseModal }>Close</Button>
                 </Modal.Footer>
             </Modal>
 
-            <Modal show={showDisplayModal} onHide={handleCloseModal}>
-                <Modal.Header closeButton style={{ backgroundColor: '#334257', color: 'white' }}>
+            <Modal show={ showDisplayModal } onHide={ handleCloseModal }>
+                <Modal.Header closeButton style={ { backgroundColor: '#334257', color: 'white' } }>
                     <Modal.Title>Manage Display for Station</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <p><strong>Teller Station:</strong> {selectedStation && selectedStation.name}</p>
+                    <p><strong>Teller Station:</strong> { selectedStation && selectedStation.name }</p>
                     <div>
-                        <div style={{ marginBottom: '10px' }}>
+                        <div style={ { marginBottom: '10px' } }>
                             <strong>Selected Display:</strong>
-                            {selectedStation && selectedStation.display ? (
-                                <span className="badge bg-secondary m-1" style={{ display: 'inline-flex', alignItems: 'center' }}> {selectedStation.display.name}
-                                    <Button variant="danger" size="sm" style={{ marginLeft: '5px', padding: '2px 5px', backgroundColor: '#dc3545', borderColor: '#dc3545' }} onClick={removeDisplayFromStation}>X</Button>
+                            { selectedStation && selectedStation.display ? (
+                                <span className="badge bg-secondary m-1" style={ {
+                                    display: 'inline-flex',
+                                    alignItems: 'center'
+                                } }> { selectedStation.display.name }
+                                    <Button variant="danger" size="sm" style={ {
+                                        marginLeft: '5px',
+                                        padding: '2px 5px',
+                                        backgroundColor: '#dc3545',
+                                        borderColor: '#dc3545'
+                                    } } onClick={ removeDisplayFromStation }>X</Button>
                                 </span>
                             ) : (
                                 <span> No display selected</span>
-                            )}
+                            ) }
                         </div>
                         <Form>
                             <Form.Group controlId="formGroupDisplay" className="mb-3">
                                 <DropdownButton
-                                    title={'Select Display'}
+                                    title={ 'Select Display' }
                                     variant="btn btn-outline-secondary"
                                 >
-                                    {availableDisplays.map((display, index) => (
-                                        <Dropdown.Item key={index} onClick={() => addDisplayToStation(display)}>{display.name}</Dropdown.Item>
-                                    ))}
+                                    { availableDisplays.map((display, index) => (
+                                        <Dropdown.Item key={ index }
+                                                       onClick={ () => addDisplayToStation(display) }>{ display.name }</Dropdown.Item>
+                                    )) }
                                 </DropdownButton>
 
 
                             </Form.Group>
                         </Form>
-                        {errorMessage && <p className="text-danger">{errorMessage}</p>}
+                        { errorMessage && <p className="text-danger">{ errorMessage }</p> }
                     </div>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={handleCloseModal}>Close</Button>
+                    <Button variant="secondary" onClick={ handleCloseModal }>Close</Button>
                 </Modal.Footer>
             </Modal>
 
-            <Modal show={deleteConfirmation} onHide={() => setDeleteConfirmation(false)}>
-                <Modal.Header closeButton style={{ backgroundColor: '#334257', color: 'white' }}>
+            <Modal show={ deleteConfirmation } onHide={ () => setDeleteConfirmation(false) }>
+                <Modal.Header closeButton style={ { backgroundColor: '#334257', color: 'white' } }>
                     <Modal.Title>Confirmation</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     Are you sure you want to delete this station?
                 </Modal.Body>
-                <Modal.Footer style={{ backgroundColor: '#334257', color: 'white' }}>
-                    <Button variant="secondary" onClick={() => setDeleteConfirmation(false)}>Cancel</Button>
-                    <Button variant="danger" onClick={confirmDeleteStation}>Delete</Button>
+                <Modal.Footer style={ { backgroundColor: '#334257', color: 'white' } }>
+                    <Button variant="secondary" onClick={ () => setDeleteConfirmation(false) }>Cancel</Button>
+                    <Button variant="danger" onClick={ confirmDeleteStation }>Delete</Button>
                 </Modal.Footer>
             </Modal>
         </div>

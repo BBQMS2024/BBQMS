@@ -112,4 +112,9 @@ public class DefaultStationService implements StationService {
             return allServicesForGroup;
         }
     }
+
+    @Override
+    public Set<TellerStation> getAllByBranch(final long branchId) {
+        return this.tellerStationRepository.findAllByBranch_Id(branchId);
+    }
 }

@@ -7,12 +7,12 @@ import { fetchData } from './fetching/Fetch.js';
 import AuthGuard from './components/AuthGuard/AuthGuard';
 import LoginScreen from './pages/LoginScreen/LoginScreen';
 import CompanyInfoUpdate from './pages/CompanyInfoUpdate/CompanyInfoUpdate';
-import HomePage from './pages/HomePage/HomePage'
+import HomePage from './pages/HomePage/HomePage';
 import NotFound from './pages/NotFound/NotFound.jsx';
 import CanAccess from './components/CanAccess/CanAccess';
 import HomePageCard from './components/HomePageCard/HomePageCard';
-import AdminProfile from './pages/AdminProfile/AdminProfile'
-import LoginAuth from './components/LoginAuth/LoginAuth'
+import AdminProfile from './pages/AdminProfile/AdminProfile';
+import LoginAuth from './components/LoginAuth/LoginAuth';
 import ManageAdmins from './pages/AdminManagingScreen/AdminManagingScreen';
 import ManageServices from './pages/ManageServices/ManageServices';
 import ManageBranches from './pages/ManageBranchesScreen/ManageBranchesScreen';
@@ -64,7 +64,7 @@ export default function App() {
                     <Route exact path="/:tenantCode/manage/branches" element={
                         <AuthGuard roles={ [ROLES.ROLE_SUPER_ADMIN, ROLES.ROLE_BRANCH_ADMIN] }>
                             <ManageBranches />
-                        </AuthGuard>} />
+                        </AuthGuard> } />
 
                     <Route exact path="/:tenantCode/companydetails"
                            element={
@@ -76,17 +76,18 @@ export default function App() {
                     <Route exact path="/:tenantCode/manage/services" element={
                         <AuthGuard roles={ [ROLES.ROLE_SUPER_ADMIN, ROLES.ROLE_BRANCH_ADMIN] }>
                             <ManageServices />
-                        </AuthGuard>} />
-                        } />
+                        </AuthGuard> }
+                    />
+
                     <Route exact path="/login" element={ <LoginScreen /> } />
                     <Route exact path="/:tenantCode/manage/admins" element={
                         <AuthGuard roles={ [ROLES.ROLE_SUPER_ADMIN] }>
                             <ManageAdmins />
-                        </AuthGuard>} />
+                        </AuthGuard> } />
                     <Route exact path="/profile" element={
                         <AuthGuard roles={ [ROLES.ROLE_SUPER_ADMIN, ROLES.ROLE_BRANCH_ADMIN] }>
-                        <AdminProfile />
-                    </AuthGuard>} />
+                            <AdminProfile />
+                        </AuthGuard> } />
                     <Route exact path="/" element={ <LoginScreen /> } />
                     <Route exact path="/loginauth"
                            element={
@@ -96,26 +97,39 @@ export default function App() {
                            }
                     />
 
-                    <Route exact path = "/:tenantCode/home" element = {
+                    <Route exact path="/:tenantCode/home" element={
                         <AuthGuard roles={ [ROLES.ROLE_SUPER_ADMIN, ROLES.ROLE_BRANCH_ADMIN] }>
-                        <HomePage></HomePage>
-                        <CanAccess roles={ [ROLES.ROLE_SUPER_ADMIN, ROLES.ROLE_BRANCH_ADMIN] }>
-                            <HomePageCard title = "Manage displays" backgroundColor = "var(--dark-blue)" buttonColor = "var(--light-blue)" url = {'/DFLT/manage/displays'}></HomePageCard>
-                            <HomePageCard title = "Manage groups" backgroundColor = "var(--dark-blue)" buttonColor = "var(--light-blue)" url = {'/DFLT/manage/groups'}></HomePageCard>
-                            <HomePageCard title = "Manage branches" backgroundColor = "var(--dark-blue)" buttonColor = "var(--light-blue)" url = {'/DFLT/manage/branches'}></HomePageCard>
-                            <HomePageCard title = "Manage services" backgroundColor = "var(--light-blue)" buttonColor = "var(--dark-blue)" url = {'/DFLT/manage/services'}></HomePageCard>
-                            <HomePageCard title = "Manage teller stations" backgroundColor = "var(--dark-blue)" buttonColor = "var(--light-blue)" url = {'/DFLT/manage/stations'}></HomePageCard>
-                            <HomePageCard title = "Manage company details" backgroundColor = "var(--light-blue)" buttonColor = "var(--dark-blue)" url = {'/DFLT/companydetails'}></HomePageCard>
-                        </CanAccess>
-                            <CanAccess roles={ [ROLES.ROLE_SUPER_ADMIN] }>
-                                <HomePageCard title = "Manage administrators" backgroundColor = "var(--dark-blue)" buttonColor = "var(--light-blue)" url = {'/DFLT/manage/admins'}></HomePageCard>
+                            <HomePage></HomePage>
+                            <CanAccess roles={ [ROLES.ROLE_SUPER_ADMIN, ROLES.ROLE_BRANCH_ADMIN] }>
+                                <HomePageCard title="Manage displays" backgroundColor="var(--dark-blue)"
+                                              buttonColor="var(--light-blue)"
+                                              url={ '/DFLT/manage/displays' }></HomePageCard>
+                                <HomePageCard title="Manage groups" backgroundColor="var(--light-blue)"
+                                              buttonColor="var(--light-blue)"
+                                              url={ '/DFLT/manage/groups' }></HomePageCard>
+                                <HomePageCard title="Manage branches" backgroundColor="var(--dark-blue)"
+                                              buttonColor="var(--light-blue)"
+                                              url={ '/DFLT/manage/branches' }></HomePageCard>
+                                <HomePageCard title="Manage services" backgroundColor="var(--light-blue)"
+                                              buttonColor="var(--dark-blue)"
+                                              url={ '/DFLT/manage/services' }></HomePageCard>
+                                <HomePageCard title="Manage teller stations" backgroundColor="var(--dark-blue)"
+                                              buttonColor="var(--light-blue)"
+                                              url={ '/DFLT/manage/stations' }></HomePageCard>
+                                <HomePageCard title="Manage company details" backgroundColor="var(--light-blue)"
+                                              buttonColor="var(--dark-blue)"
+                                              url={ '/DFLT/companydetails' }></HomePageCard>
                             </CanAccess>
-            </AuthGuard>
+                            <CanAccess roles={ [ROLES.ROLE_SUPER_ADMIN] }>
+                                <HomePageCard title="Manage administrators" backgroundColor="var(--dark-blue)"
+                                              buttonColor="var(--light-blue)"
+                                              url={ '/DFLT/manage/admins' }></HomePageCard>
+                            </CanAccess>
+                        </AuthGuard>
                     } />
                     <Route path="*" element={ <NotFound /> } />
                 </Routes>
             </UserContext.Provider>
         </>
-
-    )
+    );
 }

@@ -11,8 +11,8 @@ export default function HomePageCard( {title, backgroundColor, buttonColor, url}
                     <h5 className="card-title card-title-hp" style={{color: 'white'}}>{title}</h5>
                     <p className="card-text card-text-hp" style={{color: 'white'}}></p>
                     <div className="button-container-hp">
-                        <a href="#" className="btn btn-primary button-hp"
-                           style={{backgroundColor: buttonColor}} onClick ={ () => navigate(url) } >Open</a>
+                        <button className="btn btn-primary button-hp"
+                           style={{backgroundColor: buttonColor}} onClick ={ () => navigate(url) } >Open</button>
                     </div>
                 </div>
             </div>

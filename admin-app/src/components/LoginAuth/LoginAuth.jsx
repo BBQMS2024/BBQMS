@@ -181,7 +181,7 @@ export default function LoginAuth() {
                         );
                     })}
                 </div>
-                <button disabled={status === "pending"}   onClick={routeChange}>
+                <button className="button-auth" disabled={status === "pending"}   onClick={routeChange}>
                     {status === "pending" ? "VERIFYING..." : "VERIFY"}
                 </button>
             </form>

@@ -32,6 +32,12 @@ const ManageDisplays = () => {
             });
     }, [tenantCode]);
 
+    useEffect(() => {
+        if (branches.length !== 0) {
+            setSelectedBranchId(branches[0].id);
+        }
+    }, [branches]);
+
     const getDisplays = () => {
         fetchData(
             `${SERVER_URL}/api/v1/displays/${tenantCode}`,
@@ -157,7 +163,9 @@ const ManageDisplays = () => {
                             </Form.Group>
                             <Form.Group className="mb-3" controlId="formBasicBranch">
                                 <Form.Label>Branch</Form.Label>
-                                <Form.Select value = {selectedBranchId} onChange = {(b) => setSelectedBranchId(b.target.value)}>
+                                <Form.Select value = {selectedBranchId} onChange = {(b) => {
+                                    setSelectedBranchId(b.target.value);
+                                }}>
                                     {branches.map(branch => (
                                         <option key={branch.id} value={branch.id}>{branch.name}</option>
                                     ))}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Table, Modal, Form, Dropdown, DropdownButton } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { SERVER_URL } from 'src/constants.js';
 import { fetchData } from '../../fetching/Fetch.js'; // Import fetchData function
 import { useLocation } from 'react-router-dom';
 
@@ -18,7 +19,7 @@ const StationServiceScreen = () => {
         async function fetchStations() {
             try {
                 const tenantCode = location.pathname.split('/')[1];
-                const response = await fetchData(`http://localhost:8080/api/v1/stations/${tenantCode}`, 'GET');
+                const response = await fetchData(`${SERVER_URL}/api/v1/stations/${tenantCode}`, 'GET');
                 if (response.success) {
                     setStations(response.data);
                 } else {
@@ -32,7 +33,7 @@ const StationServiceScreen = () => {
         async function fetchAvailableServices() {
             try {
                 const tenantCode = location.pathname.split('/')[1];
-                const response = await fetchData(`http://localhost:8080/api/v1/tenants/${tenantCode}/services`, 'GET');
+                const response = await fetchData(`${SERVER_URL}/api/v1/tenants/${tenantCode}/services`, 'GET');
                 if (response.success) {
                     setAvailableServices(response.data);
                 } else {
@@ -58,7 +59,7 @@ const StationServiceScreen = () => {
     const saveServiceToStation = async (service) => {
         try {
             const tenantCode = location.pathname.split('/')[1];
-            const response = await fetchData(`http://localhost:8080/api/v1/stations/${tenantCode}/${selectedStation.id}/services/${service.id}`, 'PUT');
+            const response = await fetchData(`${SERVER_URL}/api/v1/stations/${tenantCode}/${selectedStation.id}/services/${service.id}`, 'PUT');
             if (response.success) {
                 console.log('Service added to station successfully');
 
@@ -84,7 +85,7 @@ const StationServiceScreen = () => {
     const removeServiceFromStation = async (serviceId) => {
         try {
             const tenantCode = location.pathname.split('/')[1];
-            const response = await fetchData(`http://localhost:8080/api/v1/stations/${tenantCode}/${selectedStation.id}/services/${serviceId}`, 'DELETE');
+            const response = await fetchData(`${SERVER_URL}/api/v1/stations/${tenantCode}/${selectedStation.id}/services/${serviceId}`, 'DELETE');
             if (response.success) {
                 console.log('Service removed from station successfully');
 
