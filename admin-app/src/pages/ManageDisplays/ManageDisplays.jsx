@@ -17,6 +17,7 @@ const ManageDisplays = () => {
     const [showDelete, setShowDelete] = useState(false);
     const [selectedDisplayId, setSelectedDisplayId] = useState(-1);
     const [displayNameInput, setDisplayNameInput] = useState("");
+    const [selectedBranchId, setSelectedBranchId] = useState(-1);
     const [branches, setBranches] = useState([]);
 
     useEffect(() => {
@@ -42,11 +43,11 @@ const ManageDisplays = () => {
         });
     };
 
-    const addDisplay = (displayName) => {
+    const addDisplay = (displayName, selectedBranchId) => {
         fetchData(
             `${SERVER_URL}/api/v1/displays/${tenantCode}`,
             "POST",
-            { name: displayName }
+            { name: displayName, branchId: selectedBranchId}
         ).then((res) => {
             if (res.success) {
                 getDisplays();
@@ -58,7 +59,7 @@ const ManageDisplays = () => {
         fetchData(
             `${SERVER_URL}/api/v1/displays/${tenantCode}/${selectedDisplayId}`,
             "PUT",
-            { name: displayName }
+            { name: displayName}
         ).then((res) => {
             if (res.success) {
                 getDisplays();
@@ -156,7 +157,7 @@ const ManageDisplays = () => {
                             </Form.Group>
                             <Form.Group className="mb-3" controlId="formBasicBranch">
                                 <Form.Label>Branch</Form.Label>
-                                <Form.Select>
+                                <Form.Select value = {selectedBranchId} onChange = {(b) => setSelectedBranchId(b.target.value)}>
                                     {branches.map(branch => (
                                         <option key={branch.id} value={branch.id}>{branch.name}</option>
                                     ))}
@@ -183,7 +184,7 @@ const ManageDisplays = () => {
                                     return;
                                 }
                                 setShowAdd(false);
-                                addDisplay(displayNameInput);
+                                addDisplay(displayNameInput, selectedBranchId);
                                 setDisplayNameInput("");
                             }}
                         >
@@ -207,14 +208,6 @@ const ManageDisplays = () => {
                                     onChange={(e) => setDisplayNameInput(e.target.value)}
                                 />
                             </Form.Group>
-                            <Form.Group className="mb-3" controlId="formBasicBranch">
-                                <Form.Label>Branch</Form.Label>
-                                <Form.Select>
-                                    {branches.map(branch => (
-                                        <option key={branch.id} value={branch.id}>{branch.name}</option>
-                                    ))}
-                                </Form.Select>
-                            </Form.Group>
                         </Form>
                     </Modal.Body>
                     <Modal.Footer>
@@ -236,7 +229,7 @@ const ManageDisplays = () => {
                                     return;
                                 }
                                 setShowEdit(false);
-                                editDisplay(displayNameInput);
+                                editDisplay(displayNameInput, selectedBranchId);
                                 setDisplayNameInput("");
                             }}
                         >
