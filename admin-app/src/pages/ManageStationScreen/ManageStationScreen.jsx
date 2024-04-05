@@ -13,6 +13,8 @@ const ManageStationScreen = () => {
     const [deleteConfirmation, setDeleteConfirmation] = useState(false);
     const [stations, setStations] = useState([]);
     const [selectedStation, setSelectedStation] = useState(null);
+    const [selectedBranch, setSelectedBranch] = useState(null);
+    const [branches, setBranches] = useState([]);
     const [selectedServices, setSelectedServices] = useState([]);
     const [availableServices, setAvailableServices] = useState([]);
     const [availableDisplays, setAvailableDisplays] = useState([]);
@@ -22,9 +24,9 @@ const ManageStationScreen = () => {
     const url = `${ SERVER_URL }/api/v1/`;
 
     useEffect(() => {
-        async function fetchStations() {
+        async function fetchStationsForBranch() {
             try {
-                const response = await fetchData(`${ url }stations/${ tenantCode }`, 'GET');
+                const response = await fetchData(`${url}stations/${tenantCode}/${selectedBranch.id}`, 'GET');
                 if (response.success) {
                     setStations(response.data);
                 } else {
@@ -32,6 +34,27 @@ const ManageStationScreen = () => {
                 }
             } catch (error) {
                 console.error('Error fetching stations:', error);
+            }
+        }
+
+        if (selectedBranch) {
+            fetchStationsForBranch();
+        } else {
+            setStations([]);
+        }
+    }, [selectedBranch]);
+
+    useEffect(() => {
+        async function fetchBranches() {
+            try {
+                const response = await fetchData(`${ url }branches/${ tenantCode }`, 'GET');
+                if (response.success) {
+                    setBranches(response.data);
+                } else {
+                    console.error('Error fetching branches:', response.error);
+                }
+            } catch (error) {
+                console.error('Error fetching branches:', error);
             }
         }
 
@@ -48,7 +71,7 @@ const ManageStationScreen = () => {
             }
         }
 
-        fetchStations();
+        fetchBranches();
         fetchAvailableDisplays();
     }, [location]);
 
@@ -191,6 +214,12 @@ const ManageStationScreen = () => {
     return (
         <div className="text-center mt-5">
             <h2>Teller Stations</h2>
+            <DropdownButton title={selectedBranch ? selectedBranch.name : "Select Branch"} variant="btn btn-outline-secondary">
+                {branches.map((branch, index) => (
+                    <Dropdown.Item key={index} onClick={() => setSelectedBranch(branch)}>{branch.name}</Dropdown.Item>
+                ))}
+            </DropdownButton>
+            <div style={{marginTop: '20px'}}>
             <Table striped bordered hover>
                 <thead>
                 <tr>
@@ -254,7 +283,7 @@ const ManageStationScreen = () => {
                 )) }
                 </tbody>
             </Table>
-
+            </div>
             <Modal show={ showServiceModal } onHide={ handleCloseModal }>
                 <Modal.Header closeButton style={ { backgroundColor: '#334257', color: 'white' } }>
                     <Modal.Title>Manage Services for Station</Modal.Title>
