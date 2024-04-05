@@ -18,6 +18,7 @@ import ManageServices from './pages/ManageServices/ManageServices';
 import ManageBranches from './pages/ManageBranchesScreen/ManageBranchesScreen';
 import ManageGroups from './pages/ManageGroupsScreen/ManageGroupsScreen';
 import ManageStations from './pages/ManageStationScreen/ManageStationScreen';
+import ManageDisplays from './pages/ManageDisplays/ManageDisplays';
 import { ROLES } from './constants.js';
 
 export default function App() {
@@ -47,7 +48,10 @@ export default function App() {
             <UserContext.Provider value={ { user, setUser } }>
                 <Header />
                 <Routes>
-
+                    <Route exact path="/:tenantCode/manage/displays" element={
+                        <AuthGuard roles={ [ROLES.ROLE_SUPER_ADMIN, ROLES.ROLE_BRANCH_ADMIN] }>
+                            <ManageDisplays />
+                        </AuthGuard> } />
                     <Route exact path="/:tenantCode/manage/stations" element={
                         <AuthGuard roles={ [ROLES.ROLE_SUPER_ADMIN, ROLES.ROLE_BRANCH_ADMIN] }>
                             <ManageStations />
@@ -96,6 +100,7 @@ export default function App() {
                         <AuthGuard roles={ [ROLES.ROLE_SUPER_ADMIN, ROLES.ROLE_BRANCH_ADMIN] }>
                         <HomePage></HomePage>
                         <CanAccess roles={ [ROLES.ROLE_SUPER_ADMIN, ROLES.ROLE_BRANCH_ADMIN] }>
+                            <HomePageCard title = "Manage displays" backgroundColor = "var(--dark-blue)" buttonColor = "var(--light-blue)" url = {'/DFLT/manage/displays'}></HomePageCard>
                             <HomePageCard title = "Manage groups" backgroundColor = "var(--dark-blue)" buttonColor = "var(--light-blue)" url = {'/DFLT/manage/groups'}></HomePageCard>
                             <HomePageCard title = "Manage branches" backgroundColor = "var(--dark-blue)" buttonColor = "var(--light-blue)" url = {'/DFLT/manage/branches'}></HomePageCard>
                             <HomePageCard title = "Manage services" backgroundColor = "var(--light-blue)" buttonColor = "var(--dark-blue)" url = {'/DFLT/manage/services'}></HomePageCard>
