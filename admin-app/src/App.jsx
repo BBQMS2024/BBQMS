@@ -8,6 +8,7 @@ import AuthGuard from './components/AuthGuard/AuthGuard';
 import LoginScreen from './pages/LoginScreen/LoginScreen';
 import CompanyInfoUpdate from './pages/CompanyInfoUpdate/CompanyInfoUpdate';
 import NotFound from './pages/NotFound/NotFound.jsx';
+import ManageDisplays from './pages/ManageDisplays/ManageDisplays.jsx';
 
 export default function App() {
     const [user, setUser] = useState();
@@ -41,6 +42,13 @@ export default function App() {
                            element={
                                <AuthGuard roles={ ['ROLE_SUPER_ADMIN'] }>
                                    <CompanyInfoUpdate />
+                               </AuthGuard>
+                           }
+                    />
+                    <Route exact path="/:tenantCode/managedisplays"
+                           element={
+                               <AuthGuard roles={ ['ROLE_SUPER_ADMIN'] }>
+                                   <ManageDisplays />
                                </AuthGuard>
                            }
                     />
