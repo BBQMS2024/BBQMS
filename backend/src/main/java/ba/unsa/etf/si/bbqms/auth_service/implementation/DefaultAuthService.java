@@ -115,6 +115,15 @@ public class DefaultAuthService implements AuthService {
         }
     }
 
+
+    @Override
+    public boolean setTfaUse(final boolean tfa) throws Exception {
+        return this.userService.setUserTfa(tfa);
+    }
+
+    /*
+       ONLY USE THIS METHOD IF 100% SURE USER IS AUTHORIZED
+    */
     @Override
     public User getAuthenticatedUser() {
         final String currentEmail = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -123,7 +132,8 @@ public class DefaultAuthService implements AuthService {
     }
 
     @Override
-    public boolean setTfaUse(final boolean tfa) throws Exception {
-        return this.userService.setUserTfa(tfa);
+    public boolean canChangeTenant(final String tenantCode) {
+        final User currentUser = getAuthenticatedUser();
+        return (currentUser.getTenant().getCode().equals(tenantCode));
     }
 }

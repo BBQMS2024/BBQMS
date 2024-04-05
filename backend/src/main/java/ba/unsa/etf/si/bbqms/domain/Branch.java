@@ -31,6 +31,19 @@ public class Branch {
     @ManyToMany(mappedBy = "branches")
     private Set<BranchGroup> branchGroups;
 
+    public Branch() {
+    }
+
+    public Branch(final String name, final Tenant tenant, final Set<TellerStation> tellerStations) {
+        this.name = name;
+        this.tenant = tenant;
+        this.tellerStations = tellerStations;
+    }
+
+    public Branch(final String name, final Tenant tenant) {
+        this(name, tenant, null);
+    }
+
     public long getId() {
         return id;
     }

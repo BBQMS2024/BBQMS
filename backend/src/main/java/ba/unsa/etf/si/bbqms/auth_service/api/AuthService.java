@@ -3,6 +3,7 @@ package ba.unsa.etf.si.bbqms.auth_service.api;
 import ba.unsa.etf.si.bbqms.domain.User;
 import ba.unsa.etf.si.bbqms.exceptions.AuthException;
 
+import javax.naming.AuthenticationException;
 import java.util.Optional;
 
 public interface AuthService {
@@ -15,4 +16,5 @@ public interface AuthService {
     boolean verifyUserTfaCode(final User user, final String code);
     boolean setTfaUse(final boolean tfa) throws Exception;
     User getAuthenticatedUser();
+    boolean canChangeTenant(final String tenantCode);
 }

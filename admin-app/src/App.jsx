@@ -15,12 +15,13 @@ import AdminProfile from './pages/AdminProfile/AdminProfile'
 import LoginAuth from './components/LoginAuth/LoginAuth'
 import ManageAdmins from './pages/AdminManagingScreen/AdminManagingScreen';
 import ManageServices from './pages/ManageServices/ManageServices';
+import ManageBranches from './pages/ManageBranchesScreen/ManageBranchesScreen';
+import ManageGroups from './pages/ManageGroupsScreen/ManageGroupsScreen';
+import ManageStations from './pages/ManageStationScreen/ManageStationScreen';
 import { ROLES } from './constants.js';
 
 export default function App() {
     const [user, setUser] = useState();
-    const servicesUrl = `/${user.tenantCode}/home`;
-
     /*
         Kada se logiramo, ako vec postoji token u localStorage, provjerimo da li je validan (nije istekao)
         Ako je validan, ulogujemo usera, ako nije ocistimo storage od starih podataka
@@ -46,6 +47,21 @@ export default function App() {
             <UserContext.Provider value={ { user, setUser } }>
                 <Header />
                 <Routes>
+
+                    <Route exact path="/:tenantCode/manage/stations" element={
+                        <AuthGuard roles={ [ROLES.ROLE_SUPER_ADMIN, ROLES.ROLE_BRANCH_ADMIN] }>
+                            <ManageStations />
+                        </AuthGuard> } />
+                    <Route exact path="/:tenantCode/manage/groups" element={
+                        <AuthGuard roles={ [ROLES.ROLE_SUPER_ADMIN, ROLES.ROLE_BRANCH_ADMIN] }>
+                            <ManageGroups />
+                        </AuthGuard> } />
+
+                    <Route exact path="/:tenantCode/manage/branches" element={
+                        <AuthGuard roles={ [ROLES.ROLE_SUPER_ADMIN, ROLES.ROLE_BRANCH_ADMIN] }>
+                            <ManageBranches />
+                        </AuthGuard>} />
+
                     <Route exact path="/:tenantCode/companydetails"
                            element={
                                <AuthGuard roles={ [ROLES.ROLE_SUPER_ADMIN, ROLES.ROLE_BRANCH_ADMIN] }>
@@ -63,7 +79,8 @@ export default function App() {
                         <AuthGuard roles={ [ROLES.ROLE_SUPER_ADMIN] }>
                             <ManageAdmins />
                         </AuthGuard>} />
-                    <Route exact path="/profile" element={ <AuthGuard roles={ [ROLES.ROLE_SUPER_ADMIN, ROLES.ROLE_BRANCH_ADMIN] }>
+                    <Route exact path="/profile" element={
+                        <AuthGuard roles={ [ROLES.ROLE_SUPER_ADMIN, ROLES.ROLE_BRANCH_ADMIN] }>
                         <AdminProfile />
                     </AuthGuard>} />
                     <Route exact path="/" element={ <LoginScreen /> } />
@@ -79,15 +96,14 @@ export default function App() {
                         <AuthGuard roles={ [ROLES.ROLE_SUPER_ADMIN, ROLES.ROLE_BRANCH_ADMIN] }>
                         <HomePage></HomePage>
                         <CanAccess roles={ [ROLES.ROLE_SUPER_ADMIN, ROLES.ROLE_BRANCH_ADMIN] }>
-                            <HomePageCard title = "Manage groups" backgroundColor = "var(--dark-blue)" buttonColor = "var(--light-blue)" ></HomePageCard>
-                            <HomePageCard title = "Manage displays" backgroundColor = "var(--light-blue)" buttonColor = "var(--dark-blue)"></HomePageCard>
-                            <HomePageCard title = "Manage branches" backgroundColor = "var(--dark-blue)" buttonColor = "var(--light-blue)"></HomePageCard>
-                            <HomePageCard title = "Manage services" backgroundColor = "var(--light-blue)" buttonColor = "var(--dark-blue)" url = {'/' + user.tenantCode + '/manage/services'}></HomePageCard>
-                            <HomePageCard title = "Manage teller stations" backgroundColor = "var(--dark-blue)" buttonColor = "var(--light-blue)"></HomePageCard>
-                            <HomePageCard title = "Manage company details" backgroundColor = "var(--light-blue)" buttonColor = "var(--dark-blue)" url = {'/' + user.tenantCode + '/companydetails'} ></HomePageCard>
+                            <HomePageCard title = "Manage groups" backgroundColor = "var(--dark-blue)" buttonColor = "var(--light-blue)" url = {'/DFLT/manage/groups'}></HomePageCard>
+                            <HomePageCard title = "Manage branches" backgroundColor = "var(--dark-blue)" buttonColor = "var(--light-blue)" url = {'/DFLT/manage/branches'}></HomePageCard>
+                            <HomePageCard title = "Manage services" backgroundColor = "var(--light-blue)" buttonColor = "var(--dark-blue)" url = {'/DFLT/manage/services'}></HomePageCard>
+                            <HomePageCard title = "Manage teller stations" backgroundColor = "var(--dark-blue)" buttonColor = "var(--light-blue)" url = {'/DFLT/manage/stations'}></HomePageCard>
+                            <HomePageCard title = "Manage company details" backgroundColor = "var(--light-blue)" buttonColor = "var(--dark-blue)" url = {'/DFLT/companydetails'}></HomePageCard>
                         </CanAccess>
                             <CanAccess roles={ [ROLES.ROLE_SUPER_ADMIN] }>
-                                <HomePageCard title = "Manage administrators" backgroundColor = "var(--dark-blue)" buttonColor = "var(--light-blue)" url = {'/' + user.tenantCode + '/manage/admins'} ></HomePageCard>
+                                <HomePageCard title = "Manage administrators" backgroundColor = "var(--dark-blue)" buttonColor = "var(--light-blue)" url = {'/DFLT/manage/admins'}></HomePageCard>
                             </CanAccess>
             </AuthGuard>
                     } />
