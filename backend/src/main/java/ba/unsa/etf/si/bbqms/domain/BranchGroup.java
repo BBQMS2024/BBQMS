@@ -38,7 +38,7 @@ public class BranchGroup {
     public BranchGroup() {
     }
 
-    public BranchGroup(String name, Set<Branch> branches, Set<Service> services) {
+    public BranchGroup(final String name, final Set<Branch> branches, final Set<Service> services) {
         this.name = name;
         this.branches = branches;
         this.services = services;
