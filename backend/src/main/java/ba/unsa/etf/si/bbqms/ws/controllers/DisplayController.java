@@ -18,7 +18,7 @@ public class DisplayController {
     private final DisplayService displayService;
     private final AuthService authService;
 
-    public DisplayController(DisplayService displayService, AuthService authService) {
+    public DisplayController(final DisplayService displayService, final AuthService authService) {
         this.displayService = displayService;
         this.authService = authService;
     }
@@ -35,7 +35,6 @@ public class DisplayController {
             final Display createdDisplay = this.displayService.createDisplay(request.name(), request.branchId());
             return ResponseEntity.ok().body(DisplayDto.fromEntity(createdDisplay));
         } catch (final Exception exception) {
-            System.out.println(exception.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
@@ -54,7 +53,6 @@ public class DisplayController {
                     .collect(Collectors.toSet());
             return ResponseEntity.ok().body(displays);
         } catch (final Exception exception) {
-            System.out.println(exception.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
@@ -72,7 +70,6 @@ public class DisplayController {
                     .collect(Collectors.toSet());
             return ResponseEntity.ok().body(displays);
         } catch (final Exception exception) {
-            System.out.println(exception.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
@@ -90,7 +87,6 @@ public class DisplayController {
                     .collect(Collectors.toSet());
             return ResponseEntity.ok().body(displays);
         } catch (final Exception exception) {
-            System.out.println(exception.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
@@ -108,7 +104,6 @@ public class DisplayController {
             final Display updatedDisplay = this.displayService.updateDisplay(Long.parseLong(displayId), request.name());
             return ResponseEntity.ok().body(DisplayDto.fromEntity(updatedDisplay));
         } catch (final Exception exception) {
-            System.out.println(exception.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }

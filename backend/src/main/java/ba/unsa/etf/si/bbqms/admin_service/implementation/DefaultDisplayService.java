@@ -7,13 +7,9 @@ import ba.unsa.etf.si.bbqms.domain.TellerStation;
 import ba.unsa.etf.si.bbqms.repository.BranchRepository;
 import ba.unsa.etf.si.bbqms.repository.DisplayRepository;
 import ba.unsa.etf.si.bbqms.repository.TellerStationRepository;
-import ba.unsa.etf.si.bbqms.repository.TenantRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -35,7 +31,7 @@ public class DefaultDisplayService implements DisplayService {
         final Branch branch = this.branchRepository.findById(branchId)
                 .orElseThrow(() -> new Exception("Branch with id: " + branchId + " doesn't exist."));
 
-        final Display newDisplay = new Display(name, null, branch);
+        final Display newDisplay = new Display(name, branch);
 
         return this.displayRepository.save(newDisplay);
     }
@@ -49,12 +45,12 @@ public class DefaultDisplayService implements DisplayService {
     }
 
     @Override
-    public Set<Display> getDisplaysByTenant(String tenantCode) {
+    public Set<Display> getDisplaysByTenant(final String tenantCode) {
         return this.displayRepository.findByBranchTenantCode(tenantCode);
     }
 
     @Override
-    public Set<Display> getUnassignedDisplaysByTenant(String tenantCode) {
+    public Set<Display> getUnassignedDisplaysByTenant(final String tenantCode) {
         return this.displayRepository.findByBranchTenantCodeAndTellerStationIsNull(tenantCode);
     }
 
@@ -69,7 +65,7 @@ public class DefaultDisplayService implements DisplayService {
     }
 
     @Override
-    public void removeDisplay(long displayId) {
+    public void removeDisplay(final long displayId) {
         final Display display = this.displayRepository.findById(displayId)
                 .orElseThrow(EntityNotFoundException::new);
 
