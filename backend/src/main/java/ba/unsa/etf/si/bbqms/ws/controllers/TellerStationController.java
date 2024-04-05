@@ -146,7 +146,7 @@ public class TellerStationController {
         try{
             return ResponseEntity.ok().body(
                     this.stationService.getAllByBranch(Long.parseLong(branchId)).stream()
-                            .map(TellerStationDto::fromEntity)
+                            .map(TellerStationResponseDto::fromEntity)
                             .collect(Collectors.toList())
             );
         } catch (final Exception exception) {
