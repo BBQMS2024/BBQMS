@@ -40,7 +40,7 @@ public class AdminController {
         }
         try {
             final List<User> admins = this.adminService.findAdminsByCode(tenantCode);
-            List<UserDto> adminDtos = new ArrayList<>();
+            final List<UserDto> adminDtos = new ArrayList<>();
 
             for (User admin : admins) {
                 adminDtos.add(UserDto.fromEntity(admin));

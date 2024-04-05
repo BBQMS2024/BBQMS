@@ -47,7 +47,7 @@ public class DefaultAdminService implements AdminService {
     @Override
     public List<User> findAdminsByCode(final String tenantCode){
         final Set<RoleName> roleNameSet = Set.of(RoleName.ROLE_BRANCH_ADMIN);
-        return userRepository.findAllByTenant_CodeAndRoles_NameIn(tenantCode, roleNameSet);
+        return this.userRepository.findAllByTenant_CodeAndRoles_NameIn(tenantCode, roleNameSet);
     }
 
     @Override
