@@ -4,10 +4,10 @@ import ba.unsa.etf.si.bbqms.admin_service.api.StationService;
 import ba.unsa.etf.si.bbqms.auth_service.api.AuthService;
 import ba.unsa.etf.si.bbqms.domain.Service;
 import ba.unsa.etf.si.bbqms.domain.TellerStation;
+import ba.unsa.etf.si.bbqms.ws.models.DisplayDto;
 import ba.unsa.etf.si.bbqms.ws.models.ErrorResponseDto;
 import ba.unsa.etf.si.bbqms.ws.models.ServiceResponseDto;
 import ba.unsa.etf.si.bbqms.ws.models.TellerStationDto;
-import ba.unsa.etf.si.bbqms.ws.models.TellerStationResponseDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -154,4 +154,15 @@ public class TellerStationController {
         }
     }
 
+    public record TellerStationResponseDto(long id, String name, DisplayDto display, Set<ServiceResponseDto> services) {
+        public static TellerStationResponseDto fromEntity(final TellerStation tellerStation) {
+            final Set<Service> serviceSet = tellerStation.getServices();
+            return new TellerStationResponseDto(
+                    tellerStation.getId(),
+                    tellerStation.getName(),
+                    tellerStation.getDisplay() != null ? DisplayDto.fromEntity(tellerStation.getDisplay()) : null,
+                    serviceSet.stream().map(ServiceResponseDto::fromEntity).collect(Collectors.toSet())
+            );
+        }
+    }
 }

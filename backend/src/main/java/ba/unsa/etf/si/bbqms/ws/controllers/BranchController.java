@@ -59,8 +59,7 @@ public class BranchController {
     @GetMapping("/{tenantCode}")
     @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN', 'ROLE_BRANCH_ADMIN')")
     public ResponseEntity getBranches(@PathVariable final String tenantCode) {
-        final User currentUser = this.authService.getAuthenticatedUser();
-        if (!currentUser.getTenant().getCode().equals(tenantCode)) {
+        if (!this.authService.canChangeTenant(tenantCode)) {
             return ResponseEntity.badRequest().build();
         }
 
@@ -101,8 +100,7 @@ public class BranchController {
     @DeleteMapping("/{tenantCode}/{branchId}")
     @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN', 'ROLE_BRANCH_ADMIN')")
     public ResponseEntity removeBranch(@PathVariable final String tenantCode, @PathVariable final String branchId) {
-        final User currentUser = this.authService.getAuthenticatedUser();
-        if (!currentUser.getTenant().getCode().equals(tenantCode)) {
+        if (!this.authService.canChangeTenant(tenantCode)) {
             return ResponseEntity.badRequest().build();
         }
 
@@ -116,8 +114,7 @@ public class BranchController {
     public ResponseEntity addStation(@RequestBody final StationRequest request,
                                      @PathVariable final String tenantCode,
                                      @PathVariable final String branchId) {
-        final User currentUser = this.authService.getAuthenticatedUser();
-        if (!currentUser.getTenant().getCode().equals(tenantCode)) {
+        if (!this.authService.canChangeTenant(tenantCode)) {
             return ResponseEntity.badRequest().build();
         }
 
@@ -135,8 +132,7 @@ public class BranchController {
                                         @PathVariable final String tenantCode,
                                         @PathVariable final String branchId,
                                         @PathVariable final String stationId) {
-        final User currentUser = this.authService.getAuthenticatedUser();
-        if (!currentUser.getTenant().getCode().equals(tenantCode)) {
+        if (!this.authService.canChangeTenant(tenantCode)) {
             return ResponseEntity.badRequest().build();
         }
 
@@ -153,8 +149,7 @@ public class BranchController {
     public ResponseEntity removeStation(@PathVariable final String tenantCode,
                                         @PathVariable final String branchId,
                                         @PathVariable final String stationId) {
-        final User currentUser = this.authService.getAuthenticatedUser();
-        if (!currentUser.getTenant().getCode().equals(tenantCode)) {
+        if (!this.authService.canChangeTenant(tenantCode)) {
             return ResponseEntity.badRequest().build();
         }
 
