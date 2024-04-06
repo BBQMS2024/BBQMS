@@ -2,18 +2,21 @@ package ba.unsa.etf.si.bbqms.admin_service.implementation;
 
 import ba.unsa.etf.si.bbqms.admin_service.api.BranchService;
 import ba.unsa.etf.si.bbqms.domain.Branch;
+import ba.unsa.etf.si.bbqms.domain.BranchGroup;
+import ba.unsa.etf.si.bbqms.domain.Service;
 import ba.unsa.etf.si.bbqms.domain.TellerStation;
 import ba.unsa.etf.si.bbqms.domain.Tenant;
 import ba.unsa.etf.si.bbqms.repository.BranchRepository;
 import ba.unsa.etf.si.bbqms.repository.TellerStationRepository;
 import ba.unsa.etf.si.bbqms.repository.TenantRepository;
-import org.springframework.stereotype.Service;
 
+
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Service
+@org.springframework.stereotype.Service
 public class DefaultBranchService implements BranchService {
     private final BranchRepository branchRepository;
     private final TenantRepository tenantRepository;
@@ -109,5 +112,15 @@ public class DefaultBranchService implements BranchService {
 
         existingStation.setName(name);
         return this.tellerStationRepository.save(existingStation);
+    }
+
+    @Override
+    public Set<Service> extractPossibleServices(final Branch branch) {
+        final Set<BranchGroup> groups = branch.getBranchGroups();
+        final Set<Service> possibleServices = new HashSet<>();
+        for (final BranchGroup group : groups) {
+            possibleServices.addAll(group.getServices());
+        }
+        return possibleServices;
     }
 }

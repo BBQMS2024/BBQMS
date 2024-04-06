@@ -1,6 +1,7 @@
 package ba.unsa.etf.si.bbqms.admin_service.api;
 
 import ba.unsa.etf.si.bbqms.domain.Branch;
+import ba.unsa.etf.si.bbqms.domain.Service;
 import ba.unsa.etf.si.bbqms.domain.TellerStation;
 
 import java.util.List;
@@ -14,4 +15,5 @@ public interface BranchService {
     TellerStation addStation(final String name, final long branchId) throws Exception;
     void removeStation(final long stationId) throws Exception;
     TellerStation updateStation(final long stationId, final String name) throws Exception;
+    Set<Service> extractPossibleServices(final Branch branch);
 }
