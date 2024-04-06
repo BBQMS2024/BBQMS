@@ -27,16 +27,18 @@ import java.util.Set;
 
 @Component
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
+    @Value("${jwt.header-title}")
+    public String AUTH_HEADER_TITLE;
+
+    @Value("${jwt.token-prefix}")
+    public String TOKEN_PREFIX;
 
     private final JwtService jwtService;
-    private final CookieService cookieService;
     private final UserService userService;
 
     public JwtAuthorizationFilter(final JwtService jwtService,
-                                  final CookieService cookieService,
                                   final UserService userService) {
         this.jwtService = jwtService;
-        this.cookieService = cookieService;
         this.userService = userService;
     }
 
@@ -45,9 +47,13 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                                     final HttpServletResponse response,
                                     final FilterChain filterChain) throws ServletException, IOException {
         try {
-            final String token = this.cookieService.extractJwtCookie(request.getCookies())
-                    .map(Cookie::getValue)
-                    .orElse(null);
+            final String bearerToken = request.getHeader(this.AUTH_HEADER_TITLE);
+            if (bearerToken == null) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            final String token = bearerToken.replace("Bearer ", "");
 
             final Claims claims = jwtService.resolveClaims(token);
             if (claims != null && !jwtService.isExpired(claims)) {
@@ -61,13 +67,12 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                         new UsernamePasswordAuthenticationToken(username, "", userAuthorities);
 
                 final String newToken = this.jwtService.generateToken(currentUser);
-                final Cookie newJwtCookie = this.cookieService.generateDefaultJwtCookie(newToken);
-
-                response.addCookie(newJwtCookie);
+                response.addHeader("Access-Control-Expose-Headers", "Auth-Token");
+                response.addHeader("Auth-Token", newToken);
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
-        } catch (Exception exception) {
+        } catch (final Exception exception) {
             response.setStatus(HttpStatus.FORBIDDEN.value());
         }
 
