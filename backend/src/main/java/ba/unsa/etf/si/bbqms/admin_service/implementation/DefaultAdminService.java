@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class DefaultAdminService implements AdminService {
@@ -46,10 +45,8 @@ public class DefaultAdminService implements AdminService {
     }
 
     @Override
-    public List<User> findAdminsByCode(final String tenantCode, final List<String> roleNames){
-        final Set<RoleName> roleNameSet = roleNames.stream()
-                .map(RoleName::valueOf)
-                .collect(Collectors.toSet());
+    public List<User> findUsersByCode(final String tenantCode, final String roleName){
+        final Set<RoleName> roleNameSet = Set.of(RoleName.valueOf(roleName));
         return this.userRepository.findAllByTenant_CodeAndRoles_NameIn(tenantCode, roleNameSet);
     }
 
@@ -77,7 +74,7 @@ public class DefaultAdminService implements AdminService {
     }
 
     @Override
-    public User updateAdmin(final UserDto request, final String tenantCode, final Long adminId) throws Exception {
+    public User updateAdmin(final UserDto request, final String tenantCode, final Long adminId) {
         final User admin = this.userRepository.findById(adminId)
                 .orElseThrow(() -> new NoSuchElementException("Admin user not found"));
 
@@ -97,7 +94,7 @@ public class DefaultAdminService implements AdminService {
     }
 
     @Override
-    public void removeAdmin(final String tenantCode, final Long adminId) throws Exception {
+    public void removeAdmin(final String tenantCode, final Long adminId) {
         final User admin = this.userRepository.findById(adminId)
                 .orElseThrow(() -> new NoSuchElementException("Admin user not found"));
 

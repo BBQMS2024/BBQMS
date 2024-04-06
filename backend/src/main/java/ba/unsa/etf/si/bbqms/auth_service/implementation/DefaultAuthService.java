@@ -138,7 +138,7 @@ public class DefaultAuthService implements AuthService {
     }
 
     @Override
-    public boolean canOnlyAddUser(final RoleName roleName) {
+    public boolean canOnlyCRUDUser(final RoleName roleName) {
         Set<Role> currentUsersRoles = getAuthenticatedUser().getRoles();
 
         return currentUsersRoles.stream()

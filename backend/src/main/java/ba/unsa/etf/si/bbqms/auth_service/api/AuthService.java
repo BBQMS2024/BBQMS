@@ -17,5 +17,5 @@ public interface AuthService {
     boolean setTfaUse(final boolean tfa) throws Exception;
     User getAuthenticatedUser();
     boolean canChangeTenant(final String tenantCode);
-    boolean canOnlyAddUser(final RoleName roleName);
+    boolean canOnlyCRUDUser(final RoleName roleName);
 }

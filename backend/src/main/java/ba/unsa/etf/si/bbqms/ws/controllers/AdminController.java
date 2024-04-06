@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
@@ -29,16 +28,29 @@ public class AdminController {
         this.authService = authService;
     }
 
-    @GetMapping("/{code}")
-    @PreAuthorize("hasRole('ROLE_SUPER_ADMIN')")
-    public ResponseEntity getAdmins(@RequestBody RoleRequest request, @PathVariable(name = "code") final String tenantCode) {
+    @PostMapping("/{code}")
+    @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN', 'ROLE_BRANCH_ADMIN', 'ROLE_STAFF_ADMIN')")
+    public ResponseEntity getUsers(@RequestBody RoleRequest request, @PathVariable(name = "code") final String tenantCode) {
+        RoleName roleName;
+        try {
+            roleName = RoleName.valueOf(request.roleName);
+        } catch (IllegalArgumentException e) {
+            logger.warn("Role doesn't exist");
+            return ResponseEntity.badRequest().build();
+        }
+
+        if(this.authService.canOnlyCRUDUser(roleName)){
+            logger.warn("Only super admin can read admins");
+            return ResponseEntity.badRequest().build();
+        }
+
         if (!this.authService.canChangeTenant(tenantCode)) {
             logger.warn("Super admin does not belong to the specified tenant");
             return ResponseEntity.badRequest().build();
         }
         try {
             return ResponseEntity.ok().body(
-                    this.adminService.findAdminsByCode(tenantCode, request.roleNames).stream()
+                    this.adminService.findUsersByCode(tenantCode, request.roleName).stream()
                             .map(UserDto::fromEntity)
                             .collect(Collectors.toList())
             );
@@ -54,12 +66,12 @@ public class AdminController {
         try {
             roleName = RoleName.valueOf(request.roleName);
         } catch (IllegalArgumentException e) {
-            logger.warn("Tried setting a role that doesn't exist");
+            logger.warn("Role doesn't exist");
             return ResponseEntity.badRequest().build();
         }
 
-        if(this.authService.canOnlyAddUser(roleName)){
-            logger.warn("Admin can only add user");
+        if(this.authService.canOnlyCRUDUser(roleName)){
+            logger.warn("Only super admin can add admin");
             return ResponseEntity.badRequest().build();
         }
 
@@ -118,6 +130,6 @@ public class AdminController {
     public record AdminRequest(String email, String password, String roleName) {
     }
 
-    public record RoleRequest(List<String> roleNames){
+    public record RoleRequest(String roleName){
     }
 }
