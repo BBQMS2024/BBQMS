@@ -2,7 +2,9 @@ package ba.unsa.etf.si.bbqms.ws.controllers;
 
 import ba.unsa.etf.si.bbqms.admin_service.api.AdminService;
 import ba.unsa.etf.si.bbqms.auth_service.api.AuthService;
+import ba.unsa.etf.si.bbqms.domain.RoleName;
 import ba.unsa.etf.si.bbqms.domain.User;
+import ba.unsa.etf.si.bbqms.exceptions.AuthException;
 import ba.unsa.etf.si.bbqms.ws.models.SimpleMessageDto;
 import ba.unsa.etf.si.bbqms.ws.models.UserDto;
 import jakarta.persistence.EntityNotFoundException;
@@ -46,18 +48,32 @@ public class AdminController {
     }
 
     @PostMapping("/{code}/user")
-    @PreAuthorize("hasRole('ROLE_SUPER_ADMIN')")
-    public ResponseEntity addAdmin(@RequestBody final AdminRequest request, @PathVariable(name = "code") final String tenantCode) {
-        if (!this.authService.canChangeTenant(tenantCode)) {
-            logger.warn("Super admin does not belong to the specified tenant");
+    @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN', 'ROLE_BRANCH_ADMIN', 'ROLE_STAFF_ADMIN')")
+    public ResponseEntity addUser(@RequestBody final AdminRequest request, @PathVariable(name = "code") final String tenantCode) throws AuthException {
+        RoleName roleName;
+        try {
+            roleName = RoleName.valueOf(request.roleName);
+        } catch (IllegalArgumentException e) {
+            logger.warn("Tried setting a role that doesn't exist");
             return ResponseEntity.badRequest().build();
         }
-        final User newAdmin = User.builder()
+
+        if(this.authService.canOnlyAddUser(roleName)){
+            logger.warn("Admin can only add user");
+            return ResponseEntity.badRequest().build();
+        }
+
+        if (!this.authService.canChangeTenant(tenantCode)) {
+            logger.warn("Admin does not belong to the specified tenant");
+            return ResponseEntity.badRequest().build();
+        }
+
+        final User newUser = User.builder()
                 .password(request.password())
                 .email(request.email)
                 .build();
         try {
-            final User user = this.adminService.addAdmin(newAdmin, tenantCode, request.roleName);
+            final User user = this.adminService.addUser(newUser, tenantCode, request.roleName);
             return ResponseEntity.ok(UserDto.fromEntity(user));
         } catch (Exception exception) {
             logger.warn(exception.getMessage());

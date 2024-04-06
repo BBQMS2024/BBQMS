@@ -54,12 +54,12 @@ public class DefaultAdminService implements AdminService {
     }
 
     @Override
-    public User addAdmin(final User admin, final String tenantCode, final String roleName) throws AuthException {
-        if (!UserValidator.validateData(admin)) {
+    public User addUser(final User user, final String tenantCode, final String roleName) throws AuthException {
+        if (!UserValidator.validateData(user)) {
             throw new AuthException("Invalid email/password format");
         }
 
-        final Optional<User> optionalExistingUser = this.userService.findByEmail(admin.getEmail());
+        final Optional<User> optionalExistingUser = this.userService.findByEmail(user.getEmail());
         if (optionalExistingUser.isPresent()) {
             throw new AuthException("Tried making a user that already exists");
         }
@@ -68,12 +68,12 @@ public class DefaultAdminService implements AdminService {
                 .orElseThrow(() -> new AuthException("Tried setting a role that doesn't exist"));
         final Tenant tenant = this.tenantService.findByCode(tenantCode);
 
-        admin.setRoles(Set.of(role));
-        admin.setTenant(tenant);
-        admin.setOauth(false);
-        admin.setTfaSecret(this.twoFactorService.generateNewSecret());
-        admin.setPassword(this.passwordEncoder.encode(admin.getPassword().trim()));
-        return this.userRepository.save(admin);
+        user.setRoles(Set.of(role));
+        user.setTenant(tenant);
+        user.setOauth(false);
+        user.setTfaSecret(this.twoFactorService.generateNewSecret());
+        user.setPassword(this.passwordEncoder.encode(user.getPassword().trim()));
+        return this.userRepository.save(user);
     }
 
     @Override
