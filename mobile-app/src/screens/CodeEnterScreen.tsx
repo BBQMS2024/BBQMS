@@ -10,7 +10,7 @@ import {
     View,
 } from "react-native";
 import { registerRootComponent } from "expo";
-import { getCompanyDetails } from "../services/fetchData";
+import { getCompanyBranches, getCompanyDetails } from "../services/fetchData";
 import { Dialogs } from "../constants/dialogs";
 import { Colors } from "../constants/colors";
 import { Screens } from "../constants/screens";
@@ -35,9 +35,12 @@ export default function CodeEnterScreen({ navigation }: { navigation: any }) {
         getCompanyDetails(code)
             .then(function (details) {
                 setIsLoading(false);
-                navigation.navigate(Screens.WELCOME, {
-                    details: details,
-                });
+                getCompanyBranches(code)
+                .then(function (branches){             
+                    navigation.navigate(Screens.BRANCH_PICK, {
+                    details: details, branches: branches, code
+                });})
+   
             })
             .catch((error) => {
                 console.error("Error:", error);

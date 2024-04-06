@@ -1,3 +1,5 @@
+import { TEST_URL } from "../constants/api";
+
 const { SERVER_URL } = require("../constants/api");
 const { Dialogs } = require("../constants/dialogs");
 const { Fonts } = require("../constants/fonts");
@@ -9,6 +11,20 @@ interface CompanyData {
     welcomeMessage: string;
     font: string;
     logoUrl: string;
+}
+
+interface BranchData {
+    id: string,
+    name: string,
+    tellerStations: Array<Int32Array>;
+}
+
+interface ServiceData{
+    name: string
+}
+
+interface DisplayData{
+    name: string,
 }
 
 async function getCompanyDetails(code: string) {
@@ -45,4 +61,82 @@ async function getCompanyDetails(code: string) {
     return details;
 }
 
-export { getCompanyDetails };
+async function getCompanyBranches(code: any) {
+    const branchList: BranchData[] = [];
+    let branches: BranchData[] = await fetch(
+        `${TEST_URL}/branches/${code}`,
+        { method: "GET" }
+    )
+        .then((response) => {
+            console.log(response);
+            if (response.status === 200) {
+                return response.json();
+            } else {
+                throw new Error(Dialogs.ERROR.INVALID_CODE);
+            }
+        })
+        .then((data) => {
+            data.forEach((branch: any) => {
+                const tellerList: Int32Array[] = [];
+                branch.tellerStations.forEach((teller: any) => {
+                    tellerList.push(teller)
+                })
+
+                const branchData: BranchData = {
+                    id: branch.id,
+                    name: branch.name,
+                    tellerStations: tellerList
+                };
+
+                branchList.push(branchData);
+            });
+
+            return branchList;
+        })
+        .catch((error) => {
+            console.error("Error:", error);
+            throw error;
+        });
+    return branches;
+    
+}
+
+async function getBranchServices(code:string, id: string) {
+    const serviceList: ServiceData[] = [];
+    let services: ServiceData[] = await fetch(
+        `${TEST_URL}/stations//${code}/${id}`,
+        { method: "GET" }
+    )
+        .then((response) => {
+            console.log(response);
+            if (response.status === 200) {
+                return response.json();
+            } else {
+                throw new Error(Dialogs.ERROR.INVALID_CODE);
+            }
+        })
+        .then((data) => {
+            data.forEach((service: any) => {
+
+                const serviceData: ServiceData = {
+                    name: service.name
+                };
+
+                serviceList.push(serviceData);
+            });
+
+            return serviceList;
+        })
+        .catch((error) => {
+            console.error("Error:", error);
+            throw error;
+        });
+    return services;
+}
+
+async function  getUnassignedDisplays(code: string) {
+        
+}
+
+
+export { getCompanyDetails, getBranchServices, getCompanyBranches };
