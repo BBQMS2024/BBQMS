@@ -1,6 +1,7 @@
 package ba.unsa.etf.si.bbqms.admin_service.implementation;
 
 import ba.unsa.etf.si.bbqms.admin_service.api.AdminService;
+import ba.unsa.etf.si.bbqms.auth_service.api.AuthService;
 import ba.unsa.etf.si.bbqms.auth_service.api.RoleService;
 import ba.unsa.etf.si.bbqms.auth_service.api.UserService;
 import ba.unsa.etf.si.bbqms.domain.Role;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class DefaultAdminService implements AdminService {
@@ -30,18 +32,21 @@ public class DefaultAdminService implements AdminService {
     private final TenantService tenantService;
     private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
+    private final AuthService authService;
     public DefaultAdminService(final UserRepository userRepository,
                                final UserService userService,
                                final TwoFactorService twoFactorService,
                                final TenantService tenantService,
                                final RoleService roleService,
-                               final PasswordEncoder passwordEncoder) {
+                               final PasswordEncoder passwordEncoder,
+                               final AuthService authService) {
         this.userRepository = userRepository;
         this.userService = userService;
         this.twoFactorService = twoFactorService;
         this.tenantService = tenantService;
         this.roleService = roleService;
         this.passwordEncoder = passwordEncoder;
+        this.authService = authService;
     }
 
     @Override
@@ -74,33 +79,52 @@ public class DefaultAdminService implements AdminService {
     }
 
     @Override
-    public User updateAdmin(final UserDto request, final String tenantCode, final Long adminId) {
-        final User admin = this.userRepository.findById(adminId)
-                .orElseThrow(() -> new NoSuchElementException("Admin user not found"));
+    public User updateUser(final UserDto request, final String tenantCode, final Long adminId) {
+        final User user = this.userRepository.findById(adminId)
+                .orElseThrow(() -> new NoSuchElementException("User not found"));
 
-        if (!admin.getTenant().getCode().equals(tenantCode)) {
-            throw new IllegalArgumentException("Admin user does not belong to the specified tenant");
+        if (!user.getTenant().getCode().equals(tenantCode)) {
+            throw new IllegalArgumentException("Specified tenant is not associated with user");
+        }
+
+        final Set<Role> userRoles = user.getRoles();
+        Set<RoleName> roleNameSet = userRoles.stream()
+                .map(Role::getName)
+                .collect(Collectors.toSet());
+
+        if (roleNameSet.stream().anyMatch(this.authService::canOnlyCRUDUser)) {
+            throw new IllegalArgumentException("Only super admin can update admin");
         }
 
         if (request.email() != null) {
-            admin.setEmail(request.email());
+            user.setEmail(request.email());
         }
 
         if (request.phoneNumber() != null) {
-            admin.setPhoneNumber(request.phoneNumber());
+            user.setPhoneNumber(request.phoneNumber());
         }
 
-        return this.userRepository.save(admin);
+        return this.userRepository.save(user);
     }
 
     @Override
-    public void removeAdmin(final String tenantCode, final Long adminId) {
-        final User admin = this.userRepository.findById(adminId)
-                .orElseThrow(() -> new NoSuchElementException("Admin user not found"));
+    public void removeUser(final String tenantCode, final Long userId) {
+        final User user = this.userRepository.findById(userId)
+                .orElseThrow(() -> new NoSuchElementException("User not found"));
 
-        if (!admin.getTenant().getCode().equals(tenantCode)) {
-            throw new IllegalArgumentException("Admin user does not belong to the specified tenant");
+        if (!user.getTenant().getCode().equals(tenantCode)) {
+            throw new IllegalArgumentException("Specified tenant is not associated with user");
         }
-        this.userRepository.deleteById(adminId);
+
+        final Set<Role> userRoles = user.getRoles();
+        Set<RoleName> roleNameSet = userRoles.stream()
+                .map(Role::getName)
+                .collect(Collectors.toSet());
+
+        if (roleNameSet.stream().anyMatch(this.authService::canOnlyCRUDUser)) {
+            throw new IllegalArgumentException("Only super admin can remove admin");
+        }
+
+        this.userRepository.deleteById(userId);
     }
 }

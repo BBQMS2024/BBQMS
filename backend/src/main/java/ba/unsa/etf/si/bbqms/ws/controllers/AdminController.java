@@ -94,16 +94,16 @@ public class AdminController {
     }
 
     @PutMapping("/{code}/user/{userId}")
-    @PreAuthorize("hasRole('ROLE_SUPER_ADMIN')")
-    public ResponseEntity updateAdmin(@RequestBody final UserDto admin, @PathVariable(name = "code") final String tenantCode, @PathVariable(name = "userId") final long adminId) {
+    @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN', 'ROLE_BRANCH_ADMIN', 'ROLE_STAFF_ADMIN')")
+    public ResponseEntity updateAdmin(@RequestBody final UserDto request, @PathVariable(name = "code") final String tenantCode, @PathVariable(name = "userId") final long adminId) {
         if (!this.authService.canChangeTenant(tenantCode)) {
-            logger.warn("Super admin does not belong to the specified tenant");
+            logger.warn("Admin does not belong to the specified tenant");
             return ResponseEntity.badRequest().build();
         }
 
         try {
-            final User user = this.adminService.updateAdmin(admin, tenantCode, adminId);
-            return ResponseEntity.ok().body(new SimpleMessageDto("Updated admin: " + user.getUsername()));
+            final User user = this.adminService.updateUser(request, tenantCode, adminId);
+            return ResponseEntity.ok().body(new SimpleMessageDto("Updated user: " + user.getUsername()));
         } catch (Exception exception) {
             logger.warn(exception.getMessage());
             return ResponseEntity.badRequest().build();
@@ -111,16 +111,16 @@ public class AdminController {
     }
 
     @DeleteMapping("/{code}/user/{userId}")
-    @PreAuthorize("hasRole('ROLE_SUPER_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN', 'ROLE_BRANCH_ADMIN', 'ROLE_STAFF_ADMIN')")
     public ResponseEntity removeAdmin(@PathVariable(name = "code") final String tenantCode, @PathVariable(name = "userId") final long adminId) {
         if (!this.authService.canChangeTenant(tenantCode)) {
-            logger.warn("Super admin does not belong to the specified tenant");
+            logger.warn("Admin does not belong to the specified tenant");
             return ResponseEntity.badRequest().build();
         }
 
         try {
-            this.adminService.removeAdmin(tenantCode, adminId);
-            return ResponseEntity.ok().body(new SimpleMessageDto("Removed admin"));
+            this.adminService.removeUser(tenantCode, adminId);
+            return ResponseEntity.ok().body(new SimpleMessageDto("Removed user"));
         } catch (Exception exception) {
             logger.warn(exception.getMessage());
             return ResponseEntity.badRequest().build();

@@ -9,6 +9,6 @@ import java.util.List;
 public interface AdminService {
     List<User> findUsersByCode(final String tenantCode, final String roleNames);
     User addUser(final User admin, final String tenantCode, final String roleName) throws AuthException;
-    User updateAdmin(final UserDto admin, final String tenantCode, final Long adminId);
-    void removeAdmin(final String tenantCode, final Long adminId);
+    User updateUser(final UserDto request, final String tenantCode, final Long adminId);
+    void removeUser(final String tenantCode, final Long adminId);
 }
