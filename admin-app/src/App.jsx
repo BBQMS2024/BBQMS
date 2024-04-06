@@ -110,7 +110,7 @@ export default function App() {
                                               buttonColor="var(--light-blue)"
                                               url={ '/DFLT/manage/displays' }></HomePageCard>
                                 <HomePageCard title="Manage groups" backgroundColor="var(--light-blue)"
-                                              buttonColor="var(--light-blue)"
+                                              buttonColor="var(--dark-blue)"
                                               url={ '/DFLT/manage/groups' }></HomePageCard>
                                 <HomePageCard title="Manage branches" backgroundColor="var(--dark-blue)"
                                               buttonColor="var(--light-blue)"
@@ -118,24 +118,30 @@ export default function App() {
                                 <HomePageCard title="Manage services" backgroundColor="var(--light-blue)"
                                               buttonColor="var(--dark-blue)"
                                               url={ '/DFLT/manage/services' }></HomePageCard>
-                                <HomePageCard title="Manage teller stations" backgroundColor="var(--dark-blue)"
-                                              buttonColor="var(--light-blue)"
-                                              url={ '/DFLT/manage/stations' }></HomePageCard>
-                                <HomePageCard title="Manage company details" backgroundColor="var(--light-blue)"
+                                <HomePageCard title="Manage teller stations" backgroundColor="var(--light-blue)"
                                               buttonColor="var(--dark-blue)"
+                                              url={ '/DFLT/manage/stations' }></HomePageCard>
+                                <HomePageCard title="Manage company details" backgroundColor="var(--dark-blue)"
+                                              buttonColor="var(--light-blue)"
                                               url={ '/DFLT/companydetails' }></HomePageCard>
                             </CanAccess>
                             <CanAccess roles={ [ROLES.ROLE_SUPER_ADMIN] }>
-                                <HomePageCard title="Manage administrators" backgroundColor="var(--dark-blue)"
-                                              buttonColor="var(--light-blue)"
+                                <HomePageCard title="Manage administrators" backgroundColor="var(--light-blue)"
+                                              buttonColor="var(--dark-blue)"
                                               url={ '/DFLT/manage/admins' }></HomePageCard>
-                            </CanAccess>
-
-                            <CanAccess roles={[ROLES.ROLE_SUPER_ADMIN, ROLES.ROLE_BRANCH_ADMIN]}>
                                 <HomePageCard
                                     title="Manage users"
-                                    backgroundColor={(user && user.role === ROLES.ROLE_SUPER_ADMIN && "var(--light-blue)") || "var(--dark-blue)"}
-                                    buttonColor={(user && user.role === ROLES.ROLE_SUPER_ADMIN && "var(--dark-blue)") || "var(--light-blue)"}
+                                    backgroundColor="var(--dark-blue)"
+                                    buttonColor="var(--light-blue)"
+                                    url={'/DFLT/manage/users'}
+                                />
+                            </CanAccess>
+
+                            <CanAccess roles={[ROLES.ROLE_BRANCH_ADMIN]}>
+                                <HomePageCard
+                                    title="Manage users"
+                                    backgroundColor="var(--light-blue)"
+                                    buttonColor="var(--dark-blue)"
                                     url={'/DFLT/manage/users'}
                                 />
                             </CanAccess>
