@@ -134,7 +134,7 @@ public class DefaultAuthService implements AuthService {
     @Override
     public boolean canChangeTenant(final String tenantCode) {
         final User currentUser = getAuthenticatedUser();
-        return (currentUser.getTenant().getCode().equals(tenantCode));
+        return currentUser.getTenant().getCode().equals(tenantCode);
     }
 
     @Override

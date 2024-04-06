@@ -26,7 +26,7 @@ const ManageStationScreen = () => {
     useEffect(() => {
         async function fetchStationsForBranch() {
             try {
-                const response = await fetchData(`${url}stations/${tenantCode}/${selectedBranch.id}`, 'GET');
+                const response = await fetchData(`${ url }stations/${ tenantCode }/${ selectedBranch.id }`, 'GET');
                 if (response.success) {
                     setStations(response.data);
                 } else {
@@ -39,6 +39,7 @@ const ManageStationScreen = () => {
 
         if (selectedBranch) {
             fetchStationsForBranch();
+            fetchAvailableDisplays(selectedBranch);
         } else {
             setStations([]);
         }
@@ -58,26 +59,25 @@ const ManageStationScreen = () => {
             }
         }
 
-        async function fetchAvailableDisplays() {
-            try {
-                const response = await fetchData(`${ url }displays/unassigned/${ tenantCode }`, 'GET');
-                if (response.success) {
-                    setAvailableDisplays(response.data);
-                } else {
-                    console.error('Error fetching available displays:', response.error);
-                }
-            } catch (error) {
-                console.error('Error fetching available displays:', error);
-            }
-        }
-
         fetchBranches();
-        fetchAvailableDisplays();
     }, [location]);
+
+    async function fetchAvailableDisplays(branch) {
+        try {
+            const response = await fetchData(`${ url }displays/unassigned/${ tenantCode }/${ branch.id }`, 'GET');
+            if (response.success) {
+                setAvailableDisplays(response.data);
+            } else {
+                console.error('Error fetching available displays:', response.error);
+            }
+        } catch (error) {
+            console.error('Error fetching available displays:', error);
+        }
+    }
 
     async function fetchAvailableServices(station) {
         try {
-            const response = await fetchData(`${ url }stations/${ tenantCode }/${station.id}/services?assigned=false`, 'GET');
+            const response = await fetchData(`${ url }stations/${ tenantCode }/${ station.id }/services?assigned=false`, 'GET');
             if (response.success) {
                 setAvailableServices(response.data);
             } else {
@@ -214,75 +214,77 @@ const ManageStationScreen = () => {
     return (
         <div className="text-center mt-5">
             <h2>Teller Stations</h2>
-            <DropdownButton title={selectedBranch ? selectedBranch.name : "Select Branch"} variant="btn btn-outline-secondary">
-                {branches.map((branch, index) => (
-                    <Dropdown.Item key={index} onClick={() => setSelectedBranch(branch)}>{branch.name}</Dropdown.Item>
-                ))}
-            </DropdownButton>
-            <div style={{marginTop: '20px'}}>
-            <Table striped bordered hover>
-                <thead>
-                <tr>
-                    <th>Station ID</th>
-                    <th>Station Name</th>
-                    <th>Services</th>
-                    <th>Service Action</th>
-                    <th>Displays</th>
-                    <th>Display Action</th>
-                </tr>
-                </thead>
-                <tbody>
-                { stations.map((station, index) => (
-                    <tr key={ index }>
-                        <td>{ station.id }</td>
-                        <td>{ station.name }</td>
-                        <td>
-                            { station.services && station.services.length > 0 ? (
-                                station.services.map((service, serviceIndex) => (
-                                    <span key={ serviceIndex } style={ { marginRight: '5px' } }>
-                                            { serviceIndex > 0 && ', ' }
-                                        { service.name }
-                                        </span>
-                                ))
-                            ) : (
-                                <span>No services</span>
-                            ) }
-                        </td>
-                        <td>
-                            <Button
-                                variant="primary"
-                                style={ { backgroundColor: '#548CA8', color: 'white', borderColor: '#548CA8' } }
-                                onClick={ () => {
-                                    setShowServiceModal(true);
-                                    setSelectedStation(station);
-                                } }
-                            >
-                                Edit
-                            </Button>
-                        </td>
-                        <td>
-                            { station.display ? (
-                                <span>{ station.display.name }</span>
-                            ) : (
-                                <span>No display</span>
-                            ) }
-                        </td>
-                        <td>
-                            <Button
-                                variant="primary"
-                                style={ { backgroundColor: '#548CA8', color: 'white', borderColor: '#548CA8' } }
-                                onClick={ () => {
-                                    setShowDisplayModal(true);
-                                    setSelectedStation(station);
-                                } }
-                            >
-                                Edit
-                            </Button>
-                        </td>
-                    </tr>
+            <DropdownButton title={ selectedBranch ? selectedBranch.name : 'Select Branch' }
+                            variant="btn btn-outline-secondary">
+                { branches.map((branch, index) => (
+                    <Dropdown.Item key={ index }
+                                   onClick={ () => setSelectedBranch(branch) }>{ branch.name }</Dropdown.Item>
                 )) }
-                </tbody>
-            </Table>
+            </DropdownButton>
+            <div style={ { marginTop: '20px' } }>
+                <Table striped bordered hover>
+                    <thead>
+                    <tr>
+                        <th>Station ID</th>
+                        <th>Station Name</th>
+                        <th>Services</th>
+                        <th>Service Action</th>
+                        <th>Displays</th>
+                        <th>Display Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    { stations.map((station, index) => (
+                        <tr key={ index }>
+                            <td>{ station.id }</td>
+                            <td>{ station.name }</td>
+                            <td>
+                                { station.services && station.services.length > 0 ? (
+                                    station.services.map((service, serviceIndex) => (
+                                        <span key={ serviceIndex } style={ { marginRight: '5px' } }>
+                                            { serviceIndex > 0 && ', ' }
+                                            { service.name }
+                                        </span>
+                                    ))
+                                ) : (
+                                    <span>No services</span>
+                                ) }
+                            </td>
+                            <td>
+                                <Button
+                                    variant="primary"
+                                    style={ { backgroundColor: '#548CA8', color: 'white', borderColor: '#548CA8' } }
+                                    onClick={ () => {
+                                        setShowServiceModal(true);
+                                        setSelectedStation(station);
+                                    } }
+                                >
+                                    Edit
+                                </Button>
+                            </td>
+                            <td>
+                                { station.display ? (
+                                    <span>{ station.display.name }</span>
+                                ) : (
+                                    <span>No display</span>
+                                ) }
+                            </td>
+                            <td>
+                                <Button
+                                    variant="primary"
+                                    style={ { backgroundColor: '#548CA8', color: 'white', borderColor: '#548CA8' } }
+                                    onClick={ () => {
+                                        setShowDisplayModal(true);
+                                        setSelectedStation(station);
+                                    } }
+                                >
+                                    Edit
+                                </Button>
+                            </td>
+                        </tr>
+                    )) }
+                    </tbody>
+                </Table>
             </div>
             <Modal show={ showServiceModal } onHide={ handleCloseModal }>
                 <Modal.Header closeButton style={ { backgroundColor: '#334257', color: 'white' } }>
@@ -311,17 +313,18 @@ const ManageStationScreen = () => {
                             ) }
                         </div>
                         <Form.Group controlId="formGroupService" className="mb-3">
-                            <DropdownButton title={'Select Service'} variant="btn btn-outline-secondary">
-                                {availableServices.map((service, index) => {
+                            <DropdownButton title={ 'Select Service' } variant="btn btn-outline-secondary">
+                                { availableServices.map((service, index) => {
                                     const isAssigned = selectedServices.some(selectedService => selectedService.id === service.id);
                                     if (!isAssigned) {
                                         return (
-                                            <Dropdown.Item key={index} onClick={() => addService(service)}>{service.name}</Dropdown.Item>
+                                            <Dropdown.Item key={ index }
+                                                           onClick={ () => addService(service) }>{ service.name }</Dropdown.Item>
                                         );
                                     } else {
                                         return null;
                                     }
-                                })}
+                                }) }
                             </DropdownButton>
                         </Form.Group>
 

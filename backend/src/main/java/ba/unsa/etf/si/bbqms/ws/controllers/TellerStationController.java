@@ -7,7 +7,6 @@ import ba.unsa.etf.si.bbqms.domain.TellerStation;
 import ba.unsa.etf.si.bbqms.ws.models.DisplayDto;
 import ba.unsa.etf.si.bbqms.ws.models.ErrorResponseDto;
 import ba.unsa.etf.si.bbqms.ws.models.ServiceResponseDto;
-import ba.unsa.etf.si.bbqms.ws.models.TellerStationDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
