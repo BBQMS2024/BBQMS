@@ -174,6 +174,4 @@ public class DefaultGroupService implements GroupService {
     public Set<BranchGroup> getAllOfferingService(final Service service) {
         return this.branchGroupRepository.findAllByServicesContains(service);
     }
-
-    private void remove
 }
