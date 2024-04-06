@@ -19,8 +19,7 @@ spring:
     schemas: ${DB_SCHEMA}
 
 jwt:
-  header-title: Authorization
-  token-prefix: Bearer
+  cookie-title: access-token
   secret-key: ${JWT_KEY}
   authorities-key: USER_AUTHORITIES
   token-validity-time: PT30M

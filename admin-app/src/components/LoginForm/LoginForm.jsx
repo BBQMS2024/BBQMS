@@ -2,8 +2,7 @@ import { GoogleLogin } from '@react-oauth/google';
 import React, { useState } from "react";
 import validator from "validator";
 import "./LoginForm.css";
-import LoginAuth from "../LoginAuth/LoginAuth";
-import { Route, Routes, useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { SERVER_URL } from "../../constants.js";
 
 const LoginForm = () => {
@@ -29,7 +28,7 @@ const LoginForm = () => {
         }
         const data = await response.json();
         localStorage.setItem('userData', JSON.stringify(data));
-        navigate('/');
+        navigate('/companydetails');
     }
 
     const handleSubmit = async (event) => {
@@ -67,9 +66,9 @@ const LoginForm = () => {
 
             const data = await response.json();
 
-            localStorage.setItem('userData', JSON.stringify(data));
 
             if (response.ok) {
+                localStorage.setItem('userData', JSON.stringify(data));
                 setIsSubmitted(true);
                 navigate('/');
             } else if(response.status === 403){
@@ -92,11 +91,8 @@ const LoginForm = () => {
     };
 
     if (isSubmitted) {
-        return (
-            <Routes>
-                <Route path='/' element={<LoginAuth />} />
-            </Routes>
-        )
+        //navigate('/loginAuth');
+        navigate('/companydetails');
     }
 
     return (
@@ -126,10 +122,7 @@ const LoginForm = () => {
                     />
                     {error && error.includes("Password") && <p className="error">{error}</p>}
                 </div>
-                <input type="submit" value="Submit" />
-                <p id="registration">
-                    Not registered? <Link to="/registration">Create an account</Link>
-                </p>
+                <input type="submit" value="Submit"  />
                 <div style={{
                     display: 'flex',
                     justifyContent: 'center'

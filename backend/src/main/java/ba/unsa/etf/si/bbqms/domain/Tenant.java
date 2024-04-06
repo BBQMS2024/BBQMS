@@ -2,8 +2,6 @@ package ba.unsa.etf.si.bbqms.domain;
 
 import jakarta.persistence.*;
 
-import java.util.Set;
-
 @Entity
 @Table(name = "tenant")
 public class Tenant {
@@ -30,12 +28,6 @@ public class Tenant {
     @OneToOne
     @JoinColumn(name = "logo_id", referencedColumnName = "id")
     private TenantLogo logo;
-
-    @OneToMany(mappedBy = "tenant")
-    private Set<Service> service;
-
-    @OneToMany(mappedBy = "tenant")
-    private Set<Branch> branches;
 
     public Tenant() {
     }
