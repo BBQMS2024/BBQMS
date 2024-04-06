@@ -114,35 +114,4 @@ public class DefaultAuthService implements AuthService {
             return false;
         }
     }
-
-
-    @Override
-    public boolean setTfaUse(final boolean tfa) throws Exception {
-        return this.userService.setUserTfa(tfa);
-    }
-
-    /*
-       ONLY USE THIS METHOD IF 100% SURE USER IS AUTHORIZED
-    */
-    @Override
-    public User getAuthenticatedUser() {
-        final String currentEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-        return this.userService.findByEmail(currentEmail)
-                .orElseThrow(() -> new RuntimeException("This should never happen. You should not call this in non-authorized endpoints!"));
-    }
-
-    @Override
-    public boolean canChangeTenant(final String tenantCode) {
-        final User currentUser = getAuthenticatedUser();
-        return currentUser.getTenant().getCode().equals(tenantCode);
-    }
-
-    @Override
-    public boolean canOnlyCRUDUser(final RoleName roleName) {
-        Set<Role> currentUsersRoles = getAuthenticatedUser().getRoles();
-
-        return currentUsersRoles.stream()
-                .noneMatch(role -> role.getName().equals(RoleName.ROLE_SUPER_ADMIN))
-                && !roleName.equals(RoleName.ROLE_USER);
-    }
 }

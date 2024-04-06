@@ -2,10 +2,8 @@ package ba.unsa.etf.si.bbqms.auth_service.implementation;
 
 import ba.unsa.etf.si.bbqms.auth_service.api.UserService;
 import ba.unsa.etf.si.bbqms.domain.User;
-import ba.unsa.etf.si.bbqms.exceptions.AuthException;
 import ba.unsa.etf.si.bbqms.repository.UserRepository;
 import ba.unsa.etf.si.bbqms.utils.EmailValidator;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -37,14 +35,5 @@ public class UsernamePasswordUserService implements UserService {
     @Override
     public Optional<User> findByEmail(final String email) {
         return this.userRepository.findByEmailEqualsAndOauthEquals(email, false);
-    }
-
-    @Override
-    public boolean setUserTfa(final boolean tfa) throws AuthException {
-        final String currentEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-        final User currentUser = this.findByEmail(currentEmail)
-                .orElseThrow(() -> new AuthException("User is not logged in."));
-        currentUser.setTfa(tfa);
-        return this.userRepository.save(currentUser).isTfa();
     }
 }

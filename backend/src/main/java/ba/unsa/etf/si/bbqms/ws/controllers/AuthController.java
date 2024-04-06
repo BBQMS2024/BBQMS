@@ -15,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -41,6 +40,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
+    @PreAuthorize("!isAuthenticated()")
     public ResponseEntity register(@RequestBody final RegisterRequest request) {
         final User newUser = User.builder()
                 .password(request.password())
@@ -56,8 +56,8 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody final LoginRequest loginRequest,
-                                final HttpServletResponse response) {
+    @PreAuthorize("!isAuthenticated()")
+    public ResponseEntity login(@RequestBody final LoginRequest loginRequest) {
         final User userData = User.builder()
                 .email(loginRequest.email().trim())
                 .password(loginRequest.password().trim())
@@ -68,29 +68,14 @@ public class AuthController {
         if (optionalUser.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        final User user = optionalUser.get();
 
-        if (user.isTfa()) {
-            return ResponseEntity.ok().body(UserDto.fromEntity(user));
-            // if user is using 2FA, then we indicate everything is OK, but not give the user their token
-            // because they still need to do 2FA
-        }
-
-        final String token = this.authService.generateUserToken(user);
-        response.addHeader("Auth-Token", token);
-
-        return ResponseEntity.ok().body(new LoginResponse(UserDto.fromEntity(user), token));
+        return ResponseEntity.ok(UserDto.fromEntity(optionalUser.get()));
     }
 
     @GetMapping
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity verifyToken() {
-        final boolean userLoggedIn = this.authService.getCurrentUser().isPresent();
-        if (userLoggedIn) {
-            return ResponseEntity.ok(new SimpleMessageDto("Success"));
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(this.authService.getCurrentUser().isPresent());
     }
 
     @GetMapping("/tfa")
@@ -116,19 +101,13 @@ public class AuthController {
         final boolean verified = this.authService.verifyUserTfaCode(user, request.code());
         if (verified) {
             final String token = this.authService.generateUserToken(user);
-            response.addHeader("Auth-Token", token);
+            final Cookie jwtCookie = this.cookieService.generateDefaultJwtCookie(token);
+            response.addCookie(jwtCookie);
 
-            return ResponseEntity.ok(new LoginResponse(UserDto.fromEntity(user), token));
+            return ResponseEntity.ok(new SimpleMessageDto("Code verified successfully."));
         } else {
             return ResponseEntity.badRequest().body(new ErrorMessage("Could not verify the code."));
         }
-    }
-
-    @PutMapping("/tfa")
-    @PreAuthorize("isAuthenticated()")
-    public ResponseEntity setTfaState(@RequestBody final TfaSetRequest request) throws Exception {
-        final boolean tfa = this.authService.setTfaUse(Boolean.parseBoolean(request.isTfa));
-        return ResponseEntity.ok().body(new SimpleMessageDto("User tfa set to: " + tfa));
     }
 
     @PostMapping("/login/oauth2/google")
@@ -153,9 +132,6 @@ public class AuthController {
     public record LoginRequest(String email, String password) {
     }
 
-    public record LoginResponse(UserDto userData, String token) {
-    }
-
     public record TfaCodeVerificationRequest(String code, String email) {
     }
 
@@ -163,8 +139,5 @@ public class AuthController {
     }
 
     public record GoogleLoginRequest(String googleToken) {
-    }
-
-    public record TfaSetRequest(String isTfa) {
     }
 }
