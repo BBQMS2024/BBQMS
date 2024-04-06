@@ -7,9 +7,8 @@ import ba.unsa.etf.si.bbqms.ws.models.UserDto;
 import java.util.List;
 
 public interface AdminService {
-    List<User> findAdminsByCode(final String tenantCode);
-    User addAdmin(final User admin, final String tenantCode) throws AuthException;
-
+    List<User> findAdminsByCode(final String tenantCode, final List<String> roleNames);
+    User addAdmin(final User admin, final String tenantCode, final String roleName) throws AuthException;
     User updateAdmin(final UserDto admin, final String tenantCode, final Long adminId) throws Exception;
     void removeAdmin(final String tenantCode, final Long adminId) throws Exception;
 }

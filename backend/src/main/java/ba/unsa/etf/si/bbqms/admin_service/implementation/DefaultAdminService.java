@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class DefaultAdminService implements AdminService {
@@ -45,13 +46,15 @@ public class DefaultAdminService implements AdminService {
     }
 
     @Override
-    public List<User> findAdminsByCode(final String tenantCode){
-        final Set<RoleName> roleNameSet = Set.of(RoleName.ROLE_BRANCH_ADMIN);
-        return userRepository.findAllByTenant_CodeAndRoles_NameIn(tenantCode, roleNameSet);
+    public List<User> findAdminsByCode(final String tenantCode, final List<String> roleNames){
+        final Set<RoleName> roleNameSet = roleNames.stream()
+                .map(RoleName::valueOf)
+                .collect(Collectors.toSet());
+        return this.userRepository.findAllByTenant_CodeAndRoles_NameIn(tenantCode, roleNameSet);
     }
 
     @Override
-    public User addAdmin(final User admin, final String tenantCode) throws AuthException {
+    public User addAdmin(final User admin, final String tenantCode, final String roleName) throws AuthException {
         if (!UserValidator.validateData(admin)) {
             throw new AuthException("Invalid email/password format");
         }
@@ -61,7 +64,7 @@ public class DefaultAdminService implements AdminService {
             throw new AuthException("Tried making a user that already exists");
         }
 
-        final Role role = this.roleService.getRoleByName(RoleName.ROLE_BRANCH_ADMIN)
+        final Role role = this.roleService.getRoleByName(RoleName.valueOf(roleName))
                 .orElseThrow(() -> new AuthException("Tried setting a role that doesn't exist"));
         final Tenant tenant = this.tenantService.findByCode(tenantCode);
 
@@ -70,12 +73,12 @@ public class DefaultAdminService implements AdminService {
         admin.setOauth(false);
         admin.setTfaSecret(this.twoFactorService.generateNewSecret());
         admin.setPassword(this.passwordEncoder.encode(admin.getPassword().trim()));
-        return userRepository.save(admin);
+        return this.userRepository.save(admin);
     }
 
     @Override
     public User updateAdmin(final UserDto request, final String tenantCode, final Long adminId) throws Exception {
-        final User admin = userRepository.findById(adminId)
+        final User admin = this.userRepository.findById(adminId)
                 .orElseThrow(() -> new NoSuchElementException("Admin user not found"));
 
         if (!admin.getTenant().getCode().equals(tenantCode)) {
@@ -90,12 +93,12 @@ public class DefaultAdminService implements AdminService {
             admin.setPhoneNumber(request.phoneNumber());
         }
 
-        return userRepository.save(admin);
+        return this.userRepository.save(admin);
     }
 
     @Override
     public void removeAdmin(final String tenantCode, final Long adminId) throws Exception {
-        final User admin = userRepository.findById(adminId)
+        final User admin = this.userRepository.findById(adminId)
                 .orElseThrow(() -> new NoSuchElementException("Admin user not found"));
 
         if (!admin.getTenant().getCode().equals(tenantCode)) {
