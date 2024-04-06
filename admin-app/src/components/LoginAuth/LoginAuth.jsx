@@ -1,6 +1,8 @@
-import React, { useEffect, useRef, useReducer, useState } from "react";
+import React, { useEffect, useRef, useReducer, useContext } from "react";
 import "./LoginAuth.css";
 import { SERVER_URL } from "../../constants.js";
+import { fetchData } from '../../fetching/Fetch.js';
+import { UserContext } from '../../context/UserContext.jsx';
 import { useNavigate } from "react-router-dom";
 
 function doSubmit(submittedValues) {
@@ -88,6 +90,7 @@ const initialState = {
 };
 
 export default function LoginAuth() {
+    const { user, setUser } = useContext(UserContext);
     const [{ inputValues, focusedIndex, status }, dispatch] = useReducer(
         reducer,
         initialState
@@ -118,7 +121,7 @@ export default function LoginAuth() {
 
     async function handleSubmit(e) {
 
-        e.preventDefault();
+        //e.preventDefault();
 
         dispatch({ type: "VERIFY" });
 
@@ -128,20 +131,17 @@ export default function LoginAuth() {
             if (!userData) {
                 throw new Error("Email not found in localStorage");
             }
-
-            const response = await fetch(`${SERVER_URL}/api/v1/auth/tfa`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    code: inputValues.join(""),
-                    email: userData.email
-                }),
+            
+            const url = `${ SERVER_URL }/api/v1/auth/tfa`;
+            const { data, success } = await fetchData(url, 'POST', {
+                code: inputValues.join(""),
+                email: userData.email
             });
-
-            if (response.ok) {
-                navigate('/companyDetails')
+            
+            if (success) {
+                localStorage.setItem('token', data.token);
+                setUser(data.userData);
+                navigate(`/${ data.userData.tenantCode }/home`);
             } else {
                 throw new Error("Code could not be verified. It is incorrect or expired.");
             }
@@ -181,7 +181,7 @@ export default function LoginAuth() {
                         );
                     })}
                 </div>
-                <button disabled={status === "pending"}   onClick={routeChange}>
+                <button className="button-auth" disabled={status === "pending"}   onClick={routeChange}>
                     {status === "pending" ? "VERIFYING..." : "VERIFY"}
                 </button>
             </form>

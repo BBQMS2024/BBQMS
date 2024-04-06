@@ -5,12 +5,14 @@ import ba.unsa.etf.si.bbqms.domain.User;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public record UserDto(long id, String email, String phoneNumber, Set<String> roles) {
+public record UserDto(long id, String email, String phoneNumber, Set<String> roles, String tenantCode, boolean isTfa) {
     public static UserDto fromEntity(final User user) {
         return new UserDto(
                 user.getId(),
                 user.getEmail(),
                 user.getPhoneNumber(),
-                user.getRoles().stream().map(role -> role.getName().name()).collect(Collectors.toSet()));
+                user.getRoles().stream().map(role -> role.getName().name()).collect(Collectors.toSet()),
+                user.getTenant().getCode(),
+                user.isTfa());
     }
 }

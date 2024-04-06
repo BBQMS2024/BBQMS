@@ -2,7 +2,7 @@ BEGIN;
 
 CREATE TABLE tenant
 (
-    id              BIGINT AUTO_INCREMENT NOT NULL,
+    id              INTEGER AUTO_INCREMENT NOT NULL,
     code            VARCHAR(255)          NOT NULL,
     name            VARCHAR(255)          NULL,
     hq_address      VARCHAR(255)          NULL,

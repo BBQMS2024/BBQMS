@@ -1,9 +1,9 @@
 BEGIN;
 
-ALTER TABLE User
-    ADD tenant_id BIGINT;
+ALTER TABLE user
+    ADD tenant_id INTEGER;
 
-ALTER TABLE User
+ALTER TABLE user
     ADD CONSTRAINT FK_user_tenant FOREIGN KEY (tenant_id) REFERENCES tenant (id);
 
 INSERT INTO tenant_logo (id, base64_logo)
