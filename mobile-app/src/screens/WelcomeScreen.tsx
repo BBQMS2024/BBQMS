@@ -5,6 +5,7 @@ import { useFonts } from "expo-font";
 const { Fonts } = require("../constants/fonts");
 const { Assets } = require("../constants/assets");
 const { Colors } = require("../constants/colors");
+import { Ionicons } from '@expo/vector-icons';
 
 export default function WelcomeScreen({ route }: { route: any }) {
     const details = route.params.details;
@@ -34,16 +35,20 @@ export default function WelcomeScreen({ route }: { route: any }) {
         }).start();
     }, [fadeAnim]);
 
-    const renderItem = ({ item }:{ item: any }) => (
+    const renderItem = ({ item }: { item: any }) => (
         <TouchableOpacity
           style={styles.branchItem}
           onPress={() => handlePress(item.name)}
         >
-          <Text style={{ fontSize: 28, fontFamily: Fonts.ARIAL}}>{item.name}</Text>
+          <View style={styles.branchInfoContainer}>
+            <Ionicons name="ios-information-circle" size={24} color={Colors.ACCENT} style={styles.icon} />
+            <Text style={styles.branchName}>{item.name}</Text>
+            <Ionicons name="chevron-forward" size={24} color={Colors.ACCENT} style={styles.icon} />
+          </View>
         </TouchableOpacity>
       );
-    
       async function handlePress(id: any) {
+        //to doo
     }
 
     if (!fontsLoaded) return <Text>Loading...</Text>;
@@ -69,42 +74,67 @@ export default function WelcomeScreen({ route }: { route: any }) {
     );
 }
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: Colors.BACKGROUND,
-        alignItems: "center",
-        justifyContent: "center",
+      flex: 1,
+      backgroundColor: Colors.BACKGROUND,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    titleContainer: {
+      alignSelf: 'flex-start',
+      marginLeft: 20,
+      marginTop: 30,
+      marginBottom: 10, // Adjust the margin to lower the items from the title
     },
     logoContainer: {
-        
+      marginBottom: 20, // Add margin to separate logo from title
     },
     logo: {
-        width: 250,
-        height: 250,
-        resizeMode: "contain",
+      width: '80%', // Adjust the logo size to fit better on all screens
+      height: undefined, // Allow height to adjust automatically based on width
+      aspectRatio: 1, // Maintain aspect ratio
+      resizeMode: 'contain',
     },
     title: {
-        fontSize: 42,
-        fontWeight: 'bold',
-        marginBottom: 30,
-        marginTop: 30,
-        fontFamily: Fonts.ARIAL
-      },
-      titleContainer: {
-        alignSelf: 'flex-start',
-        marginLeft: 20, // Adjust the margin as needed
-        marginTop: 30, // Adjust the margin as needed
-      },
+      fontSize: 42,
+      fontWeight: 'bold',
+      fontFamily: Fonts.ARIAL,
+      color: Colors.TEXT_PRIMARY,
+    },
     flatListContainer: {
       flexGrow: 1,
       paddingHorizontal: 20,
-      paddingBottom: 20, // Add padding to the bottom of the list
+      paddingTop: 10, // Add padding to the top of the list to separate from title
     },
     branchItem: {
       paddingVertical: 15,
-      borderBottomWidth: 1,
-      borderBottomColor: '#ccc',
-      backgroundColor: Colors.ACCENT
+      paddingHorizontal: 20,
+      marginBottom: 15,
+      borderRadius: 10,
+      borderColor: Colors.ACCENT,
+      borderWidth: 1,
+      shadowColor: '#000',
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.25,
+      shadowRadius: 3.84,
+      elevation: 5,
+      width: '100%', // Make items take full width of the screen
     },
-});
+    branchInfoContainer: {
+      flexDirection: 'row', // Arrange items horizontally
+      alignItems: 'center', // Center items vertically
+    },
+    branchName: {
+      fontSize: 34,
+      fontFamily: Fonts.ARIAL,
+      color: Colors.TEXT_PRIMARY,
+      marginLeft: 10, // Add some space between text and icon
+    },
+    icon: {
+      marginRight: 10, // Add some space between icon and text
+    },
+  });

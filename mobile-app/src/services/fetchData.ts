@@ -25,6 +25,7 @@ interface ServiceData{
 }
 
 interface DisplayData{
+    id: string,
     name: string,
 }
 
@@ -136,8 +137,28 @@ async function getBranchServices(code:string, id: string) {
     return services;
 }
 
-async function  getUnassignedDisplays(code: string) {
-        
+async function  getUnassignedDisplays(code: string) {;
+    let display: DisplayData = await fetch(
+        `${TEST_URL}/displays/unassigned/${code}`,
+        { method: "GET" }
+    )
+        .then((response) => {
+            console.log(response);
+            if (response.status === 200) {
+                return response.json();
+            } else {
+                throw new Error(Dialogs.ERROR.INVALID_CODE);
+            }
+        })
+        .then((data) => {
+            
+            return data
+        })
+        .catch((error) => {
+            console.error("Error:", error);
+            throw error;
+        });
+    return display;
 }
 
 

@@ -1,24 +1,29 @@
 import React, { useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import { Screens } from '../constants/screens';
 import { getBranchServices } from '../services/fetchData';
 import { Colors } from '../constants/colors';
 import { Fonts } from '../constants/fonts';
+import { Ionicons } from '@expo/vector-icons';
 
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 
 export default function BranchPickScreen({ route, navigation }: { route: any, navigation: any }){
 
   const { branches } = route.params
     
-  const renderItem = ({ item }:{ item: any }) => (
+  const renderItem = ({ item }: { item: any }) => (
     <TouchableOpacity
       style={styles.branchItem}
       onPress={() => handlePress(item.name)}
     >
-      <Text style={{ fontSize: 28, fontFamily: Fonts.ARIAL}}>{item.name}</Text>
+      <Text style={styles.branchName}>{item.name}</Text>
+      <View style={styles.iconContainer}>
+        <Ionicons name="chevron-forward-circle-outline" size={windowWidth * 0.1} color={Colors.ACCENT} />
+      </View>
     </TouchableOpacity>
   );
-
   async function handlePress(id: any) {
 
     getBranchServices(route.params.code, id)
@@ -34,7 +39,7 @@ export default function BranchPickScreen({ route, navigation }: { route: any, na
 }
 return (
     <View style={styles.container}>
-      <Text style={styles.title}>Poslovnice</Text>
+      <Text style={[styles.title]}>Poslovnice</Text>
       <FlatList
         data={branches}
         renderItem={renderItem}
@@ -48,26 +53,53 @@ return (
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: '#fff', // Set background color if necessary
-      justifyContent: 'center', // Align the list to the center vertically
-      paddingTop: 100, // Add padding to the top of the container to move the list lower
+      backgroundColor: '#fff',
+      justifyContent: 'center',
+      paddingTop: windowHeight * 0.1,
     },
     title: {
-        fontSize: 42,
-        fontWeight: 'bold',
-        marginBottom: 30,
-        marginLeft: 10,
-        fontFamily: Fonts.ARIAL
-      },
+      fontSize: windowWidth * 0.1,
+      fontWeight: 'bold',
+      marginBottom: windowHeight * 0.03,
+      marginLeft: windowWidth * 0.05,
+      fontFamily: Fonts.ARIAL,
+    },
     flatListContainer: {
       flexGrow: 1,
-      paddingHorizontal: 20,
-      paddingBottom: 20, // Add padding to the bottom of the list
+      paddingHorizontal: windowWidth * 0.05,
+      paddingBottom: windowHeight * 0.05,
     },
     branchItem: {
-      paddingVertical: 15,
-      borderBottomWidth: 1,
-      borderBottomColor: '#ccc',
-      backgroundColor: Colors.ACCENT
+      paddingHorizontal: windowWidth * 0.05,
+      paddingVertical: windowHeight * 0.06, // Adjust the padding to make the items taller
+      marginBottom: windowHeight * 0.02,
+      borderRadius: windowWidth * 0.05,
+      backgroundColor: '#fff',
+      shadowColor: Colors.ACCENT,
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.25,
+      shadowRadius: 3.84,
+      elevation: 5,
     },
-  });
+    branchContent: {
+      flexDirection: 'row', 
+      alignItems: 'center', 
+      justifyContent: 'center',
+    },
+    branchName: {
+      flex: 1, 
+      fontSize: windowWidth * 0.08,
+      fontFamily: Fonts.ARIAL,
+      textAlign: 'center',
+    },
+    icon: {
+      marginLeft: windowWidth * 0.02,
+    },
+    iconContainer: {
+        alignItems: 'center',
+        marginTop: windowHeight * 0.02, // Adjust the margin to position the icon below the branch name
+      },
+});
