@@ -20,6 +20,7 @@ interface BranchData {
 }
 
 interface ServiceData{
+    id: string,
     name: string
 }
 
@@ -104,7 +105,7 @@ async function getCompanyBranches(code: any) {
 async function getBranchServices(code:string, id: string) {
     const serviceList: ServiceData[] = [];
     let services: ServiceData[] = await fetch(
-        `${TEST_URL}/stations//${code}/${id}`,
+        `${TEST_URL}/stations/${code}/${id}`,
         { method: "GET" }
     )
         .then((response) => {
@@ -116,12 +117,13 @@ async function getBranchServices(code:string, id: string) {
             }
         })
         .then((data) => {
-            data.forEach((service: any) => {
+            console.log(data)
+            data.services.forEach((service: any) => {
 
                 const serviceData: ServiceData = {
+                    id: service.id,
                     name: service.name
                 };
-
                 serviceList.push(serviceData);
             });
 
