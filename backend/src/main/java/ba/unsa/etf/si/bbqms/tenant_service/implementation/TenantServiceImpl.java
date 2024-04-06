@@ -1,5 +1,7 @@
 package ba.unsa.etf.si.bbqms.tenant_service.implementation;
 
+import ba.unsa.etf.si.bbqms.admin_service.api.GroupService;
+import ba.unsa.etf.si.bbqms.domain.BranchGroup;
 import ba.unsa.etf.si.bbqms.domain.Service;
 import ba.unsa.etf.si.bbqms.domain.Tenant;
 import ba.unsa.etf.si.bbqms.domain.TenantLogo;
@@ -20,14 +22,17 @@ public class TenantServiceImpl implements TenantService {
     private final TenantRepository tenantRepository;
     private final TenantLogoRepository tenantLogoRepository;
     private final ServiceRepository serviceRepository;
+    private final GroupService groupService;
 
     @Autowired
     public TenantServiceImpl(final TenantRepository tenantRepository,
                              final TenantLogoRepository tenantLogoRepository,
-                             final ServiceRepository serviceRepository) {
+                             final ServiceRepository serviceRepository,
+                             final GroupService groupService) {
         this.tenantRepository = tenantRepository;
         this.tenantLogoRepository = tenantLogoRepository;
         this.serviceRepository = serviceRepository;
+        this.groupService = groupService;
     }
 
     @Override
@@ -120,6 +125,14 @@ public class TenantServiceImpl implements TenantService {
 
     @Override
     public void deleteService(final long id) {
+        // If we're deleting a service we first must discard it from groups/teller stations that are already using it
+        final Service service = this.serviceRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("No service with id: " + id));
+
+        for (final BranchGroup group : this.groupService.getAllOfferingService(service)) {
+            this.groupService.deleteBranchGroupService(group.getId(), service.getId());
+        }
+
         serviceRepository.deleteById(id);
     }
 }

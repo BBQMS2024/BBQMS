@@ -1,7 +1,6 @@
 package ba.unsa.etf.si.bbqms.ws.controllers;
 
 import ba.unsa.etf.si.bbqms.auth_service.api.AuthService;
-import ba.unsa.etf.si.bbqms.domain.User;
 import ba.unsa.etf.si.bbqms.tenant_service.api.TenantService;
 import ba.unsa.etf.si.bbqms.ws.models.ServiceDto;
 import ba.unsa.etf.si.bbqms.ws.models.SimpleMessageDto;
@@ -40,12 +39,8 @@ public class TenantController {
     @PutMapping("/{code}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity updateTenant(@PathVariable final String code, @RequestBody final TenantDto request) throws Exception {
-        final User user = this.authService.getCurrentUser()
-                .orElseThrow(() -> new Exception("We should be authenticated here hence have a current user. This exception should never happen."));
-
-        if (!user.getTenant().getCode().equals(code)) {
+        if (!this.authService.canChangeTenant(code)) {
             return ResponseEntity.notFound().build();
-            // User tried to edit a tenant of whom he isn't part of. Not allowed.
         }
 
         try {
@@ -58,9 +53,9 @@ public class TenantController {
     @PostMapping("/{code}/services")
     @PreAuthorize("hasAnyRole('ROLE_BRANCH_ADMIN', 'ROLE_SUPER_ADMIN')")
     public ResponseEntity addService(@PathVariable(name = "code") final String code, @RequestBody final ServiceDto serviceDto) {
-        final User user = this.authService.getCurrentUser()
-                .orElseThrow(() -> new RuntimeException("We should be authenticated here hence have a current user. This exception should never happen."));
-
+        if (!this.authService.canChangeTenant(code)) {
+            return ResponseEntity.notFound().build();
+        }
         try {
             return ResponseEntity.ok().body(tenantService.addService(code, serviceDto));
         } catch (Exception e) {
@@ -82,10 +77,7 @@ public class TenantController {
     public ResponseEntity updateService(@PathVariable(name="code") final String code,
                                         @PathVariable(name = "id") final Long id,
                                         @RequestBody final ServiceDto request) {
-        final User user = this.authService.getCurrentUser()
-                .orElseThrow(() -> new RuntimeException("We should be authenticated here hence have a current user. This exception should never happen."));
-
-        if (!user.getTenant().getCode().equals(code)) {
+        if (!this.authService.canChangeTenant(code)) {
             return ResponseEntity.notFound().build();
         }
 
@@ -99,10 +91,7 @@ public class TenantController {
     @DeleteMapping("/{code}/services/{id}")
     @PreAuthorize("hasAnyRole('ROLE_BRANCH_ADMIN', 'ROLE_SUPER_ADMIN')")
     public ResponseEntity deleteService(@PathVariable(name="code") final String code, @PathVariable(name = "id") final Long id) {
-        final User user = this.authService.getCurrentUser()
-                .orElseThrow(() -> new RuntimeException("We should be authenticated here hence have a current user. This exception should never happen."));
-
-        if (!user.getTenant().getCode().equals(code)) {
+        if (!this.authService.canChangeTenant(code)) {
             return ResponseEntity.notFound().build();
         }
 

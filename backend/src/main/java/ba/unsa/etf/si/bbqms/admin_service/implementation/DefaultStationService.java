@@ -117,4 +117,9 @@ public class DefaultStationService implements StationService {
     public Set<TellerStation> getAllByBranch(final long branchId) {
         return this.tellerStationRepository.findAllByBranch_Id(branchId);
     }
+
+    @Override
+    public Set<TellerStation> getAllOfferingService(final Service service) {
+        return this.tellerStationRepository.findAllByServicesContains(service);
+    }
 }

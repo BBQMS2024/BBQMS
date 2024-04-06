@@ -91,6 +91,24 @@ public class DisplayController {
         }
     }
 
+    @GetMapping("/unassigned/{tenantCode}/{branchId}")
+    @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN', 'ROLE_BRANCH_ADMIN')")
+    public ResponseEntity getUnassignedByBranch(@PathVariable final String tenantCode, @PathVariable final String branchId) {
+        if (!this.authService.canChangeTenant(tenantCode)) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        try {
+            return ResponseEntity.ok().body(
+                    this.displayService.getUnassignedDisplaysByBranch(Long.parseLong(branchId)).stream()
+                            .map(DisplayDto::fromEntity)
+                            .collect(Collectors.toList())
+            );
+        } catch (final Exception exception) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
     @PutMapping("/{tenantCode}/{displayId}")
     @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN', 'ROLE_BRANCH_ADMIN')")
     public ResponseEntity updateDisplay(@PathVariable final String tenantCode,

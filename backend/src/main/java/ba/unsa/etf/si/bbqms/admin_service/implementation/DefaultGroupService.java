@@ -1,12 +1,15 @@
 package ba.unsa.etf.si.bbqms.admin_service.implementation;
 
+import ba.unsa.etf.si.bbqms.admin_service.api.StationService;
 import ba.unsa.etf.si.bbqms.domain.Branch;
 import ba.unsa.etf.si.bbqms.domain.BranchGroup;
 import ba.unsa.etf.si.bbqms.domain.Service;
 import ba.unsa.etf.si.bbqms.admin_service.api.GroupService;
+import ba.unsa.etf.si.bbqms.domain.TellerStation;
 import ba.unsa.etf.si.bbqms.repository.BranchGroupRepository;
 import ba.unsa.etf.si.bbqms.repository.BranchRepository;
 import ba.unsa.etf.si.bbqms.repository.ServiceRepository;
+import ba.unsa.etf.si.bbqms.repository.TellerStationRepository;
 import ba.unsa.etf.si.bbqms.ws.models.BranchGroupCreateDto;
 import ba.unsa.etf.si.bbqms.ws.models.BranchGroupUpdateDto;
 import jakarta.persistence.EntityNotFoundException;
@@ -17,16 +20,22 @@ import java.util.Set;
 
 @org.springframework.stereotype.Service
 public class DefaultGroupService implements GroupService {
+    private final StationService stationService;
     private final BranchGroupRepository branchGroupRepository;
     private final BranchRepository branchRepository;
     private final ServiceRepository serviceRepository;
+    private final TellerStationRepository stationRepository;
 
-    public DefaultGroupService(final BranchGroupRepository branchGroupRepository,
+    public DefaultGroupService(final StationService stationService,
+                               final BranchGroupRepository branchGroupRepository,
                                final BranchRepository branchRepository,
-                               final ServiceRepository serviceRepository) {
+                               final ServiceRepository serviceRepository,
+                               final TellerStationRepository stationRepository) {
+        this.stationService = stationService;
         this.branchGroupRepository = branchGroupRepository;
         this.branchRepository = branchRepository;
         this.serviceRepository = serviceRepository;
+        this.stationRepository = stationRepository;
     }
 
     @Override
@@ -97,6 +106,25 @@ public class DefaultGroupService implements GroupService {
 
     @Override
     public void deleteBranchGroup(final long branchGroupId) {
+        final BranchGroup group = this.branchGroupRepository.findById(branchGroupId)
+                .orElseThrow(() -> new EntityNotFoundException("No branchgroup with id: " + branchGroupId));
+
+
+        final Set<Branch> branches = group.getBranches();
+        for (final Branch existingBranch: branches) {
+            existingBranch.getBranchGroups().remove(group);
+            final Set<Service> noLongerAvailableServices = new HashSet<>(group.getServices());
+            for (final BranchGroup existingGroups : existingBranch.getBranchGroups()) {
+                noLongerAvailableServices.removeAll(existingGroups.getServices());
+            }
+
+            for (final TellerStation station : existingBranch.getTellerStations()) {
+                station.getServices().removeAll(noLongerAvailableServices);
+            }
+            this.stationRepository.saveAll(existingBranch.getTellerStations());
+            this.branchRepository.save(existingBranch);
+        }
+
         this.branchGroupRepository.deleteById(branchGroupId);
     }
 
@@ -106,6 +134,11 @@ public class DefaultGroupService implements GroupService {
                 .orElseThrow(() -> new EntityNotFoundException("No branch group found with id: " + branchGroupId));
         final Service existingService = this.serviceRepository.findById(serviceId)
                 .orElseThrow(() -> new EntityNotFoundException("No service found with id: " + serviceId));
+
+        // If we are deleting a service from a group we also must remove it from stations in the group beforehand. Same below.
+        for (final TellerStation station : this.stationService.getAllOfferingService(existingService)) {
+            this.stationService.deleteTellerStationService(station.getId(), serviceId);
+        }
 
         if (branchGroup.getServices().remove(existingService)) {
             return this.branchGroupRepository.save(branchGroup);
@@ -121,8 +154,26 @@ public class DefaultGroupService implements GroupService {
                 .orElseThrow(() -> new EntityNotFoundException("No branch found with id: " + branchId));
 
         if (branchGroup.getBranches().remove(existingBranch)) {
+            existingBranch.getBranchGroups().remove(branchGroup);
+            final Set<Service> noLongerAvailableServices = new HashSet<>(branchGroup.getServices());
+            for (final BranchGroup group : existingBranch.getBranchGroups()) {
+                noLongerAvailableServices.removeAll(group.getServices());
+            }
+
+            for (final TellerStation station : existingBranch.getTellerStations()) {
+                station.getServices().removeAll(noLongerAvailableServices);
+            }
+            this.stationRepository.saveAll(existingBranch.getTellerStations());
+            this.branchRepository.save(existingBranch);
             return this.branchGroupRepository.save(branchGroup);
         }
         throw new EntityNotFoundException("Group doesn't contain branch with id: " + existingBranch.getId());
     }
+
+    @Override
+    public Set<BranchGroup> getAllOfferingService(final Service service) {
+        return this.branchGroupRepository.findAllByServicesContains(service);
+    }
+
+    private void remove
 }
