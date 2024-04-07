@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Set;
 
 public interface BranchGroupRepository extends JpaRepository<BranchGroup, Long> {
-    @Query("select distinct bg from BranchGroup bg join bg.branches b where b.tenant.code = :tenantCode")
-    List<BranchGroup> findGroupsByTenantCode(@Param("tenantCode") final String tenantCode);
+    List<BranchGroup> findGroupsByTenantCode(final String tenantCode);
     Set<BranchGroup> findAllByServicesContains(final Service service);
 }
