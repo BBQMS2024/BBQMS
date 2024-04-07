@@ -21,6 +21,7 @@ public class TellerStation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String name;
+    private boolean active;
 
     @ManyToOne
     @JoinColumn(name = "branch_id", referencedColumnName = "id")
@@ -41,10 +42,15 @@ public class TellerStation {
     public TellerStation() {
     }
 
-    public TellerStation(final String name, final Branch branch, final Display display) {
+    public TellerStation(final String name, final boolean active, final Branch branch, final Display display) {
         this.name = name;
+        this.active = active;
         this.branch = branch;
         this.display = display;
+    }
+
+    public TellerStation(final String name, final Branch branch, final Display display) {
+        this(name, true, branch, display);
     }
 
     public TellerStation(final String name, final Branch branch) {
@@ -65,6 +71,14 @@ public class TellerStation {
 
     public void setName(final String name) {
         this.name = name;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(final boolean active) {
+        this.active = active;
     }
 
     public Branch getBranch() {

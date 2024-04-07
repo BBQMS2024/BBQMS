@@ -4,6 +4,7 @@ import ba.unsa.etf.si.bbqms.domain.Service;
 import ba.unsa.etf.si.bbqms.domain.TellerStation;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public interface StationService {
@@ -15,4 +16,5 @@ public interface StationService {
     Set<Service> getServicesByAssigned(final long stationId, final boolean assigned);
     Set<TellerStation> getAllByBranch(final long branchId);
     Set<TellerStation> getAllOfferingService(final Service service);
+    Optional<TellerStation> findById(final long serviceId);
 }

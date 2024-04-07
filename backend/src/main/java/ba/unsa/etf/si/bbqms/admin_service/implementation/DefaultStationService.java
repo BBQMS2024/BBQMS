@@ -12,6 +12,7 @@ import jakarta.persistence.EntityNotFoundException;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 
@@ -121,5 +122,10 @@ public class DefaultStationService implements StationService {
     @Override
     public Set<TellerStation> getAllOfferingService(final Service service) {
         return this.tellerStationRepository.findAllByServicesContains(service);
+    }
+
+    @Override
+    public Optional<TellerStation> findById(final long serviceId) {
+        return this.tellerStationRepository.findById(serviceId);
     }
 }
