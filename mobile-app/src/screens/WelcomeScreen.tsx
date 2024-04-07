@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { View, StyleSheet, Animated, Text, FlatList, TouchableOpacity } from "react-native";
 import WelcomeMessage from "../components/WelcomeMessage";
 import { useFonts } from "expo-font";
@@ -6,8 +6,10 @@ const { Fonts } = require("../constants/fonts");
 const { Assets } = require("../constants/assets");
 const { Colors } = require("../constants/colors");
 import { Ionicons } from '@expo/vector-icons';
+import { Screens } from "../constants/screens";
+import AssignedNumberAlert from "../components/AssignedNumberAlert";
 
-export default function WelcomeScreen({ route }: { route: any }) {
+export default function WelcomeScreen({ route, navigation }: { route: any, navigation : any }) {
     const details = route.params.details;
     let { name, welcomeMessage, font, logoUrl } = details;
     let { services } = route.params
@@ -35,6 +37,16 @@ export default function WelcomeScreen({ route }: { route: any }) {
         }).start();
     }, [fadeAnim]);
 
+    const [modalVisible, setModalVisible] = useState(false);
+
+    const openModal = () => {
+        setModalVisible(true);
+    };
+
+    const closeModal = () => {
+        setModalVisible(false);
+    };
+
     const renderItem = ({ item }: { item: any }) => (
         <TouchableOpacity
           style={styles.branchItem}
@@ -48,7 +60,7 @@ export default function WelcomeScreen({ route }: { route: any }) {
         </TouchableOpacity>
       );
       async function handlePress(id: any) {
-        //to doo
+        openModal();
     }
 
     if (!fontsLoaded) return <Text>Loading...</Text>;
@@ -70,6 +82,7 @@ export default function WelcomeScreen({ route }: { route: any }) {
                 keyExtractor={(item) => item.id.toString()}
                 contentContainerStyle={styles.flatListContainer}
       />
+      <AssignedNumberAlert visible={modalVisible} number={1} onClose={closeModal} />
         </View>
     );
 }

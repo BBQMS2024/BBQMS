@@ -5,6 +5,7 @@ import CodeEnterScreen from "../screens/CodeEnterScreen";
 import WelcomeScreen from "../screens/WelcomeScreen";
 import BranchPickScreen from "../screens/BranchPickScreen"
 import { Screens } from "../constants/screens";
+import AssignedNumberAlert from "../components/AssignedNumberAlert";
 
 const Stack = createStackNavigator();
 
@@ -23,6 +24,7 @@ const AppNavigator = () => {
                 />
                 <Stack.Screen name={Screens.BRANCH_PICK} component={BranchPickScreen} />
                 <Stack.Screen name={Screens.WELCOME} component={WelcomeScreen} />
+                <Stack.Screen name={Screens.ASSIGNED_NUMBER} component={AssignedNumberAlert} />
             </Stack.Navigator>
         </NavigationContainer>
     );
