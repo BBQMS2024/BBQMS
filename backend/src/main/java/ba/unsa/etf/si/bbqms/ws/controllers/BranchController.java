@@ -6,6 +6,7 @@ import ba.unsa.etf.si.bbqms.domain.Branch;
 import ba.unsa.etf.si.bbqms.domain.TellerStation;
 import ba.unsa.etf.si.bbqms.domain.User;
 import ba.unsa.etf.si.bbqms.ws.models.BranchWithStationsDto;
+import ba.unsa.etf.si.bbqms.ws.models.ServiceDto;
 import ba.unsa.etf.si.bbqms.ws.models.SimpleMessageDto;
 import ba.unsa.etf.si.bbqms.ws.models.TellerStationDto;
 import org.springframework.http.ResponseEntity;
@@ -57,7 +58,6 @@ public class BranchController {
     }
 
     @GetMapping("/{tenantCode}")
-    @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN', 'ROLE_BRANCH_ADMIN')")
     public ResponseEntity getBranches(@PathVariable final String tenantCode) {
         if (!this.authService.canChangeTenant(tenantCode)) {
             return ResponseEntity.badRequest().build();
@@ -159,6 +159,16 @@ public class BranchController {
         } catch (final Exception exception) {
             return ResponseEntity.badRequest().build();
         }
+    }
+
+    @GetMapping("/{tenantCode}/{branchId}/services")
+    public ResponseEntity getBranchServices(@PathVariable final String branchId,
+                                            @PathVariable final String tenantCode) {
+        return this.branchService.findById(Long.parseLong(branchId))
+                .map(this.branchService::extractPossibleServices)
+                .map(services -> services.stream().map(ServiceDto::fromEntity).collect(Collectors.toSet()))
+                .map(serviceDtos -> ResponseEntity.ok().body(serviceDtos))
+                .orElse(ResponseEntity.badRequest().build());
     }
 
     public record BranchRequest(String name, List<String> tellerStations) {

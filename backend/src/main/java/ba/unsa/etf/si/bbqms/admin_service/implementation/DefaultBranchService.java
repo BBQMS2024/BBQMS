@@ -13,6 +13,7 @@ import ba.unsa.etf.si.bbqms.repository.TenantRepository;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -28,6 +29,11 @@ public class DefaultBranchService implements BranchService {
         this.branchRepository = branchRepository;
         this.tenantRepository = tenantRepository;
         this.tellerStationRepository = tellerStationRepository;
+    }
+
+    @Override
+    public Optional<Branch> findById(final long branchId) {
+        return this.branchRepository.findById(branchId);
     }
 
     @Override
