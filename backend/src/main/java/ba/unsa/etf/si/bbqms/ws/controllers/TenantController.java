@@ -2,7 +2,7 @@ package ba.unsa.etf.si.bbqms.ws.controllers;
 
 import ba.unsa.etf.si.bbqms.auth_service.api.AuthService;
 import ba.unsa.etf.si.bbqms.tenant_service.api.TenantService;
-import ba.unsa.etf.si.bbqms.ws.models.ServiceDto;
+import ba.unsa.etf.si.bbqms.ws.models.ServiceRequestDto;
 import ba.unsa.etf.si.bbqms.ws.models.SimpleMessageDto;
 import ba.unsa.etf.si.bbqms.ws.models.TenantDto;
 import ba.unsa.etf.si.bbqms.ws.models.ErrorResponseDto;
@@ -52,12 +52,12 @@ public class TenantController {
 
     @PostMapping("/{code}/services")
     @PreAuthorize("hasAnyRole('ROLE_BRANCH_ADMIN', 'ROLE_SUPER_ADMIN')")
-    public ResponseEntity addService(@PathVariable(name = "code") final String code, @RequestBody final ServiceDto serviceDto) {
+    public ResponseEntity addService(@PathVariable(name = "code") final String code, @RequestBody final ServiceRequestDto serviceRequestDto) {
         if (!this.authService.canChangeTenant(code)) {
             return ResponseEntity.notFound().build();
         }
         try {
-            return ResponseEntity.ok().body(tenantService.addService(code, serviceDto));
+            return ResponseEntity.ok().body(tenantService.addService(code, serviceRequestDto));
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
@@ -76,7 +76,7 @@ public class TenantController {
     @PreAuthorize("hasAnyRole('ROLE_BRANCH_ADMIN', 'ROLE_SUPER_ADMIN')")
     public ResponseEntity updateService(@PathVariable(name="code") final String code,
                                         @PathVariable(name = "id") final Long id,
-                                        @RequestBody final ServiceDto request) {
+                                        @RequestBody final ServiceRequestDto request) {
         if (!this.authService.canChangeTenant(code)) {
             return ResponseEntity.notFound().build();
         }

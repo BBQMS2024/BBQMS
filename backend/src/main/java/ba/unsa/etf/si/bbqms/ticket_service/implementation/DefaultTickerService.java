@@ -4,7 +4,6 @@ import ba.unsa.etf.si.bbqms.admin_service.api.BranchService;
 import ba.unsa.etf.si.bbqms.domain.Branch;
 import ba.unsa.etf.si.bbqms.domain.Service;
 import ba.unsa.etf.si.bbqms.domain.Ticket;
-import ba.unsa.etf.si.bbqms.domain.projections.TicketNumberProjection;
 import ba.unsa.etf.si.bbqms.repository.BranchRepository;
 import ba.unsa.etf.si.bbqms.repository.ServiceRepository;
 import ba.unsa.etf.si.bbqms.repository.TicketRepository;
@@ -41,11 +40,15 @@ public class DefaultTickerService implements TicketService {
 
         final Set<Service> possibleServices = this.branchService.extractPossibleServices(branch);
 
-        final long currentHighestNumber = this.ticketRepository.findTopByServiceInOrderByNumberDesc(possibleServices)
-                .map(TicketNumberProjection::getNumber)
+        if (!possibleServices.contains(service)) {
+            throw new IllegalArgumentException("Branch with id: " + branchId + " does not offer service with id: " + serviceId);
+        }
+
+        final long currentHighestNumber = this.ticketRepository.findTopByServiceInAndBranchOrderByNumberDesc(possibleServices, branch)
+                .map(Ticket::getNumber)
                 .orElse(0L);
 
-        final Ticket newTicket = new Ticket(currentHighestNumber + 1, Instant.now(), service);
+        final Ticket newTicket = new Ticket(currentHighestNumber + 1, Instant.now(), service, branch);
         return this.ticketRepository.save(newTicket);
     }
 }

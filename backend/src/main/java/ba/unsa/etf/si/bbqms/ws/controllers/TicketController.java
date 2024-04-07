@@ -1,6 +1,8 @@
 package ba.unsa.etf.si.bbqms.ws.controllers;
 
+import ba.unsa.etf.si.bbqms.domain.Ticket;
 import ba.unsa.etf.si.bbqms.ticket_service.api.TicketService;
+import ba.unsa.etf.si.bbqms.ws.models.TicketDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +25,8 @@ public class TicketController {
     public ResponseEntity createNewTicket(@PathVariable final String branchId,
                                           @PathVariable final String serviceId) {
         try {
-            return ResponseEntity.ok().body(
-                    this.ticketService.createNewTicket(Long.parseLong(serviceId), Long.parseLong(branchId))
-            );
+            final Ticket created = this.ticketService.createNewTicket(Long.parseLong(serviceId), Long.parseLong(branchId));
+            return ResponseEntity.ok().body(TicketDto.fromEntity(created));
         } catch (final Exception exception) {
             logger.error(exception.getMessage());
             return ResponseEntity.badRequest().build();

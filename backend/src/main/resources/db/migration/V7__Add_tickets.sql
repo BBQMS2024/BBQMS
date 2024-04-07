@@ -6,10 +6,12 @@ CREATE TABLE IF NOT EXISTS ticket
     number     INTEGER  NOT NULL,
     created_at DATETIME NOT NULL,
     service_id INTEGER  NOT NULL,
-    CONSTRAINT FK_ticket_service FOREIGN KEY (service_id) REFERENCES service (id)
+    branch_id  INTEGER  NOT NULL,
+    CONSTRAINT FK_ticket_service FOREIGN KEY (service_id) REFERENCES service (id),
+    CONSTRAINT FK_ticket_branch FOREIGN KEY (branch_id) REFERENCES branch (id)
 );
 
 ALTER TABLE teller_station
-    ADD COLUMN active BOOLEAN DEFAULT TRUE; # Ovo bi zapravo trebalo biti default false, ali ovako je lakse za testiranje
+    ADD COLUMN active BOOLEAN DEFAULT TRUE; # This should be actually be false, but this way it's easier to test.
 
 COMMIT;

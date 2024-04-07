@@ -22,13 +22,18 @@ public class Ticket {
     @JoinColumn(name = "service_id", referencedColumnName = "id")
     private Service service;
 
+    @ManyToOne
+    @JoinColumn(name = "branch_id", referencedColumnName = "id")
+    private Branch branch;
+
     public Ticket() {
     }
 
-    public Ticket(final long number, final Instant createdAt, final Service service) {
+    public Ticket(final long number, final Instant createdAt, final Service service, final Branch branch) {
         this.number = number;
         this.createdAt = createdAt;
         this.service = service;
+        this.branch = branch;
     }
 
     public long getId() {
@@ -61,5 +66,13 @@ public class Ticket {
 
     public void setService(final Service service) {
         this.service = service;
+    }
+
+    public Branch getBranch() {
+        return branch;
+    }
+
+    public void setBranch(final Branch branch) {
+        this.branch = branch;
     }
 }
