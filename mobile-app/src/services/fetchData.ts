@@ -106,7 +106,7 @@ async function getCompanyBranches(code: any) {
 async function getBranchServices(code:string, id: string) {
     const serviceList: ServiceData[] = [];
     let services: ServiceData[] = await fetch(
-        `${TEST_URL}/stations/${code}/${id}`,
+        `${TEST_URL}/branches/${code}/${id}/services`,
         { method: "GET" }
     )
         .then((response) => {
@@ -119,7 +119,7 @@ async function getBranchServices(code:string, id: string) {
         })
         .then((data) => {
             console.log(data)
-            data.services.forEach((service: any) => {
+            data.forEach((service: any) => {
 
                 const serviceData: ServiceData = {
                     id: service.id,
