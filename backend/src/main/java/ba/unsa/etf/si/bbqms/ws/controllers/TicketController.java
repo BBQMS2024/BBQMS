@@ -69,7 +69,7 @@ public class TicketController {
     @DeleteMapping("/{ticketId}")
     public ResponseEntity cancelTicket(@PathVariable final String ticketId) {
         try {
-            ticketService.cancelTicket(Long.parseLong(ticketId));
+            this.ticketService.cancelTicket(Long.parseLong(ticketId));
             return ResponseEntity.ok().body(new SimpleMessageDto("Deleted ticket with id: " + ticketId));
         } catch (final Exception exception) {
             logger.error(exception.getMessage());

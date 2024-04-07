@@ -44,7 +44,7 @@ public class DefaultGroupService implements GroupService {
     public BranchGroup addBranchGroup(final String tenantCode, final BranchGroupCreateDto request) throws Exception {
         final Set<Service> services = new HashSet<>();
         final Set<Branch> branches = new HashSet<>();
-        final Tenant tenant = tenantRepository.findByCode(tenantCode)
+        final Tenant tenant = this.tenantRepository.findByCode(tenantCode)
                 .orElseThrow(() -> new EntityNotFoundException("No tenant with code " + tenantCode));
 
         if (request.serviceIds() != null) {

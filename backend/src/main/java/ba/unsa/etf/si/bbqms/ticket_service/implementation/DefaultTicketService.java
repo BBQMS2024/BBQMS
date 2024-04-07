@@ -63,15 +63,15 @@ public class DefaultTicketService implements TicketService {
 
     @Override
     public void cancelTicket(final long ticketId) {
-        final Ticket ticket = ticketRepository.findById(ticketId)
+        final Ticket ticket = this.ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new EntityNotFoundException("No tichet with id: " + ticketId));
 
         final TellerStation tellerStation = ticket.getTellerStation();
         if(tellerStation != null) {
-            queueService.advanceQueueState(tellerStation);
+            this.queueService.advanceQueueState(tellerStation);
         }
         else {
-            ticketRepository.delete(ticket);
+            this.ticketRepository.delete(ticket);
         }
     }
 }
