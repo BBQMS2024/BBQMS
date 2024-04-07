@@ -1,35 +1,57 @@
 package ba.unsa.etf.si.bbqms.ws.controllers;
 
+import ba.unsa.etf.si.bbqms.admin_service.api.BranchService;
 import ba.unsa.etf.si.bbqms.domain.Ticket;
 import ba.unsa.etf.si.bbqms.ticket_service.api.TicketService;
+import ba.unsa.etf.si.bbqms.ws.models.TellerStationDto;
 import ba.unsa.etf.si.bbqms.ws.models.TicketDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/tickets")
 public class TicketController {
     private static final Logger logger = LoggerFactory.getLogger(TicketController.class);
     private final TicketService ticketService;
+    private final BranchService branchService;
 
-    public TicketController(final TicketService ticketService) {
+    public TicketController(final TicketService ticketService, final BranchService branchService) {
         this.ticketService = ticketService;
+        this.branchService = branchService;
     }
 
-    @GetMapping("/{branchId}/{serviceId}")
-    public ResponseEntity createNewTicket(@PathVariable final String branchId,
-                                          @PathVariable final String serviceId) {
+    /**
+     * Returns ticket object, as well as all stations to which the visitor can potentially be routed to.
+     */
+    @PostMapping
+    public ResponseEntity createNewTicket(@RequestBody final NewTicketRequest request) {
         try {
-            final Ticket created = this.ticketService.createNewTicket(Long.parseLong(serviceId), Long.parseLong(branchId));
-            return ResponseEntity.ok().body(TicketDto.fromEntity(created));
+            final Ticket created = this.ticketService.createNewTicket(request.serviceId(), request.branchId(), request.deviceToken());
+            final Set<TellerStationDto> legibileStations = this.branchService.getStationsWithService(created.getBranch(), created.getService()).stream()
+                    .map(TellerStationDto::fromEntity)
+                    .collect(Collectors.toSet());
+
+            return ResponseEntity.ok().body(new NewTicketResponse(
+                    TicketDto.fromEntity(created),
+                    legibileStations
+            ));
         } catch (final Exception exception) {
             logger.error(exception.getMessage());
             return ResponseEntity.badRequest().build();
         }
+    }
+
+    public record NewTicketRequest(long branchId, long serviceId, String deviceToken) {
+    }
+
+    public record NewTicketResponse(TicketDto ticket, Set<TellerStationDto> stations) {
     }
 }

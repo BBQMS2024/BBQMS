@@ -6,6 +6,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 import java.time.Instant;
@@ -18,6 +19,7 @@ public class Ticket {
     private long id;
     private long number;
     private Instant createdAt;
+    private String deviceToken;
     @ManyToOne
     @JoinColumn(name = "service_id", referencedColumnName = "id")
     private Service service;
@@ -26,14 +28,27 @@ public class Ticket {
     @JoinColumn(name = "branch_id", referencedColumnName = "id")
     private Branch branch;
 
+    /**
+     * Represents the teller station to which ticket is currently assigned, if assigned at all.
+     */
+    @OneToOne
+    @JoinColumn(name = "teller_station_id", referencedColumnName = "id")
+    private TellerStation tellerStation;
+
     public Ticket() {
     }
 
-    public Ticket(final long number, final Instant createdAt, final Service service, final Branch branch) {
+    public Ticket(final long number, final Instant createdAt, final String deviceToken, final Service service, final Branch branch, final TellerStation tellerStation) {
         this.number = number;
         this.createdAt = createdAt;
+        this.deviceToken = deviceToken;
         this.service = service;
         this.branch = branch;
+        this.tellerStation = tellerStation;
+    }
+
+    public Ticket(final long number, final Instant createdAt, final String deviceToken, final Service service, final Branch branch) {
+        this(number, createdAt, deviceToken, service, branch, null);
     }
 
     public long getId() {
@@ -60,6 +75,14 @@ public class Ticket {
         this.createdAt = createdAt;
     }
 
+    public String getDeviceToken() {
+        return deviceToken;
+    }
+
+    public void setDeviceToken(final String deviceToken) {
+        this.deviceToken = deviceToken;
+    }
+
     public Service getService() {
         return service;
     }
@@ -74,5 +97,13 @@ public class Ticket {
 
     public void setBranch(final Branch branch) {
         this.branch = branch;
+    }
+
+    public TellerStation getTellerStation() {
+        return tellerStation;
+    }
+
+    public void setTellerStation(final TellerStation tellerStation) {
+        this.tellerStation = tellerStation;
     }
 }

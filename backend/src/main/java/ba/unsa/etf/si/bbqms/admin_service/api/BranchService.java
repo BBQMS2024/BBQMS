@@ -18,4 +18,5 @@ public interface BranchService {
     void removeStation(final long stationId) throws Exception;
     TellerStation updateStation(final long stationId, final String name) throws Exception;
     Set<Service> extractPossibleServices(final Branch branch);
+    Set<TellerStation> getStationsWithService(final Branch branch, final Service service);
 }

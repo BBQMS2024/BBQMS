@@ -31,7 +31,7 @@ public class DefaultTickerService implements TicketService {
     }
 
     @Override
-    public Ticket createNewTicket(final long serviceId, final long branchId) {
+    public Ticket createNewTicket(final long serviceId, final long branchId, final String deviceToken) {
         final Service service = this.serviceRepository.findById(serviceId)
                 .orElseThrow(() -> new EntityNotFoundException("No service with id: " + serviceId));
 
@@ -48,7 +48,7 @@ public class DefaultTickerService implements TicketService {
                 .map(Ticket::getNumber)
                 .orElse(0L);
 
-        final Ticket newTicket = new Ticket(currentHighestNumber + 1, Instant.now(), service, branch);
+        final Ticket newTicket = new Ticket(currentHighestNumber + 1, Instant.now(), deviceToken, service, branch);
         return this.ticketRepository.save(newTicket);
     }
 }

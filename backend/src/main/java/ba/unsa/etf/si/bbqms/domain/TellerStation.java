@@ -73,6 +73,14 @@ public class TellerStation {
         this.name = name;
     }
 
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(final boolean active) {
+        this.active = active;
+    }
+
     public Branch getBranch() {
         return branch;
     }

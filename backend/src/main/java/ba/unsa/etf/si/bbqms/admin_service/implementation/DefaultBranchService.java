@@ -129,4 +129,11 @@ public class DefaultBranchService implements BranchService {
         }
         return possibleServices;
     }
+
+    @Override
+    public Set<TellerStation> getStationsWithService(final Branch branch, final Service service) {
+        return branch.getTellerStations().stream()
+                .filter(station -> station.getServices().contains(service))
+                .collect(Collectors.toSet());
+    }
 }
