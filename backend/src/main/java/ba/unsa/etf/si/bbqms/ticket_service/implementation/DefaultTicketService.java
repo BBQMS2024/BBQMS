@@ -67,11 +67,11 @@ public class DefaultTicketService implements TicketService {
                 .orElseThrow(() -> new EntityNotFoundException("No tichet with id: " + ticketId));
 
         final TellerStation tellerStation = ticket.getTellerStation();
-
         if(tellerStation != null) {
             queueService.advanceQueueState(tellerStation);
         }
-
-        ticketRepository.delete(ticket);
+        else {
+            ticketRepository.delete(ticket);
+        }
     }
 }
