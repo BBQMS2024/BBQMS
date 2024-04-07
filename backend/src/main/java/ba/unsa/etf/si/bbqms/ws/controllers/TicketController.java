@@ -8,11 +8,14 @@ import ba.unsa.etf.si.bbqms.ws.models.TicketDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -35,13 +38,13 @@ public class TicketController {
     public ResponseEntity createNewTicket(@RequestBody final NewTicketRequest request) {
         try {
             final Ticket created = this.ticketService.createNewTicket(request.serviceId(), request.branchId(), request.deviceToken());
-            final Set<TellerStationDto> legibileStations = this.branchService.getStationsWithService(created.getBranch(), created.getService()).stream()
+            final Set<TellerStationDto> legibleStations = this.branchService.getStationsWithService(created.getBranch(), created.getService()).stream()
                     .map(TellerStationDto::fromEntity)
                     .collect(Collectors.toSet());
 
-            return ResponseEntity.ok().body(new NewTicketResponse(
+            return ResponseEntity.ok().body(new TicketResponse(
                     TicketDto.fromEntity(created),
-                    legibileStations
+                    legibleStations
             ));
         } catch (final Exception exception) {
             logger.error(exception.getMessage());
@@ -49,9 +52,27 @@ public class TicketController {
         }
     }
 
+    @GetMapping("/devices/{deviceToken}")
+    public ResponseEntity getTicketsForDevice(@PathVariable final String deviceToken) {
+
+        final Set<TicketResponse> responses = new HashSet<>();
+        for (final Ticket ticket : this.ticketService.getTicketsByDevice(deviceToken)) {
+            final Set<TellerStationDto> legibleStations = this.branchService.getStationsWithService(ticket.getBranch(), ticket.getService()).stream()
+                    .map(TellerStationDto::fromEntity)
+                    .collect(Collectors.toSet());
+
+            responses.add(new TicketResponse(
+                    TicketDto.fromEntity(ticket),
+                    legibleStations
+            ));
+        }
+
+        return ResponseEntity.ok().body(responses);
+    }
+
     public record NewTicketRequest(long branchId, long serviceId, String deviceToken) {
     }
 
-    public record NewTicketResponse(TicketDto ticket, Set<TellerStationDto> stations) {
+    public record TicketResponse(TicketDto ticket, Set<TellerStationDto> stations) {
     }
 }

@@ -14,13 +14,13 @@ import java.time.Instant;
 import java.util.Set;
 
 @org.springframework.stereotype.Service
-public class DefaultTickerService implements TicketService {
+public class DefaultTicketService implements TicketService {
     private final TicketRepository ticketRepository;
     private final ServiceRepository serviceRepository;
     private final BranchRepository branchRepository;
     private final BranchService branchService;
 
-    public DefaultTickerService(final TicketRepository ticketRepository,
+    public DefaultTicketService(final TicketRepository ticketRepository,
                                 final ServiceRepository serviceRepository,
                                 final BranchRepository branchRepository,
                                 final BranchService branchService) {
@@ -50,5 +50,10 @@ public class DefaultTickerService implements TicketService {
 
         final Ticket newTicket = new Ticket(currentHighestNumber + 1, Instant.now(), deviceToken, service, branch);
         return this.ticketRepository.save(newTicket);
+    }
+
+    @Override
+    public Set<Ticket> getTicketsByDevice(final String deviceToken) {
+        return this.ticketRepository.findAllByDeviceToken(deviceToken);
     }
 }
