@@ -2,6 +2,8 @@ package ba.unsa.etf.si.bbqms.queue_service.implementation;
 
 import ba.unsa.etf.si.bbqms.domain.TellerStation;
 import ba.unsa.etf.si.bbqms.domain.Ticket;
+import ba.unsa.etf.si.bbqms.notification_service.api.Notification;
+import ba.unsa.etf.si.bbqms.notification_service.api.NotificationService;
 import ba.unsa.etf.si.bbqms.queue_service.api.QueueService;
 import ba.unsa.etf.si.bbqms.repository.TicketRepository;
 import jakarta.transaction.Transactional;
@@ -12,8 +14,11 @@ import java.util.Optional;
 @Service
 public class DefaultQueueService implements QueueService {
     private final TicketRepository ticketRepository;
-    public DefaultQueueService(final TicketRepository ticketRepository) {
+    private final NotificationService notificationService;
+
+    public DefaultQueueService(final TicketRepository ticketRepository, final NotificationService notificationService) {
         this.ticketRepository = ticketRepository;
+        this.notificationService = notificationService;
     }
 
     @Override
@@ -40,6 +45,14 @@ public class DefaultQueueService implements QueueService {
 
         final Ticket nextTicket = optionalNextTicket.get();
         nextTicket.setTellerStation(tellerStation);
+
+        // Send the notification to whoever is holding the ticket next up.
+        final Notification newNotification = new Notification(
+                nextTicket.getDeviceToken(),
+                "It's your turn!",
+                "Please approach station: " + nextTicket.getTellerStation().getName()
+        );
+        this.notificationService.sendNotification(newNotification);
 
         return Optional.of(this.ticketRepository.save(nextTicket));
     }
