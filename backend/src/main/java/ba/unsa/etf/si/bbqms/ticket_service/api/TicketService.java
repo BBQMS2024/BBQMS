@@ -8,4 +8,5 @@ public interface TicketService {
     Ticket createNewTicket(final long serviceId, final long branchId, final String deviceToken);
     Set<Ticket> getTicketsByDevice(final String deviceToken);
     void cancelTicket(final long ticketId);
+    Ticket getTicketById(final long id);
 }

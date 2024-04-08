@@ -48,6 +48,17 @@ public class TicketController {
         }
     }
 
+    @GetMapping("/{ticketId}")
+    public ResponseEntity getTicketById(@PathVariable final String ticketId) {
+       try {
+            final Ticket ticket = this.ticketService.getTicketById(Long.parseLong(ticketId));
+            return ResponseEntity.ok().body(TicketDto.fromEntity(ticket));
+       } catch (final Exception exception) {
+           logger.error(exception.getMessage());
+           return ResponseEntity.badRequest().build();
+       }
+    }
+
     @GetMapping("/devices/{deviceToken}")
     public ResponseEntity getTicketsForDevice(@PathVariable final String deviceToken) {
 
