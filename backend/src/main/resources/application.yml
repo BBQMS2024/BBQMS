@@ -31,3 +31,4 @@ tenancy:
   default-code: DFLT
 notifications:
   expo-url: https://exp.host/--/api/v2/push/send
+  mock: true
