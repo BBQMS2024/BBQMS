@@ -14,15 +14,12 @@ import { getExpoToken, setExpoToken } from "../utils/tokenUtils";
 export default function WelcomeScreen({ route, navigation }: { route: any, navigation : any }) {
 
   const { details } = route.params;
-  
+
     let { name, welcomeMessage, font, logoUrl } = details;
     let { services } = route.params
     const [notification, setNotification] = useState(false);
     const notificationListener = useRef();
     const responseListener = useRef();
-    
-    
-    console.log(services)
 
     Notifications.setNotificationHandler({
         handleNotification: async () => ({
@@ -175,7 +172,7 @@ export const styles = StyleSheet.create({
       marginBottom: 20, // Add margin to separate logo from title
     },
     logo: {
-      width: '80%', // Adjust the logo size to fit better on all screens
+      width: '50%', // Adjust the logo size to fit better on all screens
       height: undefined, // Allow height to adjust automatically based on width
       aspectRatio: 1, // Maintain aspect ratio
       resizeMode: 'contain',
@@ -183,6 +180,7 @@ export const styles = StyleSheet.create({
     title: {
       fontSize: 42,
       fontWeight: 'bold',
+      marginTop: 20,
       fontFamily: Fonts.ARIAL,
       color: Colors.TEXT_PRIMARY,
     },

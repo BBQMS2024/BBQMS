@@ -8,6 +8,7 @@ import BranchPickScreen from "../screens/BranchPickScreen"
 import TicketListScreen from '../screens/TicketListScreen';
 import { Screens } from "../constants/screens";
 import AssignedNumberAlert from "../components/AssignedNumberAlert";
+import { Ionicons } from '@expo/vector-icons';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -18,8 +19,25 @@ const BottomNavigator = ({ route }) =>  {
 
   return (
     <Tab.Navigator>
-      <Tab.Screen name="Home" component={WelcomeScreen} initialParams={{details,services}}/>
-      <Tab.Screen name="My Tickets" component={TicketListScreen} details={details}/>
+      <Tab.Screen
+        name="Home"
+        component={WelcomeScreen}
+        initialParams={{ details, services }}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="home-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Moji tiketi"
+        component={TicketListScreen}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="list-outline" size={size} color={color} />
+          ),
+        }}
+      />
     </Tab.Navigator>
   );
 };

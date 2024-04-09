@@ -150,7 +150,8 @@ async function  getTickets(token: string) {
             }
         })
         .then((data) => {
-            data.forEach((ticket: any) => {
+            let ticket = data
+
                 
                 const stationList: String[] = [];
                 ticket.stations.forEach((station: any) => {
@@ -164,7 +165,6 @@ async function  getTickets(token: string) {
                     stations: stationList
                 };
                 ticketList.push(ticketData);
-            });
 
             return ticketList;
         })
