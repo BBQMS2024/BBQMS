@@ -1,17 +1,22 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import { Screens } from '../constants/screens';
-import { getBranchServices } from '../services/fetchData';
+import { getBranchServices, getTickets } from '../services/fetchData';
 import { Colors } from '../constants/colors';
 import { Fonts } from '../constants/fonts';
 import { Ionicons } from '@expo/vector-icons';
+import { getExpoToken } from '../utils/tokenUtils';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
-export default function TicketListScreen({ route, navigation }: { route: any, navigation: any }){
+export default async function TicketListScreen({ route, navigation }: { route: any, navigation: any }){
+    
+    let tickets = await getTickets(getExpoToken())
 
-  const { tickets } = route.params
+  useEffect(() => {
+   
+    }, []);
     
   const renderItem = ({ item }: { item: any }) => (
     <TouchableOpacity
@@ -26,16 +31,12 @@ export default function TicketListScreen({ route, navigation }: { route: any, na
   );
   async function handlePress(id: any) {
 
-    getBranchServices(route.params.code, id)
-        .then(function (services) {           
-                navigation.navigate(Screens.WELCOME, {
-                details: route.params.details, services: services
-            })
+    let ticket = tickets.findIndex(id)     
 
-        })
-        .catch((error) => {
-            console.error("Error:", error);
-        });
+    navigation.navigate(Screens.TICKET_INFO, {
+        ticket:ticket
+    })
+
 }
 return (
     <View style={styles.container}>

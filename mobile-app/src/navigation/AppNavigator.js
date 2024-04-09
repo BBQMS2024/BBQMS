@@ -14,8 +14,8 @@ const Tab = createBottomTabNavigator();
 const BottomNavigator = () => {
   return (
     <Tab.Navigator>
-      <Tab.Screen name="Welcome" component={WelcomeScreen} />
-      <Tab.Screen name="TicketList" component={TickeListScreen} />
+      <Tab.Screen name="Home" component={WelcomeScreen} />
+      <Tab.Screen name="My Tickets" component={TickeListScreen} />
     </Tab.Navigator>
   );
 };

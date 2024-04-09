@@ -9,12 +9,12 @@ import { Ionicons } from '@expo/vector-icons';
 import AssignedNumberAlert from "../components/AssignedNumberAlert";
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device'
+import { getExpoToken, setExpoToken } from "../utils/tokenUtils";
 
 export default function WelcomeScreen({ route, navigation }: { route: any, navigation : any }) {
     const details = route.params.details;
     let { name, welcomeMessage, font, logoUrl } = details;
     let { services } = route.params
-    const [expoPushToken, setExpoPushToken] = useState(' ');
     const [notification, setNotification] = useState(false);
     const notificationListener = useRef();
     const responseListener = useRef();
@@ -52,8 +52,7 @@ export default function WelcomeScreen({ route, navigation }: { route: any, navig
 
     useEffect(() => {
 
-        getToken()
-
+      getToken()
      
       }, []);
 
@@ -61,9 +60,12 @@ export default function WelcomeScreen({ route, navigation }: { route: any, navig
         try{     
             
             await registerForPushNotificationsAsync()
-            .then(token => setExpoPushToken(token as React.SetStateAction<string>));
+            .then(token => {
+              if(token!=undefined)
+                setExpoToken(token)
+            });
 
-            console.log(expoPushToken)
+            console.log(getExpoToken)
         } catch (error) {
             console.error("Failed to fetch data in TasksScreen:", error);
           }

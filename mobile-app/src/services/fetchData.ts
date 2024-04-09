@@ -24,7 +24,7 @@ interface ServiceData{
     name: string
 }
 
-interface TicketData{
+export interface TicketData{
     id: string,
     name: string,
     date: Date,
@@ -135,10 +135,10 @@ async function getBranchServices(code:string, id: string) {
     return services;
 }
 
-async function  getTickets(code: string) {
+async function  getTickets(token: string) {
     const ticketList: TicketData[] = [];
     let tickets: TicketData[] = await fetch(
-        `${TEST_URL}/tickets/devices/${code}`,
+        `${TEST_URL}/tickets/devices/${token}`,
         { method: "GET" }
     )
         .then((response) => {
@@ -207,4 +207,4 @@ async function  generateTicket(token: string, branchId: number , serviceId: numb
     return tickets;
 }
 
-export { getCompanyDetails, getBranchServices, getCompanyBranches, getTickets };
+export { getCompanyDetails, getBranchServices, getCompanyBranches, getTickets, generateTicket };
