@@ -12,12 +12,17 @@ import * as Device from 'expo-device'
 import { getExpoToken, setExpoToken } from "../utils/tokenUtils";
 
 export default function WelcomeScreen({ route, navigation }: { route: any, navigation : any }) {
-    const details = route.params.details;
+
+  const { details } = route.params;
+  
     let { name, welcomeMessage, font, logoUrl } = details;
     let { services } = route.params
     const [notification, setNotification] = useState(false);
     const notificationListener = useRef();
     const responseListener = useRef();
+    
+    
+    console.log(services)
 
     Notifications.setNotificationHandler({
         handleNotification: async () => ({

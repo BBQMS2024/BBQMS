@@ -12,7 +12,8 @@ const windowHeight = Dimensions.get('window').height;
 export default function BranchPickScreen({ route, navigation }: { route: any, navigation: any }){
 
   const { branches } = route.params
-    
+
+
   const renderItem = ({ item }: { item: any }) => (
     <TouchableOpacity
       style={styles.branchItem}
@@ -25,10 +26,10 @@ export default function BranchPickScreen({ route, navigation }: { route: any, na
     </TouchableOpacity>
   );
   async function handlePress(id: any) {
-
+    
     getBranchServices(route.params.code, id)
         .then(function (services) {           
-                navigation.navigate(Screens.WELCOME, {
+                navigation.navigate(Screens.BOTTOM_NAV, {
                 details: route.params.details, services: services
             })
 

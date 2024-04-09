@@ -4,5 +4,6 @@ export const Screens = {
     BRANCH_PICK : "BranchPickScreen",
     ASSIGNED_NUMBER:"AssignedNumberAlert",
     TICKET_INFO:"TicketInfoScreen",
-    TICKET_LIST:"TicketListScreen"
+    TICKET_LIST:"TicketListScreen",
+    BOTTOM_NAV:"BottomNavigator"
 }
