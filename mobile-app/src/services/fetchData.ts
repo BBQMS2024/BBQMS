@@ -175,5 +175,36 @@ async function  getTickets(code: string) {
     return tickets;
 }
 
+async function  generateTicket(token: string, branchId: number , serviceId: number) {
+    let tickets: TicketData = await fetch(
+        `${TEST_URL}/tickets`,
+        { 
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "branchId": `${branchId}`,
+                "serviceId": `${serviceId}`,
+                "deviceToken": token,
+          },
+         }
+    )
+        .then((response) => {
+            console.log(response);
+            if (response.status === 200) {
+                return response.json();
+            } else {
+                throw new Error(Dialogs.ERROR.INVALID_CODE);
+            }
+        })
+        .then((data) => {
+            
+            return data
+        })
+        .catch((error) => {
+            console.error("Error:", error);
+            throw error;
+        });
+    return tickets;
+}
 
 export { getCompanyDetails, getBranchServices, getCompanyBranches, getTickets };
