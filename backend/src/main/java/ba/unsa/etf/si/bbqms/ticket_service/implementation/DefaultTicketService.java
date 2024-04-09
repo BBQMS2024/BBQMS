@@ -80,4 +80,9 @@ public class DefaultTicketService implements TicketService {
         return this.ticketRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("No ticket with id: " + id));
     }
+
+    @Override
+    public void deleteAllTickets() {
+        this.ticketRepository.deleteAll();
+    }
 }

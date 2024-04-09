@@ -9,4 +9,5 @@ public interface TicketService {
     Set<Ticket> getTicketsByDevice(final String deviceToken);
     void cancelTicket(final long ticketId);
     Ticket getTicketById(final long id);
+    void deleteAllTickets();
 }
