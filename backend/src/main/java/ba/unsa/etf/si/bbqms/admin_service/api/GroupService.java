@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 public interface GroupService {
-    BranchGroup addBranchGroup(final BranchGroupCreateDto name) throws Exception;
+    BranchGroup addBranchGroup(final String tenantCode, final BranchGroupCreateDto name) throws Exception;
     BranchGroup updateBranchGroup(final long branchGroupId, final BranchGroupUpdateDto request);
     BranchGroup addBranchGroupService(final long branchGroupId, final long serviceId);
     BranchGroup addBranchGroupBranch(final long branchGroupId, final long branchId);

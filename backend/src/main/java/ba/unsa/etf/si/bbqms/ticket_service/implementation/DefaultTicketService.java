@@ -3,7 +3,9 @@ package ba.unsa.etf.si.bbqms.ticket_service.implementation;
 import ba.unsa.etf.si.bbqms.admin_service.api.BranchService;
 import ba.unsa.etf.si.bbqms.domain.Branch;
 import ba.unsa.etf.si.bbqms.domain.Service;
+import ba.unsa.etf.si.bbqms.domain.TellerStation;
 import ba.unsa.etf.si.bbqms.domain.Ticket;
+import ba.unsa.etf.si.bbqms.queue_service.api.QueueService;
 import ba.unsa.etf.si.bbqms.repository.BranchRepository;
 import ba.unsa.etf.si.bbqms.repository.ServiceRepository;
 import ba.unsa.etf.si.bbqms.repository.TicketRepository;
@@ -19,15 +21,17 @@ public class DefaultTicketService implements TicketService {
     private final ServiceRepository serviceRepository;
     private final BranchRepository branchRepository;
     private final BranchService branchService;
-
+    private final QueueService queueService;
     public DefaultTicketService(final TicketRepository ticketRepository,
                                 final ServiceRepository serviceRepository,
                                 final BranchRepository branchRepository,
-                                final BranchService branchService) {
+                                final BranchService branchService,
+                                final QueueService queueService) {
         this.ticketRepository = ticketRepository;
         this.serviceRepository = serviceRepository;
         this.branchRepository = branchRepository;
         this.branchService = branchService;
+        this.queueService = queueService;
     }
 
     @Override
@@ -55,5 +59,25 @@ public class DefaultTicketService implements TicketService {
     @Override
     public Set<Ticket> getTicketsByDevice(final String deviceToken) {
         return this.ticketRepository.findAllByDeviceToken(deviceToken);
+    }
+
+    @Override
+    public void cancelTicket(final long ticketId) {
+        final Ticket ticket = this.ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new EntityNotFoundException("No ticket with id: " + ticketId));
+
+        final TellerStation tellerStation = ticket.getTellerStation();
+        if(tellerStation != null) {
+            this.queueService.advanceQueueState(tellerStation);
+        }
+        else {
+            this.ticketRepository.delete(ticket);
+        }
+    }
+
+    @Override
+    public Ticket getTicketById(final long id) {
+        return this.ticketRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("No ticket with id: " + id));
     }
 }

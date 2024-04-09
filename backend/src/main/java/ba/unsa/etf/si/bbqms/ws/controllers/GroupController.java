@@ -38,7 +38,7 @@ public class GroupController {
                     .map(BranchGroupResponseDto::fromEntity)
                     .collect(Collectors.toList());
             return ResponseEntity.ok().body(branchGroupResponseDtoList);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return ResponseEntity.badRequest().body(new ErrorResponseDto(e.getMessage()));
         }
     }
@@ -51,9 +51,9 @@ public class GroupController {
         }
 
         try {
-            final BranchGroup addedBranchGroup = this.groupService.addBranchGroup(request);
+            final BranchGroup addedBranchGroup = this.groupService.addBranchGroup(tenantCode, request);
             return ResponseEntity.ok().body(BranchGroupResponseDto.fromEntity(addedBranchGroup));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return ResponseEntity.badRequest().body(new ErrorResponseDto(e.getMessage()));
         }
     }
@@ -70,7 +70,7 @@ public class GroupController {
         try {
             final BranchGroup updatedBranchGroup = this.groupService.addBranchGroupService(Long.parseLong(groupId), Long.parseLong(serviceId));
             return ResponseEntity.ok().body(BranchGroupResponseDto.fromEntity(updatedBranchGroup));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return ResponseEntity.badRequest().body(new ErrorResponseDto(e.getMessage()));
         }
     }
@@ -87,7 +87,7 @@ public class GroupController {
         try {
             final BranchGroup updatedBranchGroup = this.groupService.addBranchGroupBranch(Long.parseLong(groupId), Long.parseLong(branchId));
             return ResponseEntity.ok().body(BranchGroupResponseDto.fromEntity(updatedBranchGroup));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return ResponseEntity.badRequest().body(new ErrorResponseDto(e.getMessage()));
         }
     }
@@ -104,7 +104,7 @@ public class GroupController {
         try {
             final BranchGroup updatedBranchGroup = this.groupService.updateBranchGroup(Long.parseLong(branchGroupId), name);
             return ResponseEntity.ok().body(BranchGroupResponseDto.fromEntity(updatedBranchGroup));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return ResponseEntity.badRequest().body(new ErrorResponseDto(e.getMessage()));
         }
     }
@@ -132,7 +132,7 @@ public class GroupController {
         try {
             final BranchGroup updatedBranchGroup = this.groupService.deleteBranchGroupBranch(Long.parseLong(branchGroupId),Long.parseLong(branchId));
             return ResponseEntity.ok().body(BranchGroupResponseDto.fromEntity(updatedBranchGroup));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return ResponseEntity.badRequest().body(new ErrorResponseDto(e.getMessage()));
         }
     }
@@ -149,7 +149,7 @@ public class GroupController {
         try {
             final BranchGroup updatedBranchGroup = this.groupService.deleteBranchGroupService(Long.parseLong(branchGroupId),Long.parseLong(serviceId));
             return ResponseEntity.ok().body(BranchGroupResponseDto.fromEntity(updatedBranchGroup));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return ResponseEntity.badRequest().body(new ErrorResponseDto(e.getMessage()));
         }
     }

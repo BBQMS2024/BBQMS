@@ -3,17 +3,13 @@ package ba.unsa.etf.si.bbqms.ws.controllers;
 import ba.unsa.etf.si.bbqms.admin_service.api.BranchService;
 import ba.unsa.etf.si.bbqms.domain.Ticket;
 import ba.unsa.etf.si.bbqms.ticket_service.api.TicketService;
+import ba.unsa.etf.si.bbqms.ws.models.SimpleMessageDto;
 import ba.unsa.etf.si.bbqms.ws.models.TellerStationDto;
 import ba.unsa.etf.si.bbqms.ws.models.TicketDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -52,6 +48,17 @@ public class TicketController {
         }
     }
 
+    @GetMapping("/{ticketId}")
+    public ResponseEntity getTicketById(@PathVariable final String ticketId) {
+       try {
+            final Ticket ticket = this.ticketService.getTicketById(Long.parseLong(ticketId));
+            return ResponseEntity.ok().body(TicketDto.fromEntity(ticket));
+       } catch (final Exception exception) {
+           logger.error(exception.getMessage());
+           return ResponseEntity.badRequest().build();
+       }
+    }
+
     @GetMapping("/devices/{deviceToken}")
     public ResponseEntity getTicketsForDevice(@PathVariable final String deviceToken) {
 
@@ -68,6 +75,17 @@ public class TicketController {
         }
 
         return ResponseEntity.ok().body(responses);
+    }
+
+    @DeleteMapping("/{ticketId}")
+    public ResponseEntity cancelTicket(@PathVariable final String ticketId) {
+        try {
+            this.ticketService.cancelTicket(Long.parseLong(ticketId));
+            return ResponseEntity.ok().body(new SimpleMessageDto("Deleted ticket with id: " + ticketId));
+        } catch (final Exception exception) {
+            logger.error(exception.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     public record NewTicketRequest(long branchId, long serviceId, String deviceToken) {
