@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
 const TicketDetailsScreen = ({ route }: {route: any}) => {
-    
+
   const { ticket } = route.params;
 
 
@@ -18,7 +18,6 @@ const TicketDetailsScreen = ({ route }: {route: any}) => {
           <Text>Ticket Name: {ticket.name}</Text>
           <Text>Generated: {ticket.date}</Text>
           <Text>Service: {ticket.service}</Text>
-          {/* Add more ticket details here */}
         </View>
       ) : (
         <Text>Loading...</Text>

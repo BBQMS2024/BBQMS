@@ -24,7 +24,7 @@ interface ServiceData{
     name: string
 }
 
-export interface TicketData{
+interface TicketData{
     id: string,
     name: string,
     date: Date,
@@ -151,21 +151,20 @@ async function  getTickets(token: string) {
         })
         .then((data) => {
             let ticket = data
-
-                
+            
                 const stationList: String[] = [];
                 ticket.stations.forEach((station: any) => {
                     stationList.push(station.name)
                 })
-
+                
                 const ticketData: TicketData = {
-                    id: ticket.id,
-                    name: ticket.name,
-                    date: ticket.date,
+                    id: ticket.ticket.id,
+                    name: ticket.ticket.branch.name,
+                    date: new Date(ticket.ticket.createdAt),
                     stations: stationList
                 };
                 ticketList.push(ticketData);
-
+                
             return ticketList;
         })
         .catch((error) => {

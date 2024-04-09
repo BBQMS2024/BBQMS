@@ -1,34 +1,47 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, Dimensions, ActivityIndicator } from 'react-native';
 import { Screens } from '../constants/screens';
-import { getBranchServices, getTickets } from '../services/fetchData';
+import { getTickets } from '../services/fetchData';
 import { Colors } from '../constants/colors';
 import { Fonts } from '../constants/fonts';
 import { Ionicons } from '@expo/vector-icons';
 import { getExpoToken } from '../utils/tokenUtils';
-
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
-export default async function TicketListScreen({ route, navigation }: { route: any, navigation: any }){
-    
-    let tickets = await getTickets(getExpoToken())
+export default function TicketListScreen({ navigation }: { navigation: any }){
 
-  useEffect(() => {
-   
+    const [tickets, setTickets] = useState<any[]>([]);
+
+    useEffect(() => {
+        const fetchTickets = async () => {
+            try {
+                const fetchedTickets = await getTickets(getExpoToken());
+                setTickets(fetchedTickets);
+            } catch (error) {
+                console.error('Error fetching tickets:', error);
+            }
+        };
+        fetchTickets();
+
+        const intervalId = setInterval(fetchTickets, 10000);
+
+        return () => clearInterval(intervalId);
     }, []);
+
     
-  const renderItem = ({ item }: { item: any }) => (
-    <TouchableOpacity
-      style={styles.ticketItem}
-      onPress={() => handlePress(item.name)}
-    >
-      <Text style={styles.ticketName}>{item.name}</Text>
-      <View style={styles.iconContainer}>
-        <Ionicons name="chevron-forward-circle-outline" size={windowWidth * 0.1} color={Colors.ACCENT} />
-      </View>
-    </TouchableOpacity>
-  );
+    const renderItem = ({ item }: { item: any }) => {
+        return (
+            <TouchableOpacity
+                style={styles.ticketItem}
+                onPress={() => handlePress(item.id)}
+            >
+                <Text style={styles.ticketName}>{item.name}</Text>
+                <View style={styles.iconContainer}>
+                    <Ionicons name="ticket-outline" size={windowWidth * 0.1} color={Colors.ACCENT} />
+                </View>
+            </TouchableOpacity>
+        );};
   async function handlePress(id: any) {
 
     let ticket = tickets.findIndex(id)     
@@ -38,17 +51,26 @@ export default async function TicketListScreen({ route, navigation }: { route: a
     })
 
 }
-return (
-    <View style={styles.container}>
-      <Text style={[styles.title]}>Poslovnice</Text>
-      <FlatList
-        data={tickets}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={styles.flatListContainer}
-      />
-    </View>
+if (tickets.length === 0) {
+  return (
+      <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={Colors.PRIMARY} />
+      </View>
   );
+} else {
+  return (
+      <View style={styles.container}>
+          <Text style={styles.title}>Tiketi</Text>
+          <FlatList
+              data={tickets}
+              renderItem={renderItem}
+              keyExtractor={(item) => item.id.toString()}
+              contentContainerStyle={styles.flatListContainer}
+          />
+      </View>
+  );
+}
+
 };
 
 const styles = StyleSheet.create({
@@ -72,7 +94,7 @@ const styles = StyleSheet.create({
     },
     ticketItem: {
       paddingHorizontal: windowWidth * 0.05,
-      paddingVertical: windowHeight * 0.06, // Adjust the padding to make the items taller
+      paddingVertical: windowHeight * 0.06, 
       marginBottom: windowHeight * 0.02,
       borderRadius: windowWidth * 0.05,
       backgroundColor: '#fff',
@@ -101,6 +123,11 @@ const styles = StyleSheet.create({
     },
     iconContainer: {
         alignItems: 'center',
-        marginTop: windowHeight * 0.02, // Adjust the margin to position the icon below the branch name
+        marginTop: windowHeight * 0.02, 
       },
+      loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
 });
