@@ -24,9 +24,11 @@ interface ServiceData{
     name: string
 }
 
-interface DisplayData{
+interface TicketData{
     id: string,
     name: string,
+    date: Date,
+    stations: Array<String>
 }
 
 async function getCompanyDetails(code: string) {
@@ -36,7 +38,6 @@ async function getCompanyDetails(code: string) {
         { method: "GET" }
     )
         .then((response) => {
-            console.log(response);
             if (response.status === 200) {
                 return response.json();
             } else {
@@ -70,7 +71,6 @@ async function getCompanyBranches(code: any) {
         { method: "GET" }
     )
         .then((response) => {
-            console.log(response);
             if (response.status === 200) {
                 return response.json();
             } else {
@@ -110,7 +110,6 @@ async function getBranchServices(code:string, id: string) {
         { method: "GET" }
     )
         .then((response) => {
-            console.log(response);
             if (response.status === 200) {
                 return response.json();
             } else {
@@ -118,7 +117,6 @@ async function getBranchServices(code:string, id: string) {
             }
         })
         .then((data) => {
-            console.log(data)
             data.forEach((service: any) => {
 
                 const serviceData: ServiceData = {
@@ -137,9 +135,10 @@ async function getBranchServices(code:string, id: string) {
     return services;
 }
 
-async function  getUnassignedDisplays(code: string) {;
-    let display: DisplayData = await fetch(
-        `${TEST_URL}/displays/unassigned/${code}`,
+async function  getTickets(code: string) {
+    const ticketList: TicketData[] = [];
+    let tickets: TicketData[] = await fetch(
+        `${TEST_URL}/tickets/devices/${code}`,
         { method: "GET" }
     )
         .then((response) => {
@@ -151,15 +150,30 @@ async function  getUnassignedDisplays(code: string) {;
             }
         })
         .then((data) => {
-            
-            return data
+            data.forEach((ticket: any) => {
+                
+                const stationList: String[] = [];
+                ticket.stations.forEach((station: any) => {
+                    stationList.push(station.name)
+                })
+
+                const ticketData: TicketData = {
+                    id: ticket.id,
+                    name: ticket.name,
+                    date: ticket.date,
+                    stations: stationList
+                };
+                ticketList.push(ticketData);
+            });
+
+            return ticketList;
         })
         .catch((error) => {
             console.error("Error:", error);
             throw error;
         });
-    return display;
+    return tickets;
 }
 
 
-export { getCompanyDetails, getBranchServices, getCompanyBranches };
+export { getCompanyDetails, getBranchServices, getCompanyBranches, getTickets };

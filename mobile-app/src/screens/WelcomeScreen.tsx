@@ -1,18 +1,31 @@
-import React, { useEffect, useState } from "react";
-import { View, StyleSheet, Animated, Text, FlatList, TouchableOpacity } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { View, StyleSheet, Animated, Text, FlatList, TouchableOpacity, Platform, Alert } from "react-native";
 import WelcomeMessage from "../components/WelcomeMessage";
 import { useFonts } from "expo-font";
 const { Fonts } = require("../constants/fonts");
 const { Assets } = require("../constants/assets");
 const { Colors } = require("../constants/colors");
 import { Ionicons } from '@expo/vector-icons';
-import { Screens } from "../constants/screens";
 import AssignedNumberAlert from "../components/AssignedNumberAlert";
+import * as Notifications from 'expo-notifications';
+import * as Device from 'expo-device'
 
 export default function WelcomeScreen({ route, navigation }: { route: any, navigation : any }) {
     const details = route.params.details;
     let { name, welcomeMessage, font, logoUrl } = details;
     let { services } = route.params
+    const [expoPushToken, setExpoPushToken] = useState(' ');
+    const [notification, setNotification] = useState(false);
+    const notificationListener = useRef();
+    const responseListener = useRef();
+
+    Notifications.setNotificationHandler({
+        handleNotification: async () => ({
+          shouldShowAlert: true,
+          shouldPlaySound: true,
+          shouldSetBadge: false,
+        }),
+      });
  
     let [fontsLoaded] = useFonts({
         [Fonts.ARIAL]: Assets.ARIAL,
@@ -29,13 +42,32 @@ export default function WelcomeScreen({ route, navigation }: { route: any, navig
 
     const fadeAnim = React.useRef(new Animated.Value(0)).current;
 
-    React.useEffect(() => {
+    useEffect(() => {  
         Animated.timing(fadeAnim, {
             toValue: 1,
             duration: 2000,
             useNativeDriver: true,
         }).start();
     }, [fadeAnim]);
+
+    useEffect(() => {
+
+        getToken()
+
+     
+      }, []);
+
+      async function getToken(){
+        try{     
+            
+            await registerForPushNotificationsAsync()
+            .then(token => setExpoPushToken(token as React.SetStateAction<string>));
+
+            console.log(expoPushToken)
+        } catch (error) {
+            console.error("Failed to fetch data in TasksScreen:", error);
+          }
+      }
 
     const [modalVisible, setModalVisible] = useState(false);
 
@@ -86,6 +118,38 @@ export default function WelcomeScreen({ route, navigation }: { route: any, navig
         </View>
     );
 }
+
+async function registerForPushNotificationsAsync() {
+    let token;
+  
+    if (Platform.OS === 'android') {
+      await Notifications.setNotificationChannelAsync('default', {
+        name: 'default',
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: '#FF231F7C',
+      });
+    }
+  
+    if (Device.isDevice) {
+      const { status: existingStatus } = await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+      if (existingStatus !== 'granted') {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+      if (finalStatus !== 'granted') {
+        alert('Failed to get push token for push notification!');
+        return;
+      } 
+  
+      token = (await Notifications.getExpoPushTokenAsync()).data;
+  
+    } else {
+      alert('Must use physical device for Push Notifications');
+    }
+    return token;
+  }
 
 export const styles = StyleSheet.create({
     container: {
