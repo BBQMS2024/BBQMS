@@ -38,7 +38,7 @@ export default function TicketListScreen({ navigation }: { navigation: any }){
             >
                 <Text style={styles.ticketName}>{item.name}</Text>
                 <View style={styles.iconContainer}>
-                    <Ionicons name="ticket-outline" size={windowWidth * 0.1} color={Colors.ACCENT} />
+                    <Ionicons name="information-circle-outline" size={windowWidth * 0.1} color={Colors.ACCENT} />
                 </View>
             </TouchableOpacity>
         );};

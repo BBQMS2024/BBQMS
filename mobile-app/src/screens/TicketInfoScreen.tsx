@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-const TicketDetailsScreen = ({ route }: {route: any}) => {
+const TicketInfoScreen = ({ route }: {route: any}) => {
 
   const { ticket } = route.params;
 
@@ -42,4 +42,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TicketDetailsScreen;
+export default TicketInfoScreen;
