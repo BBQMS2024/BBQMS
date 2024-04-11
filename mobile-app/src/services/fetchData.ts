@@ -1,5 +1,3 @@
-import { TEST_URL } from "../constants/api";
-
 const { SERVER_URL } = require("../constants/api");
 const { Dialogs } = require("../constants/dialogs");
 const { Fonts } = require("../constants/fonts");
@@ -68,7 +66,7 @@ async function getCompanyDetails(code: string) {
 async function getCompanyBranches(code: any) {
     const branchList: BranchData[] = [];
     let branches: BranchData[] = await fetch(
-        `${TEST_URL}/branches/${code}`,
+        `${SERVER_URL}/branches/${code}`,
         { method: "GET" }
     )
         .then((response) => {
@@ -107,7 +105,7 @@ async function getCompanyBranches(code: any) {
 async function getBranchServices(code:string, id: string) {
     const serviceList: ServiceData[] = [];
     let services: ServiceData[] = await fetch(
-        `${TEST_URL}/branches/${code}/${id}/services`,
+        `${SERVER_URL}/branches/${code}/${id}/services`,
         { method: "GET" }
     )
         .then((response) => {
@@ -139,7 +137,7 @@ async function getBranchServices(code:string, id: string) {
 async function  getTickets(token: string) {
     const ticketList: TicketData[] = [];
     let tickets: TicketData[] = await fetch(
-        `${TEST_URL}/tickets/devices/${token}`,
+        `${SERVER_URL}/tickets/devices/${token}`,
         { method: "GET" }
     )
         .then((response) => {
@@ -177,7 +175,7 @@ async function  getTickets(token: string) {
 
 async function  generateTicket(token: string, branchId: number , serviceId: number) {
     let tickets: TicketData = await fetch(
-        `${TEST_URL}/tickets`,
+        `${SERVER_URL}/tickets`,
         { 
             method: "POST",
             headers: {
