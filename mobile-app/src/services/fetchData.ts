@@ -28,6 +28,7 @@ interface TicketData{
     id: string,
     name: string,
     date: Date,
+    number:number,
     stations: Array<String>
 }
 
@@ -161,7 +162,8 @@ async function  getTickets(token: string) {
                     id: ticket.ticket.id,
                     name: ticket.ticket.branch.name,
                     date: new Date(ticket.ticket.createdAt),
-                    stations: stationList
+                    stations: stationList,
+                    number: ticket.ticket.number
                 };
                 ticketList.push(ticketData);
                 
@@ -197,7 +199,7 @@ async function  generateTicket(token: string, branchId: number , serviceId: numb
         })
         .then((data) => {
             
-            return data
+            return data.ticket
         })
         .catch((error) => {
             console.error("Error:", error);

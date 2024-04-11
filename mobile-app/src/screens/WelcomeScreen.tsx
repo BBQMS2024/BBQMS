@@ -10,13 +10,16 @@ import AssignedNumberAlert from "../components/AssignedNumberAlert";
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device'
 import { getExpoToken, setExpoToken } from "../utils/tokenUtils";
+import { generateTicket } from "../services/fetchData";
 
 export default function WelcomeScreen({ route }: { route: any }) {
 
   const { details } = route.params;
+  let { services } = route.params
+  let { branchID } = route.params
 
-    let { name, welcomeMessage, font, logoUrl } = details;
-    let { services } = route.params
+  let { name, welcomeMessage, font, logoUrl } = details;
+
 
 
     Notifications.setNotificationHandler({
@@ -70,10 +73,11 @@ export default function WelcomeScreen({ route }: { route: any }) {
       }
 
     const [modalVisible, setModalVisible] = useState(false);
+    const [ticket, setTicket] = useState(0);
 
     const openModal = () => {
-        setModalVisible(true);
-    };
+      setModalVisible(true);
+  };
 
     const closeModal = () => {
         setModalVisible(false);
@@ -82,7 +86,7 @@ export default function WelcomeScreen({ route }: { route: any }) {
     const renderItem = ({ item }: { item: any }) => (
         <TouchableOpacity
           style={styles.branchItem}
-          onPress={() => handlePress(item.name)}
+          onPress={() => handlePress(item.id)}
         >
           <View style={styles.branchInfoContainer}>
             <Ionicons name="ios-information-circle" size={24} color={Colors.ACCENT} style={styles.icon} />
@@ -91,8 +95,19 @@ export default function WelcomeScreen({ route }: { route: any }) {
           </View>
         </TouchableOpacity>
       );
-      async function handlePress(id: any) {
-        openModal();
+
+      async function handlePress(serviceID: any) {
+        const assignTicket = async () => {
+          try {
+              const fetchedTicket = await generateTicket(getExpoToken(),branchID,serviceID)
+              setTicket(fetchedTicket.number);
+          } catch (error) {
+              console.error('Error fetching tickets:', error);
+          }
+        };
+    
+        assignTicket();
+        openModal()
     }
 
     if (!fontsLoaded) return <Text>Loading...</Text>;
@@ -114,7 +129,7 @@ export default function WelcomeScreen({ route }: { route: any }) {
                 keyExtractor={(item) => item.id.toString()}
                 contentContainerStyle={styles.flatListContainer}
       />
-      <AssignedNumberAlert visible={modalVisible} number={1} onClose={closeModal} />
+      <AssignedNumberAlert visible={modalVisible} number={ticket} onClose={closeModal} />
         </View>
     );
 }

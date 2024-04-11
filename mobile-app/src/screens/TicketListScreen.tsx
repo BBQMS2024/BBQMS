@@ -31,17 +31,24 @@ export default function TicketListScreen({ navigation }: { navigation: any }){
 
     
     const renderItem = ({ item }: { item: any }) => {
-        return (
-            <TouchableOpacity
-                style={styles.ticketItem}
-                onPress={() => handlePress(item.id)}
-            >
-                <Text style={styles.ticketName}>{item.name}</Text>
-                <View style={styles.iconContainer}>
-                    <Ionicons name="information-circle-outline" size={windowWidth * 0.1} color={Colors.ACCENT} />
-                </View>
-            </TouchableOpacity>
-        );};
+      return (
+        <TouchableOpacity
+            style={styles.ticketItem}
+            onPress={() => handlePress(item.id)}
+        >
+            <Text style={styles.ticketName}>{item.name}</Text>
+            <View style={styles.stationContainer}>
+                <Text style={styles.stationTitle}>Šalteri</Text>
+                {item.stations.map((station: string, index: number) => (
+                    <Text key={index} style={styles.stationList}>{station}</Text>
+                ))}
+            </View>
+            <View style={styles.iconContainer}>
+                <Ionicons name="information-circle-outline" size={windowWidth * 0.1} color={Colors.ACCENT} />
+            </View>
+        </TouchableOpacity>
+    );
+      };
   async function handlePress(id: any) {
 
     let ticket = tickets.findIndex(id)     
@@ -130,4 +137,17 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    stationList: {
+      fontSize: windowWidth * 0.05,
+      color: 'gray', 
+      marginTop: 5,
+  },
+  stationTitle: {
+    fontSize: windowWidth * 0.06,
+    fontWeight: 'bold',
+    marginBottom: 5,
+},
+stationContainer: {
+  marginTop: 30,
+},
 });

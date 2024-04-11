@@ -15,14 +15,13 @@ const Tab = createBottomTabNavigator();
 
 const BottomNavigator = ({ route }) =>  {
 
-  const { details, services } = route.params;
-
+  const { details, services, branchID } = route.params;  
   return (
     <Tab.Navigator  screenOptions={{headerShown: false }}>
       <Tab.Screen
         name="Home"
         component={WelcomeScreen}
-        initialParams={{ details, services }}
+        initialParams={{ details, services , branchID }}
         options={{
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="home-outline" size={size} color={color} />

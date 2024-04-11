@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { View, Modal, Text, Button, StyleSheet, Dimensions } from 'react-native';
 import { Colors } from '../constants/colors';
+import { generateTicket } from '../services/fetchData';
+import { getExpoToken } from '../utils/tokenUtils';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
-export default function ({ visible, number, onClose }: { visible: any, number:number,onClose: any }) {
-  // State to track if the modal is visible
+export default function ({ visible, onClose, number }: { visible: any, onClose: any, number: number}) {
+
   const [modalVisible, setModalVisible] = useState(visible);
 
   useEffect(() => {
+
     setModalVisible(visible);
     if (visible) {
       const timer = setTimeout(() => {

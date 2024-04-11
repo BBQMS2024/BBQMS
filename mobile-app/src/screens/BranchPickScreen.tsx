@@ -17,7 +17,7 @@ export default function BranchPickScreen({ route, navigation }: { route: any, na
   const renderItem = ({ item }: { item: any }) => (
     <TouchableOpacity
       style={styles.branchItem}
-      onPress={() => handlePress(item.name)}
+      onPress={() => handlePress(item.id)}
     >
       <Text style={styles.branchName}>{item.name}</Text>
       <View style={styles.iconContainer}>
@@ -26,11 +26,10 @@ export default function BranchPickScreen({ route, navigation }: { route: any, na
     </TouchableOpacity>
   );
   async function handlePress(id: any) {
-    
     getBranchServices(route.params.code, id)
         .then(function (services) {           
                 navigation.navigate(Screens.BOTTOM_NAV, {
-                details: route.params.details, services: services
+                details: route.params.details, services: services, branchID: id
             })
 
         })
