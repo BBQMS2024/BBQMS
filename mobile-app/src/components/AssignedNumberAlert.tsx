@@ -24,6 +24,7 @@ export default function ({ visible, onClose, number }: { visible: any, onClose: 
     }
   }, [visible]);
 
+  if(number != 0 )
   return (
     <Modal
       animationType="slide"

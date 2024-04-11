@@ -49,15 +49,16 @@ export default function TicketListScreen({ navigation }: { navigation: any }){
         </TouchableOpacity>
     );
       };
-  async function handlePress(id: any) {
 
-    let ticket = tickets.findIndex(id)     
+    async function handlePress(id: any) {
 
-    navigation.navigate(Screens.TICKET_INFO, {
+      let ticket = tickets.find(item => item.id == id)    
+      navigation.navigate(Screens.TICKET_INFO, {
         ticket:ticket
     })
 
 }
+
 if (tickets.length === 0) {
   return (
       <View style={styles.loadingContainer}>
@@ -83,7 +84,7 @@ if (tickets.length === 0) {
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: '#fff',
+      backgroundColor: Colors.BACKGROUND,
       justifyContent: 'center',
       paddingTop: windowHeight * 0.1,
     },

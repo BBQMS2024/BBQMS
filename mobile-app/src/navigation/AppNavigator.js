@@ -6,6 +6,7 @@ import CodeEnterScreen from "../screens/CodeEnterScreen";
 import WelcomeScreen from "../screens/WelcomeScreen";
 import BranchPickScreen from "../screens/BranchPickScreen"
 import TicketListScreen from '../screens/TicketListScreen';
+import TicketInfoScreen from '../screens/TicketInfoScreen'
 import { Screens } from "../constants/screens";
 import AssignedNumberAlert from "../components/AssignedNumberAlert";
 import { Ionicons } from '@expo/vector-icons';
@@ -57,6 +58,7 @@ const AppNavigator = () => {
                 <Stack.Screen name={Screens.BRANCH_PICK} component={BranchPickScreen} />
                 <Stack.Screen name={Screens.BOTTOM_NAV} component={BottomNavigator} />
                 <Stack.Screen name={Screens.ASSIGNED_NUMBER} component={AssignedNumberAlert} />
+                <Stack.Screen name={Screens.TICKET_INFO} component={TicketInfoScreen} />
             </Stack.Navigator>
         </NavigationContainer>
     );

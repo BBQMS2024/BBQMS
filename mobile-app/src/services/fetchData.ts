@@ -143,7 +143,6 @@ async function  getTickets(token: string) {
         { method: "GET" }
     )
         .then((response) => {
-            console.log(response);
             if (response.status === 200) {
                 return response.json();
             } else {
@@ -190,7 +189,6 @@ async function  generateTicket(token: string, branchId: number , serviceId: numb
          }
     )
         .then((response) => {
-            console.log(response);
             if (response.status === 200) {
                 return response.json();
             } else {
