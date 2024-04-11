@@ -1,14 +1,18 @@
 package ba.unsa.etf.si.bbqms.admin_service.implementation;
 
 import ba.unsa.etf.si.bbqms.admin_service.api.BranchService;
+import ba.unsa.etf.si.bbqms.admin_service.api.GroupService;
 import ba.unsa.etf.si.bbqms.domain.Branch;
 import ba.unsa.etf.si.bbqms.domain.BranchGroup;
 import ba.unsa.etf.si.bbqms.domain.Service;
 import ba.unsa.etf.si.bbqms.domain.TellerStation;
 import ba.unsa.etf.si.bbqms.domain.Tenant;
+import ba.unsa.etf.si.bbqms.domain.Ticket;
 import ba.unsa.etf.si.bbqms.repository.BranchRepository;
 import ba.unsa.etf.si.bbqms.repository.TellerStationRepository;
 import ba.unsa.etf.si.bbqms.repository.TenantRepository;
+import ba.unsa.etf.si.bbqms.repository.TicketRepository;
+import jakarta.persistence.EntityNotFoundException;
 
 
 import java.util.HashSet;
@@ -22,13 +26,19 @@ public class DefaultBranchService implements BranchService {
     private final BranchRepository branchRepository;
     private final TenantRepository tenantRepository;
     private final TellerStationRepository tellerStationRepository;
+    private final TicketRepository ticketRepository;
+    private final GroupService groupService;
 
     public DefaultBranchService(final BranchRepository branchRepository,
                                 final TenantRepository tenantRepository,
-                                final TellerStationRepository tellerStationRepository) {
+                                final TellerStationRepository tellerStationRepository,
+                                final TicketRepository ticketRepository,
+                                final GroupService groupService) {
         this.branchRepository = branchRepository;
         this.tenantRepository = tenantRepository;
         this.tellerStationRepository = tellerStationRepository;
+        this.ticketRepository = ticketRepository;
+        this.groupService = groupService;
     }
 
     @Override
@@ -89,6 +99,15 @@ public class DefaultBranchService implements BranchService {
 
     @Override
     public void removeBranch(final long branchId) {
+        final Branch branch = this.branchRepository.findById(branchId)
+                .orElseThrow(() -> new EntityNotFoundException("Branch with id: " + branchId + " doesn't exist."));
+
+        // Discard all tickets which are at the current branch
+        final Set<Long> ticketsToBeDiscarded = this.ticketRepository.findAllByBranch_Id(branch.getId()).stream()
+                .map(Ticket::getId)
+                .collect(Collectors.toSet());
+        this.ticketRepository.deleteAllById(ticketsToBeDiscarded);
+
         this.branchRepository.deleteById(branchId);
     }
 
@@ -106,6 +125,11 @@ public class DefaultBranchService implements BranchService {
                 .orElseThrow(() -> new Exception("Did not add the station properly."));
     }
 
+    /*
+        TODO: If station is removed, and some ticket is currently on it?
+               Also, if station is removed, and some tickets service is only available at that station,
+               it should be discarded.
+     */
     @Override
     public void removeStation(final long stationId) throws Exception {
         this.tellerStationRepository.deleteById(stationId);

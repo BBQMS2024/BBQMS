@@ -14,4 +14,7 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     Optional<Ticket> findTopByServiceInAndBranchAndTellerStationIsNullOrderByCreatedAtAsc(final Set<Service> service, final Branch branch);
     void deleteByTellerStation(final TellerStation tellerStation);
     Set<Ticket> findAllByDeviceToken(final String deviceToken);
+    Set<Ticket> findAllByServiceIn(final Set<Service> services);
+    Set<Ticket> findAllByBranch_Id(final long branchId);
+    Set<Ticket> findAllByServiceInAndBranch_Id(final Set<Service> services, final long branchId);
 }
