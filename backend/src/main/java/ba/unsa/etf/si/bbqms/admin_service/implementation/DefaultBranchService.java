@@ -93,7 +93,6 @@ public class DefaultBranchService implements BranchService {
             existingBranch.getTellerStations().addAll(tellerStations);
         }
 
-
         return this.branchRepository.save(existingBranch);
     }
 
@@ -107,6 +106,11 @@ public class DefaultBranchService implements BranchService {
                 .map(Ticket::getId)
                 .collect(Collectors.toSet());
         this.ticketRepository.deleteAllById(ticketsToBeDiscarded);
+
+        for (final BranchGroup group : branch.getBranchGroups()) {
+            // We have do this to prevent FK constraint popping due to many-to-many
+            this.groupService.deleteBranchGroupBranch(group.getId(), branch.getId());
+        }
 
         this.branchRepository.deleteById(branchId);
     }
