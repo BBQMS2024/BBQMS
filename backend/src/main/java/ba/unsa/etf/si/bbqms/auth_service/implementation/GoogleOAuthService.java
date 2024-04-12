@@ -61,7 +61,7 @@ public class GoogleOAuthService implements OAuthService {
                                     .oAuth(true)
                                     .build()
                     ));
-            return user.isOauth() ? Optional.of(user) : Optional.empty();
+            return Optional.of(user);
         } catch (final Exception e) {
             return Optional.empty();
         }

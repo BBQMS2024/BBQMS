@@ -139,11 +139,10 @@ public class AuthController {
             return ResponseEntity.notFound().build();
         } else {
             final User user = optionalUser.get();
-            final String userToken = this.authService.generateUserToken(user);
-            final Cookie jwtCookie = this.cookieService.generateDefaultJwtCookie(userToken);
-            response.addCookie(jwtCookie);
+            final String token = this.authService.generateUserToken(user);
+            response.addHeader("Auth-Token", token);
 
-            return ResponseEntity.ok().body(UserDto.fromEntity(user));
+            return ResponseEntity.ok().body(new LoginResponse(UserDto.fromEntity(user), token));
         }
     }
 
