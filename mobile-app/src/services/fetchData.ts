@@ -208,6 +208,5 @@ export {
   getCompanyDetails,
   getBranchServices,
   getCompanyBranches,
-  getTickets,
   generateTicket,
 };

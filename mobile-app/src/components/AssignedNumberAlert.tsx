@@ -18,7 +18,7 @@ export default function ({ visible, onClose, number }: { visible: any, onClose: 
       const timer = setTimeout(() => {
         setModalVisible(false);
         onClose();
-      }, 10000);
+      }, 5000);
 
       return () => clearTimeout(timer);
     }

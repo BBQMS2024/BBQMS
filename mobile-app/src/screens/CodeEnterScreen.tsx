@@ -17,7 +17,7 @@ import { Screens } from "../constants/screens";
 import { Dimensions } from 'react-native';
 
 const screenWidth = Dimensions.get('window').width;
-const buttonWidth = screenWidth * 0.3;
+const buttonWidth = screenWidth * 0.5;
 
 export default function CodeEnterScreen({ navigation }: { navigation: any }) {
     const [text, onChangeText] = React.useState("");
@@ -124,4 +124,4 @@ const styles = StyleSheet.create({
     },
 });
 
-registerRootComponent(CodeEnterScreen);
+registerRootComponent(({ navigation }) => <CodeEnterScreen navigation={navigation} />);

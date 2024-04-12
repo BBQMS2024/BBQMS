@@ -56,7 +56,7 @@ export default function WelcomeScreen({ route }: { route: any }) {
   useEffect(() => {
     Animated.timing(fadeAnim, {
       toValue: 1,
-      duration: 2000,
+      duration: 2500,
       useNativeDriver: true,
     }).start();
   }, [fadeAnim]);
@@ -139,9 +139,6 @@ export default function WelcomeScreen({ route }: { route: any }) {
         />
       </View>
       <WelcomeMessage name={name} font={font} welcome={welcomeMessage} />
-      <View style={styles.titleContainer}>
-        <Text style={styles.title}>Servisi</Text>
-      </View>
       <FlatList
         data={services}
         renderItem={renderItem}
@@ -200,22 +197,23 @@ export const styles = StyleSheet.create({
   },
   titleContainer: {
     alignSelf: "flex-start",
-    marginLeft: 20,
-    marginTop: 30,
-    marginBottom: 10, // Adjust the margin to lower the items from the title
+    width: "100%",
   },
   logoContainer: {
     marginBottom: 20, // Add margin to separate logo from title
+    fontFamily: Fonts.ARIAL,
+    color: Colors.TEXT_PRIMARY,
   },
   logo: {
-    width: "50%", // Adjust the logo size to fit better on all screens
+    marginTop: 50, // Add margin to separate logo from title
+    width: "40%", // Adjust the logo size to fit better on all screens
     height: undefined, // Allow height to adjust automatically based on width
     aspectRatio: 1, // Maintain aspect ratio
     resizeMode: "contain",
   },
   title: {
     fontSize: 42,
-    fontWeight: "bold",
+    textAlign: "center",
     marginTop: 20,
     fontFamily: Fonts.ARIAL,
     color: Colors.TEXT_PRIMARY,
@@ -226,9 +224,9 @@ export const styles = StyleSheet.create({
     paddingTop: 10, // Add padding to the top of the list to separate from title
   },
   branchItem: {
+    marginTop: 10, // Add margin between items
     paddingVertical: 15,
     paddingHorizontal: 20,
-    marginBottom: 15,
     borderRadius: 10,
     borderColor: Colors.ACCENT,
     borderWidth: 1,
@@ -247,7 +245,7 @@ export const styles = StyleSheet.create({
     alignItems: "center", // Center items vertically
   },
   branchName: {
-    fontSize: 34,
+    fontSize: 30,
     fontFamily: Fonts.ARIAL,
     color: Colors.TEXT_PRIMARY,
     marginLeft: 10, // Add some space between text and icon
