@@ -1,18 +1,44 @@
-import React, { useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
-import { Screens } from '../constants/screens';
-import { getBranchServices } from '../services/fetchData';
-import { Colors } from '../constants/colors';
-import { Fonts } from '../constants/fonts';
-import { Ionicons } from '@expo/vector-icons';
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  StyleSheet,
+  Dimensions,
+} from "react-native";
+import { Screens } from "../constants/screens";
+import { getBranchServices } from "../services/fetchData";
+import { Colors } from "../constants/colors";
+import { Fonts } from "../constants/fonts";
+import { Ionicons } from "@expo/vector-icons";
+import { useFonts } from "expo-font";
+import { Assets } from "../constants/assets";
 
-const windowWidth = Dimensions.get('window').width;
-const windowHeight = Dimensions.get('window').height;
+const windowWidth = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height;
 
-export default function BranchPickScreen({ route, navigation }: { route: any, navigation: any }){
+export default function BranchPickScreen({
+  route,
+  navigation,
+}: {
+  route: any;
+  navigation: any;
+}) {
+  const { branches } = route.params;
 
-  const { branches } = route.params
-
+  let [fontsLoaded] = useFonts({
+    [Fonts.ARIAL]: Assets.ARIAL,
+    [Fonts.TIMES_NEW_ROMAN]: Assets.TIMES_NEW_ROMAN,
+    [Fonts.VERDANA]: Assets.VERDANA,
+    [Fonts.HELVETICA]: Assets.HELVETICA,
+    [Fonts.MONTSERRAT]: Assets.MONTSERRAT,
+    [Fonts.CALIBRI]: Assets.CALIBRI,
+    [Fonts.FUTURA]: Assets.FUTURA,
+    [Fonts.BODONI]: Assets.BODONI,
+    [Fonts.ROCKWELL]: Assets.ROCKWELL,
+    [Fonts.COMIC_SANS_MS]: Assets.COMIC_SANS_MS,
+  });
 
   const renderItem = ({ item }: { item: any }) => (
     <TouchableOpacity
@@ -21,23 +47,29 @@ export default function BranchPickScreen({ route, navigation }: { route: any, na
     >
       <Text style={styles.branchName}>{item.name}</Text>
       <View style={styles.iconContainer}>
-        <Ionicons name="chevron-forward-circle-outline" size={windowWidth * 0.1} color={Colors.ACCENT} />
+        <Ionicons
+          name="chevron-forward-circle-outline"
+          size={windowWidth * 0.1}
+          color={Colors.ACCENT}
+        />
       </View>
     </TouchableOpacity>
   );
   async function handlePress(id: any) {
     getBranchServices(route.params.code, id)
-        .then(function (services) {           
-                navigation.navigate(Screens.BOTTOM_NAV, {
-                details: route.params.details, services: services, branchID: id
-            })
-
-        })
-        .catch((error) => {
-            console.error("Error:", error);
+      .then(function (services) {
+        navigation.navigate(Screens.WELCOME, {
+          details: route.params.details,
+          services: services,
+          branchID: id,
         });
-}
-return (
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }
+  if (!fontsLoaded) return <Text>Loading...</Text>;
+  return (
     <View style={styles.container}>
       <Text style={[styles.title]}>Poslovnice</Text>
       <FlatList
@@ -48,58 +80,58 @@ return (
       />
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: Colors.BACKGROUND,
-      justifyContent: 'center',
-      paddingTop: windowHeight * 0.1,
+  container: {
+    flex: 1,
+    backgroundColor: Colors.BACKGROUND,
+    justifyContent: "center",
+    paddingTop: windowHeight * 0.1,
+  },
+  title: {
+    fontSize: windowWidth * 0.1,
+    fontWeight: "bold",
+    marginBottom: windowHeight * 0.03,
+    marginLeft: windowWidth * 0.05,
+    fontFamily: Fonts.ARIAL,
+  },
+  flatListContainer: {
+    flexGrow: 1,
+    paddingHorizontal: windowWidth * 0.05,
+    paddingBottom: windowHeight * 0.05,
+  },
+  branchItem: {
+    paddingHorizontal: windowWidth * 0.05,
+    paddingVertical: windowHeight * 0.06, // Adjust the padding to make the items taller
+    marginBottom: windowHeight * 0.02,
+    borderRadius: windowWidth * 0.05,
+    backgroundColor: "#fff",
+    shadowColor: Colors.ACCENT,
+    shadowOffset: {
+      width: 0,
+      height: 2,
     },
-    title: {
-      fontSize: windowWidth * 0.1,
-      fontWeight: 'bold',
-      marginBottom: windowHeight * 0.03,
-      marginLeft: windowWidth * 0.05,
-      fontFamily: Fonts.ARIAL,
-    },
-    flatListContainer: {
-      flexGrow: 1,
-      paddingHorizontal: windowWidth * 0.05,
-      paddingBottom: windowHeight * 0.05,
-    },
-    branchItem: {
-      paddingHorizontal: windowWidth * 0.05,
-      paddingVertical: windowHeight * 0.06, // Adjust the padding to make the items taller
-      marginBottom: windowHeight * 0.02,
-      borderRadius: windowWidth * 0.05,
-      backgroundColor: '#fff',
-      shadowColor: Colors.ACCENT,
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
-      shadowOpacity: 0.25,
-      shadowRadius: 3.84,
-      elevation: 5,
-    },
-    branchContent: {
-      flexDirection: 'row', 
-      alignItems: 'center', 
-      justifyContent: 'center',
-    },
-    branchName: {
-      flex: 1, 
-      fontSize: windowWidth * 0.08,
-      fontFamily: Fonts.ARIAL,
-      textAlign: 'center',
-    },
-    icon: {
-      marginLeft: windowWidth * 0.02,
-    },
-    iconContainer: {
-        alignItems: 'center',
-        marginTop: windowHeight * 0.02, // Adjust the margin to position the icon below the branch name
-      },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  branchContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  branchName: {
+    flex: 1,
+    fontSize: windowWidth * 0.08,
+    fontFamily: Fonts.ARIAL,
+    textAlign: "center",
+  },
+  icon: {
+    marginLeft: windowWidth * 0.02,
+  },
+  iconContainer: {
+    alignItems: "center",
+    marginTop: windowHeight * 0.02, // Adjust the margin to position the icon below the branch name
+  },
 });

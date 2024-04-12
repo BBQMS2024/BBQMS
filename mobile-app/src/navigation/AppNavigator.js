@@ -56,7 +56,7 @@ const AppNavigator = () => {
                     component={CodeEnterScreen}
                 />
                 <Stack.Screen name={Screens.BRANCH_PICK} component={BranchPickScreen} />
-                <Stack.Screen name={Screens.BOTTOM_NAV} component={BottomNavigator} />
+                <Stack.Screen name={Screens.WELCOME} component={WelcomeScreen} />
                 <Stack.Screen name={Screens.ASSIGNED_NUMBER} component={AssignedNumberAlert} />
                 <Stack.Screen name={Screens.TICKET_INFO} component={TicketInfoScreen} />
             </Stack.Navigator>
