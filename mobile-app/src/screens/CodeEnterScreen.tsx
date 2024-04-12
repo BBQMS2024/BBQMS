@@ -10,14 +10,19 @@ import {
     View,
 } from "react-native";
 import { registerRootComponent } from "expo";
-import { getCompanyDetails } from "../services/fetchData";
+import { getCompanyBranches, getCompanyDetails } from "../services/fetchData";
 import { Dialogs } from "../constants/dialogs";
 import { Colors } from "../constants/colors";
 import { Screens } from "../constants/screens";
+import { Dimensions } from 'react-native';
+
+const screenWidth = Dimensions.get('window').width;
+const buttonWidth = screenWidth * 0.5;
 
 export default function CodeEnterScreen({ navigation }: { navigation: any }) {
     const [text, onChangeText] = React.useState("");
     const [isLoading, setIsLoading] = useState(false);
+
 
     function displayInvalidCodeAlert() {
         Alert.alert(
@@ -35,9 +40,12 @@ export default function CodeEnterScreen({ navigation }: { navigation: any }) {
         getCompanyDetails(code)
             .then(function (details) {
                 setIsLoading(false);
-                navigation.navigate(Screens.WELCOME, {
-                    details: details,
-                });
+                getCompanyBranches(code)
+                .then(function (branches){             
+                    navigation.navigate(Screens.BRANCH_PICK, {
+                    details: details, branches: branches, code
+                });})
+   
             })
             .catch((error) => {
                 console.error("Error:", error);
@@ -101,7 +109,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 32,
         borderRadius: 4,
         elevation: 3,
-        width: 120,
+        width: buttonWidth, // Adjusted dynamically based on screen width
         backgroundColor: Colors.ACCENT,
     },
     buttonPressed: {
@@ -116,4 +124,4 @@ const styles = StyleSheet.create({
     },
 });
 
-registerRootComponent(CodeEnterScreen);
+registerRootComponent(({ navigation }) => <CodeEnterScreen navigation={navigation} />);
