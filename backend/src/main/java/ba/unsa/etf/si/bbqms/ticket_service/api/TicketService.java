@@ -2,6 +2,7 @@ package ba.unsa.etf.si.bbqms.ticket_service.api;
 
 import ba.unsa.etf.si.bbqms.domain.Ticket;
 
+import java.util.List;
 import java.util.Set;
 
 public interface TicketService {
@@ -10,4 +11,5 @@ public interface TicketService {
     void cancelTicket(final long ticketId);
     Ticket getTicketById(final long id);
     void deleteAllTickets();
+    void deleteWithIds(final Set<Long> ticketIds);
 }

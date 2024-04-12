@@ -5,9 +5,11 @@ import ba.unsa.etf.si.bbqms.domain.BranchGroup;
 import ba.unsa.etf.si.bbqms.domain.Service;
 import ba.unsa.etf.si.bbqms.domain.Tenant;
 import ba.unsa.etf.si.bbqms.domain.TenantLogo;
+import ba.unsa.etf.si.bbqms.domain.Ticket;
 import ba.unsa.etf.si.bbqms.repository.ServiceRepository;
 import ba.unsa.etf.si.bbqms.repository.TenantLogoRepository;
 import ba.unsa.etf.si.bbqms.repository.TenantRepository;
+import ba.unsa.etf.si.bbqms.repository.TicketRepository;
 import ba.unsa.etf.si.bbqms.tenant_service.api.TenantService;
 import ba.unsa.etf.si.bbqms.ws.models.ServiceRequestDto;
 import ba.unsa.etf.si.bbqms.ws.models.TenantDto;
@@ -15,6 +17,8 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @org.springframework.stereotype.Service
@@ -22,17 +26,20 @@ public class TenantServiceImpl implements TenantService {
     private final TenantRepository tenantRepository;
     private final TenantLogoRepository tenantLogoRepository;
     private final ServiceRepository serviceRepository;
+    private final TicketRepository ticketRepository;
     private final GroupService groupService;
 
     @Autowired
     public TenantServiceImpl(final TenantRepository tenantRepository,
                              final TenantLogoRepository tenantLogoRepository,
                              final ServiceRepository serviceRepository,
+                             final TicketRepository ticketRepository,
                              final GroupService groupService) {
         this.tenantRepository = tenantRepository;
         this.tenantLogoRepository = tenantLogoRepository;
         this.serviceRepository = serviceRepository;
         this.groupService = groupService;
+        this.ticketRepository = ticketRepository;
     }
 
     @Override
@@ -125,10 +132,16 @@ public class TenantServiceImpl implements TenantService {
 
     @Override
     public void deleteService(final long id) {
-        // If we're deleting a service we first must discard it from groups/teller stations that are already using it
         final Service service = this.serviceRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("No service with id: " + id));
 
+        // We must discard tickets which request the service
+        final Set<Long> ticketsToBeDiscarded = this.ticketRepository.findAllByServiceIn(Set.of(service)).stream()
+                .map(Ticket::getId)
+                .collect(Collectors.toSet());
+        this.ticketRepository.deleteAllById(ticketsToBeDiscarded);
+
+        // We also must discard it from groups/teller stations that are already using it
         for (final BranchGroup group : this.groupService.getAllOfferingService(service)) {
             this.groupService.deleteBranchGroupService(group.getId(), service.getId());
         }

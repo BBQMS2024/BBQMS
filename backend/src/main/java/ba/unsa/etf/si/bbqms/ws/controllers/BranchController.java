@@ -59,10 +59,6 @@ public class BranchController {
 
     @GetMapping("/{tenantCode}")
     public ResponseEntity getBranches(@PathVariable final String tenantCode) {
-        if (!this.authService.canChangeTenant(tenantCode)) {
-            return ResponseEntity.badRequest().build();
-        }
-
         final Set<BranchWithStationsDto> dtos = this.branchService.getBranches(tenantCode).stream()
                 .map(BranchWithStationsDto::fromEntity)
                 .collect(Collectors.toSet());

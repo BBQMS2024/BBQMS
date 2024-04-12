@@ -85,4 +85,9 @@ public class DefaultTicketService implements TicketService {
     public void deleteAllTickets() {
         this.ticketRepository.deleteAll();
     }
+
+    @Override
+    public void deleteWithIds(final Set<Long> ticketIds) {
+        this.ticketRepository.deleteAllById(ticketIds);
+    }
 }
