@@ -21,14 +21,14 @@ const styles = {
     },
 };
 
-const AdminManageScreen = () => {
+const UserManageScreen = () => {
     const { tenantCode } = useParams();
 
     const [showModal, setShowModal] = useState(false);
-    const [admins, setAdmins] = useState([]);
-    const [adminEmail, setAdminEmail] = useState('');
-    const [adminPassword, setAdminPassword] = useState('');
-    const [selectedAdminIndex, setSelectedAdminIndex] = useState(null);
+    const [users, setUsers] = useState([]);
+    const [userEmail, setUserEmail] = useState('');
+    const [userPassword, setUserPassword] = useState('');
+    const [selectedUserIndex, setSelectedUserIndex] = useState(null);
     const [token, setToken] = useState('');
     const [emailError, setEmailError] = useState('');
     const [passwordError, setPasswordError] = useState('');
@@ -42,23 +42,14 @@ const AdminManageScreen = () => {
 
     useEffect(() => {
         if (token) {
-            fetchAdmins();
+            fetchUsers();
         }
     }, [token]);
 
-    const fetchAdmins = async () => {
+    const fetchUsers = async () => {
         try {
-<<<<<<< HEAD
-            const response = await fetch(`${ SERVER_URL }/api/v1/admin/${tenantCode}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': token
-                }
-            });
-=======
             const requestBody = JSON.stringify({
-                roleName: 'ROLE_BRANCH_ADMIN'
+                roleName: 'ROLE_USER'
             });
             const response = await fetch(`${ SERVER_URL }/api/v1/admin/${tenantCode}`, {
                 method: 'POST',
@@ -69,10 +60,9 @@ const AdminManageScreen = () => {
                 body: requestBody
             });
 
->>>>>>> ebab4af6e7d562c0bcfecb58c846700ef866bc74
             if (response.ok) {
                 const data = await response.json();
-                setAdmins(data);
+                setUsers(data);
             } else {
                 console.error('Unsuccessful API call');
             }
@@ -82,23 +72,15 @@ const AdminManageScreen = () => {
     };
 
     const validateEmail = (email) => {
-<<<<<<< HEAD
-        // Regular expression for email validation
-=======
->>>>>>> ebab4af6e7d562c0bcfecb58c846700ef866bc74
         const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return re.test(String(email).toLowerCase());
     };
 
-    const handleAddAdmin = async () => {
+    const handleAddUser = async () => {
         const requestBody = {
-            email: adminEmail,
-<<<<<<< HEAD
-            password: adminPassword
-=======
-            password: adminPassword,
-            roleName: 'ROLE_BRANCH_ADMIN'
->>>>>>> ebab4af6e7d562c0bcfecb58c846700ef866bc74
+            email: userEmail,
+            password: userPassword,
+            roleName: 'ROLE_USER'
         };
 
         try {
@@ -113,10 +95,10 @@ const AdminManageScreen = () => {
 
             if (response.ok) {
                 const data = await response.json();
-                setAdmins([...admins, data]);
+                setUsers([...users, data]);
                 setShowModal(false);
-                setAdminEmail('');
-                setAdminPassword('');
+                setUserEmail('');
+                setUserPassword('');
             } else {
                 console.error('Unsuccessful API call');
             }
@@ -125,8 +107,8 @@ const AdminManageScreen = () => {
         }
     };
 
-    const handleEditAdmin = async () => {
-        if (!validateEmail(adminEmail)) {
+    const handleEditUser = async () => {
+        if (!validateEmail(userEmail)) {
             setEmailError('Invalid email address');
             return;
         }
@@ -134,29 +116,25 @@ const AdminManageScreen = () => {
         setEmailError('');
 
         try {
-            const updatedAdmin = {
-<<<<<<< HEAD
-                email: adminEmail
-=======
-                email: adminEmail,
-                password: adminPassword // Dodali smo polje za lozinku
->>>>>>> ebab4af6e7d562c0bcfecb58c846700ef866bc74
+            const updatedUser = {
+                email: userEmail,
+                password: userPassword
             };
-            const response = await fetch(`${ SERVER_URL }/api/v1/admin/${tenantCode}/user/${admins[selectedAdminIndex].id}`, {
+            const response = await fetch(`${ SERVER_URL }/api/v1/admin/${tenantCode}/user/${users[selectedUserIndex].id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': token
                 },
-                body: JSON.stringify(updatedAdmin),
+                body: JSON.stringify(updatedUser),
             });
             if (response.ok) {
-                const updatedAdmins = [...admins];
-                updatedAdmins[selectedAdminIndex].email = adminEmail;
-                setAdmins(updatedAdmins);
+                const updatedUsers = [...users];
+                updatedUsers[selectedUserIndex].email = userEmail;
+                setUsers(updatedUsers);
                 setShowModal(false);
-                setAdminEmail('');
-                setAdminPassword('');
+                setUserEmail('');
+                setUserPassword('');
             } else {
                 console.error('Unsuccessful API call');
             }
@@ -165,7 +143,7 @@ const AdminManageScreen = () => {
         }
     };
 
-    const handleDeleteAdmin = async (userId) => {
+    const handleDeleteUser = async (userId) => {
         try {
             const response = await fetch(`${ SERVER_URL }/api/v1/admin/${tenantCode}/user/${userId}`, {
                 method: 'DELETE',
@@ -175,8 +153,8 @@ const AdminManageScreen = () => {
                 }
             });
             if (response.ok) {
-                const updatedAdmins = admins.filter(admin => admin.id !== userId);
-                setAdmins(updatedAdmins);
+                const updatedUsers = users.filter(user => user.id !== userId);
+                setUsers(updatedUsers);
             } else {
                 console.error('Unsuccessful API call');
             }
@@ -186,16 +164,16 @@ const AdminManageScreen = () => {
     };
 
     const handleEditClick = (index) => {
-        const admin = admins[index];
-        setSelectedAdminIndex(index);
-        setAdminEmail(admin.email);
+        const user = users[index];
+        setSelectedUserIndex(index);
+        setUserEmail(user.email);
         setShowModal(true);
     };
 
     return (
         <div className="text-center mt-5">
-            <h2>Manage Administrators</h2>
-            <Button variant="primary" style={styles.primaryButton} className="mb-3" onClick={() => { setShowModal(true); setSelectedAdminIndex(null); }}>Add Admin</Button>
+            <h2>Manage Users</h2>
+            <Button variant="primary" style={styles.primaryButton} className="mb-3" onClick={() => { setShowModal(true); setSelectedUserIndex(null); }}>Add User</Button>
 
             <Table striped bordered hover>
                 <thead>
@@ -206,52 +184,42 @@ const AdminManageScreen = () => {
                 </tr>
                 </thead>
                 <tbody>
-                {admins.map((admin, index) => (
+                {users.map((user, index) => (
                     <tr key={index}>
-                        <td>{admin.id}</td>
-                        <td>{admin.email}</td>
+                        <td>{user.id}</td>
+                        <td>{user.email}</td>
                         <td>
                             <Button variant="info" style={styles.infoButton} onClick={() => handleEditClick(index)}>Edit</Button>{' '}
-                            <Button variant="danger" onClick={() => handleDeleteAdmin(admin.id)}>Delete</Button>
+                            <Button variant="danger" onClick={() => handleDeleteUser(user.id)}>Delete</Button>
                         </td>
                     </tr>
                 ))}
                 </tbody>
             </Table>
 
-            <Modal show={showModal} onHide={() => { setShowModal(false); setSelectedAdminIndex(null); }}>
+            <Modal show={showModal} onHide={() => { setShowModal(false); setSelectedUserIndex(null); }}>
                 <Modal.Header closeButton style={styles.modalHeader}>
-                    <Modal.Title>{selectedAdminIndex !== null ? 'EDIT ADMIN' : 'ADD ADMIN'}</Modal.Title>
+                    <Modal.Title>{selectedUserIndex !== null ? 'EDIT USER' : 'ADD USER'}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form>
-                        <Form.Group controlId="formAdminEmail" className="mb-3">
+                        <Form.Group controlId="formUserEmail" className="mb-3">
                             <Form.Label>Email</Form.Label>
-                            <Form.Control type="email" placeholder="Enter admin email" value={adminEmail} onChange={(e) => setAdminEmail(e.target.value)} />
+                            <Form.Control type="email" placeholder="Enter user email" value={userEmail} onChange={(e) => setUserEmail(e.target.value)} />
                             {emailError && <div style={{ color: 'red' }}>{emailError}</div>}
                         </Form.Group>
-<<<<<<< HEAD
-                        {selectedAdminIndex === null && (
-                            <Form.Group controlId="formAdminPassword" className="mb-3">
-                                <Form.Label>Password</Form.Label>
-                                <Form.Control type="password" placeholder="Enter admin password" value={adminPassword} onChange={(e) => setAdminPassword(e.target.value)} />
-                                {passwordError && <div style={{ color: 'red' }}>{passwordError}</div>}
-                            </Form.Group>
-                        )}
-=======
-                        <Form.Group controlId="formAdminPassword" className="mb-3">
+                        <Form.Group controlId="formUserPassword" className="mb-3">
                             <Form.Label>Password</Form.Label>
-                            <Form.Control type="password" placeholder="Enter admin password" value={adminPassword} onChange={(e) => setAdminPassword(e.target.value)} />
+                            <Form.Control type="password" placeholder="Enter user password" value={userPassword} onChange={(e) => setUserPassword(e.target.value)} />
                             {passwordError && <div style={{ color: 'red' }}>{passwordError}</div>}
                         </Form.Group>
->>>>>>> ebab4af6e7d562c0bcfecb58c846700ef866bc74
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={() => { setShowModal(false); setSelectedAdminIndex(null); }}>Close</Button>
-                    {selectedAdminIndex !== null ?
-                        <Button variant="primary" style={styles.primaryButton} onClick={handleEditAdmin}>Save Changes</Button> :
-                        <Button variant="primary" style={styles.primaryButton} onClick={handleAddAdmin}>Add Admin</Button>
+                    <Button variant="secondary" onClick={() => { setShowModal(false); setSelectedUserIndex(null); }}>Close</Button>
+                    {selectedUserIndex !== null ?
+                        <Button variant="primary" style={styles.primaryButton} onClick={handleEditUser}>Save Changes</Button> :
+                        <Button variant="primary" style={styles.primaryButton} onClick={handleAddUser}>Add User</Button>
                     }
                 </Modal.Footer>
             </Modal>
@@ -259,8 +227,4 @@ const AdminManageScreen = () => {
     );
 };
 
-<<<<<<< HEAD
-export default AdminManageScreen;
-=======
-export default AdminManageScreen;
->>>>>>> ebab4af6e7d562c0bcfecb58c846700ef866bc74
+export default UserManageScreen;

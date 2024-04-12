@@ -18,7 +18,11 @@ public class DisplayController {
     private final DisplayService displayService;
     private final AuthService authService;
 
+<<<<<<< HEAD
     public DisplayController(DisplayService displayService, AuthService authService) {
+=======
+    public DisplayController(final DisplayService displayService, final AuthService authService) {
+>>>>>>> ebab4af6e7d562c0bcfecb58c846700ef866bc74
         this.displayService = displayService;
         this.authService = authService;
     }
@@ -35,7 +39,10 @@ public class DisplayController {
             final Display createdDisplay = this.displayService.createDisplay(request.name(), request.branchId());
             return ResponseEntity.ok().body(DisplayDto.fromEntity(createdDisplay));
         } catch (final Exception exception) {
+<<<<<<< HEAD
             System.out.println(exception.getMessage());
+=======
+>>>>>>> ebab4af6e7d562c0bcfecb58c846700ef866bc74
             return ResponseEntity.badRequest().build();
         }
     }
@@ -54,7 +61,10 @@ public class DisplayController {
                     .collect(Collectors.toSet());
             return ResponseEntity.ok().body(displays);
         } catch (final Exception exception) {
+<<<<<<< HEAD
             System.out.println(exception.getMessage());
+=======
+>>>>>>> ebab4af6e7d562c0bcfecb58c846700ef866bc74
             return ResponseEntity.badRequest().build();
         }
     }
@@ -72,7 +82,10 @@ public class DisplayController {
                     .collect(Collectors.toSet());
             return ResponseEntity.ok().body(displays);
         } catch (final Exception exception) {
+<<<<<<< HEAD
             System.out.println(exception.getMessage());
+=======
+>>>>>>> ebab4af6e7d562c0bcfecb58c846700ef866bc74
             return ResponseEntity.badRequest().build();
         }
     }
@@ -90,7 +103,28 @@ public class DisplayController {
                     .collect(Collectors.toSet());
             return ResponseEntity.ok().body(displays);
         } catch (final Exception exception) {
+<<<<<<< HEAD
             System.out.println(exception.getMessage());
+=======
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping("/unassigned/{tenantCode}/{branchId}")
+    @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN', 'ROLE_BRANCH_ADMIN')")
+    public ResponseEntity getUnassignedByBranch(@PathVariable final String tenantCode, @PathVariable final String branchId) {
+        if (!this.authService.canChangeTenant(tenantCode)) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        try {
+            return ResponseEntity.ok().body(
+                    this.displayService.getUnassignedDisplaysByBranch(Long.parseLong(branchId)).stream()
+                            .map(DisplayDto::fromEntity)
+                            .collect(Collectors.toList())
+            );
+        } catch (final Exception exception) {
+>>>>>>> ebab4af6e7d562c0bcfecb58c846700ef866bc74
             return ResponseEntity.badRequest().build();
         }
     }
@@ -108,7 +142,10 @@ public class DisplayController {
             final Display updatedDisplay = this.displayService.updateDisplay(Long.parseLong(displayId), request.name());
             return ResponseEntity.ok().body(DisplayDto.fromEntity(updatedDisplay));
         } catch (final Exception exception) {
+<<<<<<< HEAD
             System.out.println(exception.getMessage());
+=======
+>>>>>>> ebab4af6e7d562c0bcfecb58c846700ef866bc74
             return ResponseEntity.badRequest().build();
         }
     }

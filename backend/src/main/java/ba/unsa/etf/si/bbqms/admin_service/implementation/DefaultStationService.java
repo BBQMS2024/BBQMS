@@ -12,6 +12,10 @@ import jakarta.persistence.EntityNotFoundException;
 
 import java.util.HashSet;
 import java.util.List;
+<<<<<<< HEAD
+=======
+import java.util.Optional;
+>>>>>>> ebab4af6e7d562c0bcfecb58c846700ef866bc74
 import java.util.Set;
 
 
@@ -117,4 +121,17 @@ public class DefaultStationService implements StationService {
     public Set<TellerStation> getAllByBranch(final long branchId) {
         return this.tellerStationRepository.findAllByBranch_Id(branchId);
     }
+<<<<<<< HEAD
+=======
+
+    @Override
+    public Set<TellerStation> getAllOfferingService(final Service service) {
+        return this.tellerStationRepository.findAllByServicesContains(service);
+    }
+
+    @Override
+    public Optional<TellerStation> findById(final long serviceId) {
+        return this.tellerStationRepository.findById(serviceId);
+    }
+>>>>>>> ebab4af6e7d562c0bcfecb58c846700ef866bc74
 }

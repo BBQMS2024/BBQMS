@@ -21,6 +21,10 @@ public class TellerStation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String name;
+<<<<<<< HEAD
+=======
+    private boolean active;
+>>>>>>> ebab4af6e7d562c0bcfecb58c846700ef866bc74
 
     @ManyToOne
     @JoinColumn(name = "branch_id", referencedColumnName = "id")
@@ -41,12 +45,25 @@ public class TellerStation {
     public TellerStation() {
     }
 
+<<<<<<< HEAD
     public TellerStation(final String name, final Branch branch, final Display display) {
         this.name = name;
+=======
+    public TellerStation(final String name, final boolean active, final Branch branch, final Display display) {
+        this.name = name;
+        this.active = active;
+>>>>>>> ebab4af6e7d562c0bcfecb58c846700ef866bc74
         this.branch = branch;
         this.display = display;
     }
 
+<<<<<<< HEAD
+=======
+    public TellerStation(final String name, final Branch branch, final Display display) {
+        this(name, true, branch, display);
+    }
+
+>>>>>>> ebab4af6e7d562c0bcfecb58c846700ef866bc74
     public TellerStation(final String name, final Branch branch) {
         this(name, branch, null);
     }
@@ -67,6 +84,17 @@ public class TellerStation {
         this.name = name;
     }
 
+<<<<<<< HEAD
+=======
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(final boolean active) {
+        this.active = active;
+    }
+
+>>>>>>> ebab4af6e7d562c0bcfecb58c846700ef866bc74
     public Branch getBranch() {
         return branch;
     }

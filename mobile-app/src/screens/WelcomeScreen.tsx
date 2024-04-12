@@ -205,7 +205,7 @@ export const styles = StyleSheet.create({
     color: Colors.TEXT_PRIMARY,
   },
   logo: {
-    marginTop: 50, // Add margin to separate logo from title
+    marginTop: 80, // Add margin to separate logo from title
     width: "40%", // Adjust the logo size to fit better on all screens
     height: undefined, // Allow height to adjust automatically based on width
     aspectRatio: 1, // Maintain aspect ratio

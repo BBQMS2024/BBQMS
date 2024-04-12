@@ -134,6 +134,19 @@ public class DefaultAuthService implements AuthService {
     @Override
     public boolean canChangeTenant(final String tenantCode) {
         final User currentUser = getAuthenticatedUser();
+<<<<<<< HEAD
         return (currentUser.getTenant().getCode().equals(tenantCode));
+=======
+        return currentUser.getTenant().getCode().equals(tenantCode);
+    }
+
+    @Override
+    public boolean canOnlyCRUDUser(final RoleName roleName) {
+        Set<Role> currentUsersRoles = getAuthenticatedUser().getRoles();
+
+        return currentUsersRoles.stream()
+                .noneMatch(role -> role.getName().equals(RoleName.ROLE_SUPER_ADMIN))
+                && !roleName.equals(RoleName.ROLE_USER);
+>>>>>>> ebab4af6e7d562c0bcfecb58c846700ef866bc74
     }
 }

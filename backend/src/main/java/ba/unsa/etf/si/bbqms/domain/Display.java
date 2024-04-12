@@ -33,6 +33,11 @@ public class Display {
         this.branch = branch;
     }
 
+<<<<<<< HEAD
+=======
+    public Display(final String name, final Branch branch) { this(name, null, branch); }
+
+>>>>>>> ebab4af6e7d562c0bcfecb58c846700ef866bc74
     public long getId() {
         return id;
     }

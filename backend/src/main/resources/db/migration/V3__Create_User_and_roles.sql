@@ -34,6 +34,7 @@ CREATE INDEX phone_number_idx ON user (phone_number);
 INSERT INTO role(name)
 values ('ROLE_SUPER_ADMIN'),
        ('ROLE_STAFF_ADMIN'),
-       ('ROLE_BRANCH_ADMIN');
+       ('ROLE_BRANCH_ADMIN'),
+       ('ROLE_USER');
 
 COMMIT;

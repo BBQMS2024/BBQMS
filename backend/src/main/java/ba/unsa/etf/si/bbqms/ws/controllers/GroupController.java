@@ -38,7 +38,11 @@ public class GroupController {
                     .map(BranchGroupResponseDto::fromEntity)
                     .collect(Collectors.toList());
             return ResponseEntity.ok().body(branchGroupResponseDtoList);
+<<<<<<< HEAD
         } catch (Exception e) {
+=======
+        } catch (final Exception e) {
+>>>>>>> ebab4af6e7d562c0bcfecb58c846700ef866bc74
             return ResponseEntity.badRequest().body(new ErrorResponseDto(e.getMessage()));
         }
     }
@@ -51,9 +55,15 @@ public class GroupController {
         }
 
         try {
+<<<<<<< HEAD
             final BranchGroup addedBranchGroup = this.groupService.addBranchGroup(request);
             return ResponseEntity.ok().body(BranchGroupResponseDto.fromEntity(addedBranchGroup));
         } catch (Exception e) {
+=======
+            final BranchGroup addedBranchGroup = this.groupService.addBranchGroup(tenantCode, request);
+            return ResponseEntity.ok().body(BranchGroupResponseDto.fromEntity(addedBranchGroup));
+        } catch (final Exception e) {
+>>>>>>> ebab4af6e7d562c0bcfecb58c846700ef866bc74
             return ResponseEntity.badRequest().body(new ErrorResponseDto(e.getMessage()));
         }
     }
@@ -70,7 +80,11 @@ public class GroupController {
         try {
             final BranchGroup updatedBranchGroup = this.groupService.addBranchGroupService(Long.parseLong(groupId), Long.parseLong(serviceId));
             return ResponseEntity.ok().body(BranchGroupResponseDto.fromEntity(updatedBranchGroup));
+<<<<<<< HEAD
         } catch (Exception e) {
+=======
+        } catch (final Exception e) {
+>>>>>>> ebab4af6e7d562c0bcfecb58c846700ef866bc74
             return ResponseEntity.badRequest().body(new ErrorResponseDto(e.getMessage()));
         }
     }
@@ -87,7 +101,11 @@ public class GroupController {
         try {
             final BranchGroup updatedBranchGroup = this.groupService.addBranchGroupBranch(Long.parseLong(groupId), Long.parseLong(branchId));
             return ResponseEntity.ok().body(BranchGroupResponseDto.fromEntity(updatedBranchGroup));
+<<<<<<< HEAD
         } catch (Exception e) {
+=======
+        } catch (final Exception e) {
+>>>>>>> ebab4af6e7d562c0bcfecb58c846700ef866bc74
             return ResponseEntity.badRequest().body(new ErrorResponseDto(e.getMessage()));
         }
     }
@@ -104,7 +122,11 @@ public class GroupController {
         try {
             final BranchGroup updatedBranchGroup = this.groupService.updateBranchGroup(Long.parseLong(branchGroupId), name);
             return ResponseEntity.ok().body(BranchGroupResponseDto.fromEntity(updatedBranchGroup));
+<<<<<<< HEAD
         } catch (Exception e) {
+=======
+        } catch (final Exception e) {
+>>>>>>> ebab4af6e7d562c0bcfecb58c846700ef866bc74
             return ResponseEntity.badRequest().body(new ErrorResponseDto(e.getMessage()));
         }
     }
@@ -132,7 +154,11 @@ public class GroupController {
         try {
             final BranchGroup updatedBranchGroup = this.groupService.deleteBranchGroupBranch(Long.parseLong(branchGroupId),Long.parseLong(branchId));
             return ResponseEntity.ok().body(BranchGroupResponseDto.fromEntity(updatedBranchGroup));
+<<<<<<< HEAD
         } catch (Exception e) {
+=======
+        } catch (final Exception e) {
+>>>>>>> ebab4af6e7d562c0bcfecb58c846700ef866bc74
             return ResponseEntity.badRequest().body(new ErrorResponseDto(e.getMessage()));
         }
     }
@@ -149,7 +175,11 @@ public class GroupController {
         try {
             final BranchGroup updatedBranchGroup = this.groupService.deleteBranchGroupService(Long.parseLong(branchGroupId),Long.parseLong(serviceId));
             return ResponseEntity.ok().body(BranchGroupResponseDto.fromEntity(updatedBranchGroup));
+<<<<<<< HEAD
         } catch (Exception e) {
+=======
+        } catch (final Exception e) {
+>>>>>>> ebab4af6e7d562c0bcfecb58c846700ef866bc74
             return ResponseEntity.badRequest().body(new ErrorResponseDto(e.getMessage()));
         }
     }

@@ -2,11 +2,17 @@ package ba.unsa.etf.si.bbqms.admin_service.implementation;
 
 import ba.unsa.etf.si.bbqms.admin_service.api.BranchService;
 import ba.unsa.etf.si.bbqms.domain.Branch;
+<<<<<<< HEAD
+=======
+import ba.unsa.etf.si.bbqms.domain.BranchGroup;
+import ba.unsa.etf.si.bbqms.domain.Service;
+>>>>>>> ebab4af6e7d562c0bcfecb58c846700ef866bc74
 import ba.unsa.etf.si.bbqms.domain.TellerStation;
 import ba.unsa.etf.si.bbqms.domain.Tenant;
 import ba.unsa.etf.si.bbqms.repository.BranchRepository;
 import ba.unsa.etf.si.bbqms.repository.TellerStationRepository;
 import ba.unsa.etf.si.bbqms.repository.TenantRepository;
+<<<<<<< HEAD
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,6 +20,17 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+=======
+
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+@org.springframework.stereotype.Service
+>>>>>>> ebab4af6e7d562c0bcfecb58c846700ef866bc74
 public class DefaultBranchService implements BranchService {
     private final BranchRepository branchRepository;
     private final TenantRepository tenantRepository;
@@ -28,6 +45,14 @@ public class DefaultBranchService implements BranchService {
     }
 
     @Override
+<<<<<<< HEAD
+=======
+    public Optional<Branch> findById(final long branchId) {
+        return this.branchRepository.findById(branchId);
+    }
+
+    @Override
+>>>>>>> ebab4af6e7d562c0bcfecb58c846700ef866bc74
     public Branch createBranch(final String name, final List<String> tellerStations, final String tenantCode) throws Exception {
         final Tenant userTenant = this.tenantRepository.findByCode(tenantCode)
                 .orElseThrow(() -> new Exception("Tenant with code: " + tenantCode + " doesn't exist."));
@@ -110,4 +135,24 @@ public class DefaultBranchService implements BranchService {
         existingStation.setName(name);
         return this.tellerStationRepository.save(existingStation);
     }
+<<<<<<< HEAD
+=======
+
+    @Override
+    public Set<Service> extractPossibleServices(final Branch branch) {
+        final Set<BranchGroup> groups = branch.getBranchGroups();
+        final Set<Service> possibleServices = new HashSet<>();
+        for (final BranchGroup group : groups) {
+            possibleServices.addAll(group.getServices());
+        }
+        return possibleServices;
+    }
+
+    @Override
+    public Set<TellerStation> getStationsWithService(final Branch branch, final Service service) {
+        return branch.getTellerStations().stream()
+                .filter(station -> station.getServices().contains(service))
+                .collect(Collectors.toSet());
+    }
+>>>>>>> ebab4af6e7d562c0bcfecb58c846700ef866bc74
 }

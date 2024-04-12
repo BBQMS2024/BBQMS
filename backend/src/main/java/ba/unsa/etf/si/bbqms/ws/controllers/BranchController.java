@@ -6,6 +6,10 @@ import ba.unsa.etf.si.bbqms.domain.Branch;
 import ba.unsa.etf.si.bbqms.domain.TellerStation;
 import ba.unsa.etf.si.bbqms.domain.User;
 import ba.unsa.etf.si.bbqms.ws.models.BranchWithStationsDto;
+<<<<<<< HEAD
+=======
+import ba.unsa.etf.si.bbqms.ws.models.ServiceDto;
+>>>>>>> ebab4af6e7d562c0bcfecb58c846700ef866bc74
 import ba.unsa.etf.si.bbqms.ws.models.SimpleMessageDto;
 import ba.unsa.etf.si.bbqms.ws.models.TellerStationDto;
 import org.springframework.http.ResponseEntity;
@@ -57,7 +61,10 @@ public class BranchController {
     }
 
     @GetMapping("/{tenantCode}")
+<<<<<<< HEAD
     @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN', 'ROLE_BRANCH_ADMIN')")
+=======
+>>>>>>> ebab4af6e7d562c0bcfecb58c846700ef866bc74
     public ResponseEntity getBranches(@PathVariable final String tenantCode) {
         if (!this.authService.canChangeTenant(tenantCode)) {
             return ResponseEntity.badRequest().build();
@@ -161,6 +168,19 @@ public class BranchController {
         }
     }
 
+<<<<<<< HEAD
+=======
+    @GetMapping("/{tenantCode}/{branchId}/services")
+    public ResponseEntity getBranchServices(@PathVariable final String branchId,
+                                            @PathVariable final String tenantCode) {
+        return this.branchService.findById(Long.parseLong(branchId))
+                .map(this.branchService::extractPossibleServices)
+                .map(services -> services.stream().map(ServiceDto::fromEntity).collect(Collectors.toSet()))
+                .map(serviceDtos -> ResponseEntity.ok().body(serviceDtos))
+                .orElse(ResponseEntity.badRequest().build());
+    }
+
+>>>>>>> ebab4af6e7d562c0bcfecb58c846700ef866bc74
     public record BranchRequest(String name, List<String> tellerStations) {
     }
 

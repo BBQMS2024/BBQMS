@@ -1,13 +1,25 @@
 package ba.unsa.etf.si.bbqms.admin_service.implementation;
 
+<<<<<<< HEAD
+=======
+import ba.unsa.etf.si.bbqms.admin_service.api.StationService;
+>>>>>>> ebab4af6e7d562c0bcfecb58c846700ef866bc74
 import ba.unsa.etf.si.bbqms.domain.Branch;
 import ba.unsa.etf.si.bbqms.domain.BranchGroup;
 import ba.unsa.etf.si.bbqms.domain.Service;
 import ba.unsa.etf.si.bbqms.admin_service.api.GroupService;
+<<<<<<< HEAD
 import ba.unsa.etf.si.bbqms.repository.BranchGroupRepository;
 import ba.unsa.etf.si.bbqms.repository.BranchRepository;
 import ba.unsa.etf.si.bbqms.repository.ServiceRepository;
 import ba.unsa.etf.si.bbqms.ws.models.BranchGroupCreateDto;
+=======
+import ba.unsa.etf.si.bbqms.domain.TellerStation;
+import ba.unsa.etf.si.bbqms.domain.Tenant;
+import ba.unsa.etf.si.bbqms.repository.*;
+import ba.unsa.etf.si.bbqms.ws.models.BranchGroupCreateDto;
+import ba.unsa.etf.si.bbqms.repository.TellerStationRepository;
+>>>>>>> ebab4af6e7d562c0bcfecb58c846700ef866bc74
 import ba.unsa.etf.si.bbqms.ws.models.BranchGroupUpdateDto;
 import jakarta.persistence.EntityNotFoundException;
 
@@ -17,6 +29,7 @@ import java.util.Set;
 
 @org.springframework.stereotype.Service
 public class DefaultGroupService implements GroupService {
+<<<<<<< HEAD
     private final BranchGroupRepository branchGroupRepository;
     private final BranchRepository branchRepository;
     private final ServiceRepository serviceRepository;
@@ -33,6 +46,35 @@ public class DefaultGroupService implements GroupService {
     public BranchGroup addBranchGroup(final BranchGroupCreateDto request) throws Exception {
         final Set<Service> services = new HashSet<>();
         final Set<Branch> branches = new HashSet<>();
+=======
+    private final StationService stationService;
+    private final BranchGroupRepository branchGroupRepository;
+    private final BranchRepository branchRepository;
+    private final ServiceRepository serviceRepository;
+    private final TenantRepository tenantRepository;
+    private final TellerStationRepository stationRepository;
+
+    public DefaultGroupService(final StationService stationService,
+                               final BranchGroupRepository branchGroupRepository,
+                               final BranchRepository branchRepository,
+                               final ServiceRepository serviceRepository,
+                               final TenantRepository tenantRepository,
+                               final TellerStationRepository stationRepository) {
+        this.stationService = stationService;
+        this.branchGroupRepository = branchGroupRepository;
+        this.branchRepository = branchRepository;
+        this.serviceRepository = serviceRepository;
+        this.tenantRepository = tenantRepository;
+        this.stationRepository = stationRepository;
+    }
+
+    @Override
+    public BranchGroup addBranchGroup(final String tenantCode, final BranchGroupCreateDto request) throws Exception {
+        final Set<Service> services = new HashSet<>();
+        final Set<Branch> branches = new HashSet<>();
+        final Tenant tenant = this.tenantRepository.findByCode(tenantCode)
+                .orElseThrow(() -> new EntityNotFoundException("No tenant with code " + tenantCode));
+>>>>>>> ebab4af6e7d562c0bcfecb58c846700ef866bc74
 
         if (request.serviceIds() != null) {
             for (final long serviceId : request.serviceIds()) {
@@ -51,7 +93,11 @@ public class DefaultGroupService implements GroupService {
             branches.add(branch);
         }
 
+<<<<<<< HEAD
         BranchGroup branchGroup = new BranchGroup(request.name(),branches,services);
+=======
+        final BranchGroup branchGroup = new BranchGroup(request.name(),branches,services,tenant);
+>>>>>>> ebab4af6e7d562c0bcfecb58c846700ef866bc74
         return this.branchGroupRepository.save(branchGroup);
     }
 
@@ -97,6 +143,28 @@ public class DefaultGroupService implements GroupService {
 
     @Override
     public void deleteBranchGroup(final long branchGroupId) {
+<<<<<<< HEAD
+=======
+        final BranchGroup group = this.branchGroupRepository.findById(branchGroupId)
+                .orElseThrow(() -> new EntityNotFoundException("No branchgroup with id: " + branchGroupId));
+
+
+        final Set<Branch> branches = group.getBranches();
+        for (final Branch existingBranch: branches) {
+            existingBranch.getBranchGroups().remove(group);
+            final Set<Service> noLongerAvailableServices = new HashSet<>(group.getServices());
+            for (final BranchGroup existingGroups : existingBranch.getBranchGroups()) {
+                noLongerAvailableServices.removeAll(existingGroups.getServices());
+            }
+
+            for (final TellerStation station : existingBranch.getTellerStations()) {
+                station.getServices().removeAll(noLongerAvailableServices);
+            }
+            this.stationRepository.saveAll(existingBranch.getTellerStations());
+            this.branchRepository.save(existingBranch);
+        }
+
+>>>>>>> ebab4af6e7d562c0bcfecb58c846700ef866bc74
         this.branchGroupRepository.deleteById(branchGroupId);
     }
 
@@ -107,6 +175,14 @@ public class DefaultGroupService implements GroupService {
         final Service existingService = this.serviceRepository.findById(serviceId)
                 .orElseThrow(() -> new EntityNotFoundException("No service found with id: " + serviceId));
 
+<<<<<<< HEAD
+=======
+        // If we are deleting a service from a group we also must remove it from stations in the group beforehand. Same below.
+        for (final TellerStation station : this.stationService.getAllOfferingService(existingService)) {
+            this.stationService.deleteTellerStationService(station.getId(), serviceId);
+        }
+
+>>>>>>> ebab4af6e7d562c0bcfecb58c846700ef866bc74
         if (branchGroup.getServices().remove(existingService)) {
             return this.branchGroupRepository.save(branchGroup);
         }
@@ -121,8 +197,30 @@ public class DefaultGroupService implements GroupService {
                 .orElseThrow(() -> new EntityNotFoundException("No branch found with id: " + branchId));
 
         if (branchGroup.getBranches().remove(existingBranch)) {
+<<<<<<< HEAD
+=======
+            existingBranch.getBranchGroups().remove(branchGroup);
+            final Set<Service> noLongerAvailableServices = new HashSet<>(branchGroup.getServices());
+            for (final BranchGroup group : existingBranch.getBranchGroups()) {
+                noLongerAvailableServices.removeAll(group.getServices());
+            }
+
+            for (final TellerStation station : existingBranch.getTellerStations()) {
+                station.getServices().removeAll(noLongerAvailableServices);
+            }
+            this.stationRepository.saveAll(existingBranch.getTellerStations());
+            this.branchRepository.save(existingBranch);
+>>>>>>> ebab4af6e7d562c0bcfecb58c846700ef866bc74
             return this.branchGroupRepository.save(branchGroup);
         }
         throw new EntityNotFoundException("Group doesn't contain branch with id: " + existingBranch.getId());
     }
+<<<<<<< HEAD
+=======
+
+    @Override
+    public Set<BranchGroup> getAllOfferingService(final Service service) {
+        return this.branchGroupRepository.findAllByServicesContains(service);
+    }
+>>>>>>> ebab4af6e7d562c0bcfecb58c846700ef866bc74
 }

@@ -9,6 +9,10 @@ public interface DisplayService {
     Set<Display> getDisplays(final long branchId) throws Exception;
     Set<Display> getDisplaysByTenant(final String tenantCode);
     Set<Display> getUnassignedDisplaysByTenant(final String tenantCode);
+<<<<<<< HEAD
+=======
+    Set<Display> getUnassignedDisplaysByBranch(final long branchId);
+>>>>>>> ebab4af6e7d562c0bcfecb58c846700ef866bc74
     Display updateDisplay(final long displayId, final String name) throws Exception;
     void removeDisplay(final long displayId);
 }

@@ -7,7 +7,10 @@ import ba.unsa.etf.si.bbqms.domain.TellerStation;
 import ba.unsa.etf.si.bbqms.ws.models.DisplayDto;
 import ba.unsa.etf.si.bbqms.ws.models.ErrorResponseDto;
 import ba.unsa.etf.si.bbqms.ws.models.ServiceResponseDto;
+<<<<<<< HEAD
 import ba.unsa.etf.si.bbqms.ws.models.TellerStationDto;
+=======
+>>>>>>> ebab4af6e7d562c0bcfecb58c846700ef866bc74
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -146,7 +149,11 @@ public class TellerStationController {
         try{
             return ResponseEntity.ok().body(
                     this.stationService.getAllByBranch(Long.parseLong(branchId)).stream()
+<<<<<<< HEAD
                             .map(TellerStationDto::fromEntity)
+=======
+                            .map(TellerStationResponseDto::fromEntity)
+>>>>>>> ebab4af6e7d562c0bcfecb58c846700ef866bc74
                             .collect(Collectors.toList())
             );
         } catch (final Exception exception) {
