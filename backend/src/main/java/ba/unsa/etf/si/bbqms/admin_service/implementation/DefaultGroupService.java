@@ -6,11 +6,10 @@ import ba.unsa.etf.si.bbqms.domain.BranchGroup;
 import ba.unsa.etf.si.bbqms.domain.Service;
 import ba.unsa.etf.si.bbqms.admin_service.api.GroupService;
 import ba.unsa.etf.si.bbqms.domain.TellerStation;
-import ba.unsa.etf.si.bbqms.repository.BranchGroupRepository;
-import ba.unsa.etf.si.bbqms.repository.BranchRepository;
-import ba.unsa.etf.si.bbqms.repository.ServiceRepository;
-import ba.unsa.etf.si.bbqms.repository.TellerStationRepository;
+import ba.unsa.etf.si.bbqms.domain.Tenant;
+import ba.unsa.etf.si.bbqms.repository.*;
 import ba.unsa.etf.si.bbqms.ws.models.BranchGroupCreateDto;
+import ba.unsa.etf.si.bbqms.repository.TellerStationRepository;
 import ba.unsa.etf.si.bbqms.ws.models.BranchGroupUpdateDto;
 import jakarta.persistence.EntityNotFoundException;
 
@@ -24,24 +23,29 @@ public class DefaultGroupService implements GroupService {
     private final BranchGroupRepository branchGroupRepository;
     private final BranchRepository branchRepository;
     private final ServiceRepository serviceRepository;
+    private final TenantRepository tenantRepository;
     private final TellerStationRepository stationRepository;
 
     public DefaultGroupService(final StationService stationService,
                                final BranchGroupRepository branchGroupRepository,
                                final BranchRepository branchRepository,
                                final ServiceRepository serviceRepository,
+                               final TenantRepository tenantRepository,
                                final TellerStationRepository stationRepository) {
         this.stationService = stationService;
         this.branchGroupRepository = branchGroupRepository;
         this.branchRepository = branchRepository;
         this.serviceRepository = serviceRepository;
+        this.tenantRepository = tenantRepository;
         this.stationRepository = stationRepository;
     }
 
     @Override
-    public BranchGroup addBranchGroup(final BranchGroupCreateDto request) throws Exception {
+    public BranchGroup addBranchGroup(final String tenantCode, final BranchGroupCreateDto request) throws Exception {
         final Set<Service> services = new HashSet<>();
         final Set<Branch> branches = new HashSet<>();
+        final Tenant tenant = this.tenantRepository.findByCode(tenantCode)
+                .orElseThrow(() -> new EntityNotFoundException("No tenant with code " + tenantCode));
 
         if (request.serviceIds() != null) {
             for (final long serviceId : request.serviceIds()) {
@@ -60,7 +64,7 @@ public class DefaultGroupService implements GroupService {
             branches.add(branch);
         }
 
-        BranchGroup branchGroup = new BranchGroup(request.name(),branches,services);
+        final BranchGroup branchGroup = new BranchGroup(request.name(),branches,services,tenant);
         return this.branchGroupRepository.save(branchGroup);
     }
 

@@ -9,7 +9,7 @@ import ba.unsa.etf.si.bbqms.repository.ServiceRepository;
 import ba.unsa.etf.si.bbqms.repository.TenantLogoRepository;
 import ba.unsa.etf.si.bbqms.repository.TenantRepository;
 import ba.unsa.etf.si.bbqms.tenant_service.api.TenantService;
-import ba.unsa.etf.si.bbqms.ws.models.ServiceDto;
+import ba.unsa.etf.si.bbqms.ws.models.ServiceRequestDto;
 import ba.unsa.etf.si.bbqms.ws.models.TenantDto;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,7 +90,7 @@ public class TenantServiceImpl implements TenantService {
     }
 
     @Override
-    public Service addService(final String code, final ServiceDto request) throws Exception {
+    public Service addService(final String code, final ServiceRequestDto request) throws Exception {
         final Tenant tenant= tenantRepository.findByCode(code).
                 orElseThrow(() -> new Exception("Tenant not found") );
 
@@ -109,7 +109,7 @@ public class TenantServiceImpl implements TenantService {
     }
 
     @Override
-    public Service updateService(final String code, final long id, final ServiceDto request) throws Exception {
+    public Service updateService(final String code, final long id, final ServiceRequestDto request) throws Exception {
         final List<Service> services = serviceRepository.findAllByTenant_Code(code);
         final boolean nameExists = services.stream()
                 .anyMatch(service -> service.getName().equals(request.name()));
