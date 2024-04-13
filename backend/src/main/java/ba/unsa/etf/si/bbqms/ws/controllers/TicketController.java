@@ -2,12 +2,16 @@ package ba.unsa.etf.si.bbqms.ws.controllers;
 
 import ba.unsa.etf.si.bbqms.admin_service.api.BranchService;
 import ba.unsa.etf.si.bbqms.domain.Ticket;
+import ba.unsa.etf.si.bbqms.export.api.Exporter;
 import ba.unsa.etf.si.bbqms.ticket_service.api.TicketService;
 import ba.unsa.etf.si.bbqms.ws.models.SimpleMessageDto;
 import ba.unsa.etf.si.bbqms.ws.models.TellerStationDto;
 import ba.unsa.etf.si.bbqms.ws.models.TicketDto;
+import com.google.common.net.HttpHeaders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.Resource;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,10 +25,14 @@ public class TicketController {
     private static final Logger logger = LoggerFactory.getLogger(TicketController.class);
     private final TicketService ticketService;
     private final BranchService branchService;
+    private final Exporter<Ticket> pdfExporter;
 
-    public TicketController(final TicketService ticketService, final BranchService branchService) {
+    public TicketController(final TicketService ticketService,
+                            final BranchService branchService,
+                            final Exporter<Ticket> pdfExporter) {
         this.ticketService = ticketService;
         this.branchService = branchService;
+        this.pdfExporter = pdfExporter;
     }
 
     /**
@@ -82,6 +90,22 @@ public class TicketController {
         try {
             this.ticketService.cancelTicket(Long.parseLong(ticketId));
             return ResponseEntity.ok().body(new SimpleMessageDto("Deleted ticket with id: " + ticketId));
+        } catch (final Exception exception) {
+            logger.error(exception.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping("/{ticketId}/print")
+    public ResponseEntity printTicket(@PathVariable final String ticketId) {
+        try{
+            final Ticket ticket = this.ticketService.getTicketById(Long.parseLong(ticketId));
+            final Resource pdfByteArray = this.pdfExporter.exportPdf(ticket);
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + ticket.getId() + ".pdf")
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .body(pdfByteArray);
         } catch (final Exception exception) {
             logger.error(exception.getMessage());
             return ResponseEntity.badRequest().build();
