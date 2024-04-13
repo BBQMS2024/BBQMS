@@ -3,6 +3,7 @@ package ba.unsa.etf.si.bbqms.admin_service.api;
 import ba.unsa.etf.si.bbqms.domain.Branch;
 import ba.unsa.etf.si.bbqms.domain.Service;
 import ba.unsa.etf.si.bbqms.domain.TellerStation;
+import ba.unsa.etf.si.bbqms.domain.Ticket;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,4 +20,5 @@ public interface BranchService {
     TellerStation updateStation(final long stationId, final String name) throws Exception;
     Set<Service> extractPossibleServices(final Branch branch);
     Set<TellerStation> getStationsWithService(final Branch branch, final Service service);
+    Set<Ticket> getTicketsWithService(final long branchId, final long serviceId);
 }
