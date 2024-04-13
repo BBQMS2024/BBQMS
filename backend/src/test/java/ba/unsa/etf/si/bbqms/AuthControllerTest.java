@@ -8,7 +8,6 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static io.restassured.RestAssured.given;
@@ -17,8 +16,6 @@ import static org.hamcrest.Matchers.equalTo;
 @ExtendWith(MockitoExtension.class)
 public class AuthControllerTest {
 
-    @InjectMocks
-    private AuthController authController;
 
     @BeforeAll
     public static void setup() {
