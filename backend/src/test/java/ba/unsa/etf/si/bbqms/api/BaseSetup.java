@@ -39,15 +39,15 @@ public class BaseSetup {
         AuthController.RegisterRequest registerRequest = new AuthController.RegisterRequest("test@example.com", "password");
 
         return  given()
-                .body(registerRequest)
+                    .body(registerRequest)
                 .when()
-                .post("/api/v1/auth/login")
+                    .post("/api/v1/auth/login")
                 .then()
-                .statusCode(200)
-                .and()
-                .assertThat()
-                .body("token", Matchers.not (nullValue()))
+                    .statusCode(200)
+                    .and()
+                    .assertThat()
+                    .body("token", Matchers.not (nullValue()))
                 .extract()
-                .path("token");
+                    .path("token");
     }
 }
