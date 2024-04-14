@@ -1,4 +1,4 @@
-package ba.unsa.etf.si.bbqms;
+package ba.unsa.etf.si.bbqms.unit;
 
 import ba.unsa.etf.si.bbqms.jwt_service.implementation.DefaultJwtService;
 import io.jsonwebtoken.Claims;

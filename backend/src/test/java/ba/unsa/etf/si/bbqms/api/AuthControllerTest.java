@@ -1,4 +1,4 @@
-package ba.unsa.etf.si.bbqms;
+package ba.unsa.etf.si.bbqms.api;
 
 import ba.unsa.etf.si.bbqms.ws.controllers.AuthController;
 import io.restassured.RestAssured;
