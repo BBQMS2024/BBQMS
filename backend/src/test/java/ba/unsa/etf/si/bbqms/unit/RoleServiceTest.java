@@ -1,4 +1,4 @@
-package ba.unsa.etf.si.bbqms;
+package ba.unsa.etf.si.bbqms.unit;
 
 import ba.unsa.etf.si.bbqms.auth_service.implementation.DefaultRoleService;
 import ba.unsa.etf.si.bbqms.domain.Role;
