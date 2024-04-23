@@ -118,8 +118,7 @@ const AdminManageScreen = () => {
 
         try {
             const updatedAdmin = {
-                email: adminEmail,
-                phoneNumber: null
+                email: adminEmail
             };
             const response = await fetch(`${ SERVER_URL }/api/v1/admin/${tenantCode}/user/${admins[selectedAdminIndex].id}`, {
                 method: 'PUT',
