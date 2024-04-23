@@ -118,37 +118,37 @@ export default function App() {
                                                 title="Manage displays"
                                                 backgroundColor="var(--dark-blue)"
                                                 buttonColor="var(--light-blue)"
-                                                url={'/DFLT/manage/displays'}
+                                                url={`/${user.tenantCode}/manage/displays`}
                                             />
                                             <HomePageCard
                                                 title="Manage groups"
                                                 backgroundColor="var(--light-blue)"
                                                 buttonColor="var(--dark-blue)"
-                                                url={'/DFLT/manage/groups'}
+                                                url={`/${user.tenantCode}/manage/groups`}
                                             />
                                             <HomePageCard
                                                 title="Manage branches"
                                                 backgroundColor="var(--dark-blue)"
                                                 buttonColor="var(--light-blue)"
-                                                url={'/DFLT/manage/branches'}
+                                                url={`/${user.tenantCode}/manage/branches`}
                                             />
                                             <HomePageCard
                                                 title="Manage services"
                                                 backgroundColor="var(--light-blue)"
                                                 buttonColor="var(--dark-blue)"
-                                                url={'/DFLT/manage/services'}
+                                                url={`/${user.tenantCode}/manage/services`}
                                             />
                                             <HomePageCard
                                                 title="Manage teller stations"
                                                 backgroundColor="var(--light-blue)"
                                                 buttonColor="var(--dark-blue)"
-                                                url={'/DFLT/manage/stations'}
+                                                url={`/${user.tenantCode}/manage/stations`}
                                             />
                                             <HomePageCard
                                                 title="Manage company details"
                                                 backgroundColor="var(--dark-blue)"
                                                 buttonColor="var(--light-blue)"
-                                                url={'/DFLT/companydetails'}
+                                                url={`/${user.tenantCode}/companydetails`}
                                             />
                                             <HomePageCard
                                                 title="View queues"
@@ -167,12 +167,12 @@ export default function App() {
                                     <>
                                 <HomePageCard title="Manage administrators" backgroundColor="var(--dark-blue)"
                                               buttonColor="var(--light-blue)"
-                                              url={ '/DFLT/manage/admins' }></HomePageCard>
+                                              url={ `/${user.tenantCode}/manage/admins` }></HomePageCard>
                                 <HomePageCard
                                     title="Manage users"
                                     backgroundColor="var(--light-blue)"
                                     buttonColor="var(--dark-blue)"
-                                    url={'/DFLT/manage/users'}
+                                    url={`/${user.tenantCode}/manage/users`}
                                 />
                                 </>
                                 )}
@@ -187,7 +187,7 @@ export default function App() {
                                     title="Manage users"
                                     backgroundColor="var(--dark-blue)"
                                     buttonColor="var(--light-blue)"
-                                    url={'/DFLT/manage/users'}
+                                    url={`/${user.tenantCode}/manage/users`}
                                 />
                                 </>
                                 )}
