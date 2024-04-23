@@ -110,30 +110,61 @@ export default function App() {
                     <Route exact path="/:tenantCode/home" element={
                         <AuthGuard roles={ [ROLES.ROLE_SUPER_ADMIN, ROLES.ROLE_BRANCH_ADMIN] }>
                             <HomePage></HomePage>
-                            <CanAccess roles={ [ROLES.ROLE_SUPER_ADMIN, ROLES.ROLE_BRANCH_ADMIN] }>
-                                <HomePageCard title="Manage displays" backgroundColor="var(--dark-blue)"
-                                              buttonColor="var(--light-blue)"
-                                              url={ '/DFLT/manage/displays' }></HomePageCard>
-                                <HomePageCard title="Manage groups" backgroundColor="var(--light-blue)"
-                                              buttonColor="var(--dark-blue)"
-                                              url={ '/DFLT/manage/groups' }></HomePageCard>
-                                <HomePageCard title="Manage branches" backgroundColor="var(--dark-blue)"
-                                              buttonColor="var(--light-blue)"
-                                              url={ '/DFLT/manage/branches' }></HomePageCard>
-                                <HomePageCard title="Manage services" backgroundColor="var(--light-blue)"
-                                              buttonColor="var(--dark-blue)"
-                                              url={ '/DFLT/manage/services' }></HomePageCard>
-                                <HomePageCard title="Manage teller stations" backgroundColor="var(--light-blue)"
-                                              buttonColor="var(--dark-blue)"
-                                              url={ '/DFLT/manage/stations' }></HomePageCard>
-                                <HomePageCard title="Manage company details" backgroundColor="var(--dark-blue)"
-                                              buttonColor="var(--light-blue)"
-                                              url={ '/DFLT/companydetails' }></HomePageCard>
-                                <HomePageCard title="View queues" backgroundColor="var(--light-blue)"
-                                              buttonColor="var(--dark-blue)"
-                                              url={ '/DFLT/queues' }></HomePageCard>
+                            <CanAccess roles={[ROLES.ROLE_SUPER_ADMIN, ROLES.ROLE_BRANCH_ADMIN]}>
+                                <>
+                                    {user  && (
+                                        <>
+                                            <HomePageCard
+                                                title="Manage displays"
+                                                backgroundColor="var(--dark-blue)"
+                                                buttonColor="var(--light-blue)"
+                                                url={'/DFLT/manage/displays'}
+                                            />
+                                            <HomePageCard
+                                                title="Manage groups"
+                                                backgroundColor="var(--light-blue)"
+                                                buttonColor="var(--dark-blue)"
+                                                url={'/DFLT/manage/groups'}
+                                            />
+                                            <HomePageCard
+                                                title="Manage branches"
+                                                backgroundColor="var(--dark-blue)"
+                                                buttonColor="var(--light-blue)"
+                                                url={'/DFLT/manage/branches'}
+                                            />
+                                            <HomePageCard
+                                                title="Manage services"
+                                                backgroundColor="var(--light-blue)"
+                                                buttonColor="var(--dark-blue)"
+                                                url={'/DFLT/manage/services'}
+                                            />
+                                            <HomePageCard
+                                                title="Manage teller stations"
+                                                backgroundColor="var(--light-blue)"
+                                                buttonColor="var(--dark-blue)"
+                                                url={'/DFLT/manage/stations'}
+                                            />
+                                            <HomePageCard
+                                                title="Manage company details"
+                                                backgroundColor="var(--dark-blue)"
+                                                buttonColor="var(--light-blue)"
+                                                url={'/DFLT/companydetails'}
+                                            />
+                                            <HomePageCard
+                                                title="View queues"
+                                                backgroundColor="var(--light-blue)"
+                                                buttonColor="var(--dark-blue)"
+                                                url={`/${user.tenantCode}/queues`}
+                                            />
+                                        </>
+                                    )}
+                                </>
                             </CanAccess>
+
                             <CanAccess roles={ [ROLES.ROLE_SUPER_ADMIN] }>
+                                <>
+                                {user && (
+                                    <>
                                 <HomePageCard title="Manage administrators" backgroundColor="var(--dark-blue)"
                                               buttonColor="var(--light-blue)"
                                               url={ '/DFLT/manage/admins' }></HomePageCard>
@@ -143,15 +174,24 @@ export default function App() {
                                     buttonColor="var(--dark-blue)"
                                     url={'/DFLT/manage/users'}
                                 />
+                                </>
+                                )}
+                                </>
                             </CanAccess>
 
                             <CanAccess roles={[ROLES.ROLE_BRANCH_ADMIN]}>
+                                <>
+                                {user  && (
+                                    <>
                                 <HomePageCard
                                     title="Manage users"
                                     backgroundColor="var(--dark-blue)"
                                     buttonColor="var(--light-blue)"
                                     url={'/DFLT/manage/users'}
                                 />
+                                </>
+                                )}
+                                    </>
                             </CanAccess>
                         </AuthGuard>
                     } />

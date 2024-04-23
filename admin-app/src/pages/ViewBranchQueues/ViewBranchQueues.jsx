@@ -8,7 +8,6 @@ import { SERVER_URL } from '../../constants.js';
 
 const ViewBranchQueues = () => {
     const location = useLocation();
-    const [selectedStation, setSelectedStation] = useState(null);
     const [selectedBranch, setSelectedBranch] = useState(null);
     const [branches, setBranches] = useState([]);
     const [services, setServices] = useState([]);

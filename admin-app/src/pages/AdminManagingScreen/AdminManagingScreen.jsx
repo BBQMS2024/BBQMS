@@ -7,19 +7,20 @@ import { useNavigate, useParams } from "react-router-dom";
 
 const styles = {
     primaryButton: {
-        backgroundColor: '#548CA8',
-        borderColor: '#548CA8',
+        backgroundColor: "var(--light-blue)",
+        borderColor: "var(--light-blue)",
     },
     infoButton: {
-        backgroundColor: '#548CA8',
+        backgroundColor: "var(--light-blue)",
         color: 'white',
-        borderColor: '#548CA8',
+        borderColor: "var(--light-blue)",
     },
     modalHeader: {
-        backgroundColor: '#334257',
+        backgroundColor: "var(--blue)",
         color: 'white',
     },
 };
+
 
 const AdminManageScreen = () => {
     const { tenantCode } = useParams();
@@ -118,7 +119,7 @@ const AdminManageScreen = () => {
         try {
             const updatedAdmin = {
                 email: adminEmail,
-                password: adminPassword // Dodali smo polje za lozinku
+                phoneNumber: null
             };
             const response = await fetch(`${ SERVER_URL }/api/v1/admin/${tenantCode}/user/${admins[selectedAdminIndex].id}`, {
                 method: 'PUT',
@@ -134,7 +135,6 @@ const AdminManageScreen = () => {
                 setAdmins(updatedAdmins);
                 setShowModal(false);
                 setAdminEmail('');
-                setAdminPassword('');
             } else {
                 console.error('Unsuccessful API call');
             }
@@ -208,13 +208,16 @@ const AdminManageScreen = () => {
                             <Form.Control type="email" placeholder="Enter admin email" value={adminEmail} onChange={(e) => setAdminEmail(e.target.value)} />
                             {emailError && <div style={{ color: 'red' }}>{emailError}</div>}
                         </Form.Group>
-                        <Form.Group controlId="formAdminPassword" className="mb-3">
-                            <Form.Label>Password</Form.Label>
-                            <Form.Control type="password" placeholder="Enter admin password" value={adminPassword} onChange={(e) => setAdminPassword(e.target.value)} />
-                            {passwordError && <div style={{ color: 'red' }}>{passwordError}</div>}
-                        </Form.Group>
+                        {selectedAdminIndex === null && (
+                            <Form.Group controlId="formAdminPassword" className="mb-3">
+                                <Form.Label>Password</Form.Label>
+                                <Form.Control type="password" placeholder="Enter admin password" value={adminPassword} onChange={(e) => setAdminPassword(e.target.value)} />
+                                {passwordError && <div style={{ color: 'red' }}>{passwordError}</div>}
+                            </Form.Group>
+                        )}
                     </Form>
                 </Modal.Body>
+
                 <Modal.Footer>
                     <Button variant="secondary" onClick={() => { setShowModal(false); setSelectedAdminIndex(null); }}>Close</Button>
                     {selectedAdminIndex !== null ?
