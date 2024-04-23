@@ -129,21 +129,18 @@ export default function App() {
                                 <HomePageCard title="Manage company details" backgroundColor="var(--dark-blue)"
                                               buttonColor="var(--light-blue)"
                                               url={ '/DFLT/companydetails' }></HomePageCard>
-                                <HomePageCard title="Manage teller stations" backgroundColor="var(--light-blue)"
+                                <HomePageCard title="View queues" backgroundColor="var(--light-blue)"
                                               buttonColor="var(--dark-blue)"
-                                              url={ '/DFLT/manage/stations' }></HomePageCard>
-                                <HomePageCard title="View queues" backgroundColor="var(--dark-blue)"
-                                              buttonColor="var(--light-blue)"
                                               url={ '/DFLT/queues' }></HomePageCard>
                             </CanAccess>
                             <CanAccess roles={ [ROLES.ROLE_SUPER_ADMIN] }>
-                                <HomePageCard title="Manage administrators" backgroundColor="var(--light-blue)"
-                                              buttonColor="var(--dark-blue)"
+                                <HomePageCard title="Manage administrators" backgroundColor="var(--dark-blue)"
+                                              buttonColor="var(--light-blue)"
                                               url={ '/DFLT/manage/admins' }></HomePageCard>
                                 <HomePageCard
                                     title="Manage users"
-                                    backgroundColor="var(--dark-blue)"
-                                    buttonColor="var(--light-blue)"
+                                    backgroundColor="var(--light-blue)"
+                                    buttonColor="var(--dark-blue)"
                                     url={'/DFLT/manage/users'}
                                 />
                             </CanAccess>
@@ -151,8 +148,8 @@ export default function App() {
                             <CanAccess roles={[ROLES.ROLE_BRANCH_ADMIN]}>
                                 <HomePageCard
                                     title="Manage users"
-                                    backgroundColor="var(--light-blue)"
-                                    buttonColor="var(--dark-blue)"
+                                    backgroundColor="var(--dark-blue)"
+                                    buttonColor="var(--light-blue)"
                                     url={'/DFLT/manage/users'}
                                 />
                             </CanAccess>
