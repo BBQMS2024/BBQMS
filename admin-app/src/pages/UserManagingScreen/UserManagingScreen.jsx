@@ -117,8 +117,7 @@ const UserManageScreen = () => {
 
         try {
             const updatedUser = {
-                email: userEmail,
-                phoneNumber: null
+                email: userEmail
             };
             const response = await fetch(`${ SERVER_URL }/api/v1/admin/${tenantCode}/user/${users[selectedUserIndex].id}`, {
                 method: 'PUT',

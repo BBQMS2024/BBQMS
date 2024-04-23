@@ -117,7 +117,6 @@ const ViewBranchQueues = () => {
                 <Table striped bordered hover>
                     <thead>
                     <tr>
-                        <th>Ticket Id</th>
                         <th>Ticket Number</th>
                         <th>Service</th>
                         <th>Created At</th>
@@ -133,7 +132,6 @@ const ViewBranchQueues = () => {
 
                             return (
                                 <tr key={`${index}-${ticketIndex}`}>
-                                    <td>{ticket.id}</td>
                                     <td>{ticket.number}</td>
                                     <td>{ticket.service.name}</td>
                                     <td>{createdAt.toLocaleString()}</td>
