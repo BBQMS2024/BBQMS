@@ -19,7 +19,8 @@ import ManageBranches from './pages/ManageBranchesScreen/ManageBranchesScreen';
 import ManageGroups from './pages/ManageGroupsScreen/ManageGroupsScreen';
 import ManageStations from './pages/ManageStationScreen/ManageStationScreen';
 import ManageDisplays from './pages/ManageDisplays/ManageDisplays';
-import ManageUsers from './pages/UserManagingScreen/UserManagingScreen'
+import ManageUsers from './pages/UserManagingScreen/UserManagingScreen';
+import ViewQueues from './pages/ViewBranchQueues/ViewBranchQueues';
 import { ROLES } from './constants.js';
 
 export default function App() {
@@ -101,6 +102,10 @@ export default function App() {
                                </AuthGuard>
                            }
                     />
+                    <Route exact path="/:tenantCode/queues" element={
+                        <AuthGuard roles={ [ROLES.ROLE_SUPER_ADMIN, ROLES.ROLE_BRANCH_ADMIN] }>
+                            <ViewQueues />
+                        </AuthGuard> } />
 
                     <Route exact path="/:tenantCode/home" element={
                         <AuthGuard roles={ [ROLES.ROLE_SUPER_ADMIN, ROLES.ROLE_BRANCH_ADMIN] }>
@@ -124,6 +129,12 @@ export default function App() {
                                 <HomePageCard title="Manage company details" backgroundColor="var(--dark-blue)"
                                               buttonColor="var(--light-blue)"
                                               url={ '/DFLT/companydetails' }></HomePageCard>
+                                <HomePageCard title="Manage teller stations" backgroundColor="var(--light-blue)"
+                                              buttonColor="var(--dark-blue)"
+                                              url={ '/DFLT/manage/stations' }></HomePageCard>
+                                <HomePageCard title="View queues" backgroundColor="var(--dark-blue)"
+                                              buttonColor="var(--light-blue)"
+                                              url={ '/DFLT/queues' }></HomePageCard>
                             </CanAccess>
                             <CanAccess roles={ [ROLES.ROLE_SUPER_ADMIN] }>
                                 <HomePageCard title="Manage administrators" backgroundColor="var(--light-blue)"
