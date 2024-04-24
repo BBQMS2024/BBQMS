@@ -1,6 +1,9 @@
 import * as FileSystem from "expo-file-system";
 import { Buffer } from "buffer";
 import * as Sharing from "expo-sharing";
+import { Platform, PermissionsAndroid } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 const { SERVER_URL } = require("../constants/api");
 const { Dialogs } = require("../constants/dialogs");
 const { Fonts } = require("../constants/fonts");
@@ -248,13 +251,34 @@ async function savePdfToFile(pdfByteArray: ArrayBuffer, filename: string) {
     await FileSystem.writeAsStringAsync(filePath, base64String, {
       encoding: FileSystem.EncodingType.Base64,
     });
-    Sharing.shareAsync(filePath);
-    return filePath; 
+    saveFile(filePath, filename, "application/pdf");
+    return filePath;
   } catch (error) {
     console.error("Error saving PDF: ", error);
     return null;
   }
 }
+
+async function saveFile(uri: string, filename: string, mimetype: string) {
+  if (Platform.OS === "android") {
+    const permissions = await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
+
+    if (permissions.granted) {
+      const base64 = await FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 });
+
+      await FileSystem.StorageAccessFramework.createFileAsync(permissions.directoryUri, filename, mimetype)
+        .then(async (uri) => {
+          await FileSystem.writeAsStringAsync(uri, base64, { encoding: FileSystem.EncodingType.Base64 });
+        })
+        .catch(e => console.log(e));
+    } else {
+      Sharing.shareAsync(uri);
+    }
+  } else {
+    Sharing.shareAsync(uri);
+  }
+}
+
 
 export {
   getCompanyDetails,
