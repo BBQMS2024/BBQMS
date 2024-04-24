@@ -1,4 +1,4 @@
-package ba.unsa.etf.si.bbqms;
+package ba.unsa.etf.si.bbqms.unit;
 
 import ba.unsa.etf.si.bbqms.tfa_service.implementation.TotpTwoFactorService;
 import org.junit.jupiter.api.Test;

@@ -7,16 +7,16 @@ import { useNavigate, useParams } from "react-router-dom";
 
 const styles = {
     primaryButton: {
-        backgroundColor: '#548CA8',
-        borderColor: '#548CA8',
+        backgroundColor: "var(--light-blue)",
+        borderColor: "var(--light-blue)",
     },
     infoButton: {
-        backgroundColor: '#548CA8',
+        backgroundColor: "var(--light-blue)",
         color: 'white',
-        borderColor: '#548CA8',
+        borderColor: "var(--light-blue)",
     },
     modalHeader: {
-        backgroundColor: '#334257',
+        backgroundColor: "var(--blue)",
         color: 'white',
     },
 };
@@ -117,8 +117,7 @@ const UserManageScreen = () => {
 
         try {
             const updatedUser = {
-                email: userEmail,
-                password: userPassword
+                email: userEmail
             };
             const response = await fetch(`${ SERVER_URL }/api/v1/admin/${tenantCode}/user/${users[selectedUserIndex].id}`, {
                 method: 'PUT',
@@ -208,11 +207,13 @@ const UserManageScreen = () => {
                             <Form.Control type="email" placeholder="Enter user email" value={userEmail} onChange={(e) => setUserEmail(e.target.value)} />
                             {emailError && <div style={{ color: 'red' }}>{emailError}</div>}
                         </Form.Group>
-                        <Form.Group controlId="formUserPassword" className="mb-3">
-                            <Form.Label>Password</Form.Label>
-                            <Form.Control type="password" placeholder="Enter user password" value={userPassword} onChange={(e) => setUserPassword(e.target.value)} />
-                            {passwordError && <div style={{ color: 'red' }}>{passwordError}</div>}
-                        </Form.Group>
+                        {selectedUserIndex === null && (
+                            <Form.Group controlId="formUserPassword" className="mb-3">
+                                <Form.Label>Password</Form.Label>
+                                <Form.Control type="password" placeholder="Enter user password" value={userPassword} onChange={(e) => setUserPassword(e.target.value)} />
+                                {passwordError && <div style={{ color: 'red' }}>{passwordError}</div>}
+                            </Form.Group>
+                        )}
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>

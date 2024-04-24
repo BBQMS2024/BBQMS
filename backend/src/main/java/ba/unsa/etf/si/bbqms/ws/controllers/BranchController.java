@@ -4,11 +4,9 @@ import ba.unsa.etf.si.bbqms.admin_service.api.BranchService;
 import ba.unsa.etf.si.bbqms.auth_service.api.AuthService;
 import ba.unsa.etf.si.bbqms.domain.Branch;
 import ba.unsa.etf.si.bbqms.domain.TellerStation;
+import ba.unsa.etf.si.bbqms.domain.Ticket;
 import ba.unsa.etf.si.bbqms.domain.User;
-import ba.unsa.etf.si.bbqms.ws.models.BranchWithStationsDto;
-import ba.unsa.etf.si.bbqms.ws.models.ServiceDto;
-import ba.unsa.etf.si.bbqms.ws.models.SimpleMessageDto;
-import ba.unsa.etf.si.bbqms.ws.models.TellerStationDto;
+import ba.unsa.etf.si.bbqms.ws.models.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -166,10 +164,26 @@ public class BranchController {
                 .map(serviceDtos -> ResponseEntity.ok().body(serviceDtos))
                 .orElse(ResponseEntity.badRequest().build());
     }
+    @GetMapping("/{tenantCode}/{branchId}/queue")
+    @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN', 'ROLE_BRANCH_ADMIN')")
+    public ResponseEntity getBranchQueue(@PathVariable final String tenantCode, @PathVariable final String branchId) {
+        return this.branchService.findById(Long.parseLong(branchId))
+                .map(this.branchService::extractPossibleServices)
+                .map(services -> services.stream().map(service -> {
+                    final Set<Ticket> tickets = this.branchService.getTicketsWithService(Long.parseLong(branchId), service.getId());
+                    final Set<TicketDto> ticketDtos = tickets.stream().map(TicketDto::fromEntity).collect(Collectors.toSet());
+                    return new ServiceWithTicketsDto(ServiceDto.fromEntity(service),ticketDtos);
+                }).collect(Collectors.toSet()))
+                .map(serviceWithTicketsDtos -> ResponseEntity.ok().body(serviceWithTicketsDtos))
+                .orElse(ResponseEntity.badRequest().build());
+    }
 
     public record BranchRequest(String name, List<String> tellerStations) {
     }
 
     public record StationRequest(String name) {
+    }
+
+    public record ServiceWithTicketsDto(ServiceDto service, Set<TicketDto> tickets) {
     }
 }
