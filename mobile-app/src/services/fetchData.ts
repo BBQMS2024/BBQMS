@@ -1,3 +1,6 @@
+import * as FileSystem from "expo-file-system";
+import { Buffer } from "buffer";
+import * as Sharing from "expo-sharing";
 const { SERVER_URL } = require("../constants/api");
 const { Dialogs } = require("../constants/dialogs");
 const { Fonts } = require("../constants/fonts");
@@ -194,7 +197,9 @@ async function generateTicket(
         throw new Error(Dialogs.ERROR.INVALID_CODE);
       }
     })
-    .then((data) => {
+    .then(async (data) => {
+      await printTicket(data.ticket.id);
+      console.log(data.ticket.id);
       return data.ticket;
     })
     .catch((error) => {
@@ -202,6 +207,53 @@ async function generateTicket(
       throw error;
     });
   return tickets;
+}
+
+function printTicket(ticketId: number) {
+  console.log("Printing ticket...");
+  fetch(`${SERVER_URL}/api/v1/tickets/${ticketId}/print`, {
+    method: "GET",
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch PDF: ${response.status} - ${response.statusText}`
+        );
+      }
+      return response.arrayBuffer();
+    })
+    .then((pdfByteArray) => {
+      const filename = `ticket_${ticketId}`;
+      return savePdfToFile(pdfByteArray, filename);
+    })
+    .then((filePath) => {
+      if (filePath) {
+        console.log("PDF saved successfully at: ", filePath);
+      } else {
+        console.log("Failed to save PDF.");
+      }
+    })
+    .catch((error) => {
+      console.error("Error printing ticket: ", error);
+    });
+}
+
+async function savePdfToFile(pdfByteArray: ArrayBuffer, filename: string) {
+  try {
+    const folderPath = FileSystem.documentDirectory + "pdfs/";
+    await FileSystem.makeDirectoryAsync(folderPath, { intermediates: true });
+    const filePath = folderPath + filename + ".pdf";
+    const buffer = Buffer.from(pdfByteArray);
+    const base64String = buffer.toString("base64");
+    await FileSystem.writeAsStringAsync(filePath, base64String, {
+      encoding: FileSystem.EncodingType.Base64,
+    });
+    Sharing.shareAsync(filePath);
+    return filePath; 
+  } catch (error) {
+    console.error("Error saving PDF: ", error);
+    return null;
+  }
 }
 
 export {
