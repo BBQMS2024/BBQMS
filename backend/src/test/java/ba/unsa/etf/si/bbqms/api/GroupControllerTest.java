@@ -1,14 +1,11 @@
 package ba.unsa.etf.si.bbqms.api;
 
-import ba.unsa.etf.si.bbqms.ws.controllers.GroupController;
+import ba.unsa.etf.si.bbqms.ws.controllers.BranchController;
 import ba.unsa.etf.si.bbqms.ws.models.BranchGroupCreateDto;
 import ba.unsa.etf.si.bbqms.ws.models.BranchGroupUpdateDto;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import java.util.HashSet;
-import java.util.List;
+import ba.unsa.etf.si.bbqms.ws.models.ServiceRequestDto;
+import io.restassured.http.ContentType;
+import org.junit.jupiter.api.*;
 import java.util.Set;
 
 import static io.restassured.RestAssured.given;
@@ -17,14 +14,72 @@ import static org.hamcrest.Matchers.greaterThan;
 
 public class GroupControllerTest extends BaseSetup {
     private int branchGroupId;
-    private final String tenantCode = "DFLT";
-    private final String invalidTenantCode = ".";
+    private static Integer branchId;
+    private static Integer serviceId;
+    private final static String tenantCode = "DFLT";
+    private final static String invalidTenantCode = ".";
+
+    @BeforeAll
+    public static void createResources() {
+        final BranchController.BranchRequest branchRequest =
+                new BranchController.BranchRequest("Dummy branch", null);
+
+        branchId = given()
+                            .contentType(ContentType.JSON)
+                            .pathParam("tenantCode", tenantCode)
+                            .body(branchRequest)
+                        .when()
+                            .header("Authorization", "Bearer " + generateSuperAdminToken())
+                            .post("api/v1/branches/{tenantCode}")
+                        .then()
+                            .statusCode(200)
+                        .extract()
+                            .path("id");
+
+        final ServiceRequestDto serviceRequestDto =
+                new ServiceRequestDto("Dummy service");
+
+        serviceId = given()
+                            .contentType(ContentType.JSON)
+                            .pathParam("code", tenantCode)
+                            .body(serviceRequestDto)
+                        .when()
+                            .header("Authorization", "Bearer " + generateSuperAdminToken())
+                            .post("api/v1/tenants/{code}/services")
+                        .then()
+                            .statusCode(200)
+                        .extract()
+                            .path("id");
+    }
+
+    @AfterAll
+    public static void deleteResources() {
+        given()
+                .contentType(ContentType.JSON)
+                .pathParam("tenantCode", tenantCode)
+                .pathParam("branchId", branchId)
+            .when()
+                .header("Authorization", "Bearer " + generateSuperAdminToken())
+                .delete("api/v1/branches/{tenantCode}/{branchId}")
+            .then()
+                .statusCode(200);
+
+        given()
+                .contentType(ContentType.JSON)
+                .pathParam("code", tenantCode)
+                .pathParam("id", serviceId)
+            .when()
+                .header("Authorization", "Bearer " + generateSuperAdminToken())
+                .delete("api/v1/tenants/{code}/services/{id}")
+            .then()
+                .statusCode(200);
+    }
 
     @BeforeEach
     public void createBranchGroup_ValidNameBranchIdsAndServiceIds_ReturnsOkResponse() {
         final String name = "Dummy Branch Group";
-        final Set<Long> branchIds = Set.of(2L);
-        final Set<Long> serviceIds = Set.of(1L);
+        final Set<Long> branchIds = Set.of(branchId.longValue());
+        final Set<Long> serviceIds = Set.of(serviceId.longValue());
 
         final BranchGroupCreateDto newBranchGroupRequest =
                 new BranchGroupCreateDto(name, serviceIds, branchIds);
@@ -40,8 +95,8 @@ public class GroupControllerTest extends BaseSetup {
                 .and()
             .assertThat()
                 .body("name" ,equalTo(name))
-                .body("branches.id", hasItem(2))
-                .body("services.id", hasItem(1))
+                .body("branches.id", hasItem(branchId))
+                .body("services.id", hasItem(serviceId))
             .extract()
                 .path("id");
     }
@@ -73,7 +128,7 @@ public class GroupControllerTest extends BaseSetup {
     @Test
     public void addBranchGroup_NonExistentService_ReturnsBadRequest() {
         final String name = "Dummy Branch Group";
-        final Set<Long> branchIds = Set.of(2L);
+        final Set<Long> branchIds = Set.of(branchId.longValue());
         final Set<Long> serviceIds = Set.of(-1L);
 
         final BranchGroupCreateDto newBranchGroupRequest =
@@ -92,8 +147,8 @@ public class GroupControllerTest extends BaseSetup {
     @Test
     public void addBranchGroup_InvalidTenantCode_ReturnsBadRequest() {
         final String name = "Dummy Branch Group";
-        final Set<Long> branchIds = Set.of(2L);
-        final Set<Long> serviceIds = Set.of(1L);
+        final Set<Long> branchIds = Set.of(branchId.longValue());
+        final Set<Long> serviceIds = Set.of(serviceId.longValue());
 
         final BranchGroupCreateDto newBranchGroupRequest =
                 new BranchGroupCreateDto(name, serviceIds, branchIds);
@@ -112,7 +167,7 @@ public class GroupControllerTest extends BaseSetup {
     public void addBranchGroup_NonExistentBranch_ReturnsBadRequest() {
         final String name = "Dummy Branch Group";
         final Set<Long> branchIds = Set.of(-1L);
-        final Set<Long> serviceIds = Set.of(2L);
+        final Set<Long> serviceIds = Set.of(serviceId.longValue());
 
         final BranchGroupCreateDto newBranchGroupRequest =
                 new BranchGroupCreateDto(name, serviceIds, branchIds);
@@ -129,8 +184,6 @@ public class GroupControllerTest extends BaseSetup {
 
     @Test
     public void addServiceToBranchGroup_ValidServiceId_ReturnsOkResponse() {
-        final int serviceId = 2;
-
         given()
                 .pathParam("tenantCode", tenantCode)
                 .pathParam("groupId", branchGroupId)
@@ -160,8 +213,6 @@ public class GroupControllerTest extends BaseSetup {
 
     @Test
     public void addServiceToBranchGroup_InvalidTenantCode_ReturnsBadRequest() {
-        final int serviceId = 2;
-
         given()
                 .pathParam("tenantCode", invalidTenantCode)
                 .pathParam("groupId", branchGroupId)
@@ -175,8 +226,6 @@ public class GroupControllerTest extends BaseSetup {
 
     @Test
     public void addBranchToBranchGroup_ValidBranchId_ReturnsOkResponse() {
-        final int branchId = 1;
-
         given()
                 .pathParam("tenantCode", tenantCode)
                 .pathParam("groupId", branchGroupId)
@@ -196,25 +245,23 @@ public class GroupControllerTest extends BaseSetup {
         given()
                 .pathParam("tenantCode", tenantCode)
                 .pathParam("groupId", branchGroupId)
-                .pathParam("serviceId", branchId)
+                .pathParam("branchId", branchId)
             .when()
                 .header("Authorization", "Bearer " + generateSuperAdminToken())
-                .put("api/v1/groups/{tenantCode}/{groupId}/branches/{serviceId}")
+                .put("api/v1/groups/{tenantCode}/{groupId}/branches/{branchId}")
             .then()
                 .statusCode(400);
     }
 
     @Test
     public void addBranchToBranchGroup_InvalidTenantCode_ReturnsBadRequest() {
-        final int branchId = 1;
-
         given()
                 .pathParam("tenantCode", invalidTenantCode)
                 .pathParam("groupId", branchGroupId)
-                .pathParam("serviceId", branchId)
+                .pathParam("branchId", branchId)
             .when()
                 .header("Authorization", "Bearer " + generateSuperAdminToken())
-                .put("api/v1/groups/{tenantCode}/{groupId}/branches/{serviceId}")
+                .put("api/v1/groups/{tenantCode}/{groupId}/branches/{branchId}")
             .then()
                 .statusCode(400);
     }
@@ -258,8 +305,6 @@ public class GroupControllerTest extends BaseSetup {
 
     @Test
     public void removeServiceFromBranchGroup_ValidServiceId_ReturnsOkResponse() {
-        final int serviceId = 1;
-
         given()
                 .pathParam("tenantCode", tenantCode)
                 .pathParam("branchGroupId", branchGroupId)
@@ -289,8 +334,6 @@ public class GroupControllerTest extends BaseSetup {
 
     @Test
     public void removeServiceFromBranchGroup_InvalidTenantCode_ReturnsBadRequest() {
-        final int serviceId = 1;
-
         given()
                 .pathParam("tenantCode", invalidTenantCode)
                 .pathParam("branchGroupId", branchGroupId)
@@ -304,8 +347,6 @@ public class GroupControllerTest extends BaseSetup {
 
     @Test
     public void removeBranchFromBranchGroup_ValidBranchId_ReturnsOkResponse() {
-        final int branchId = 2;
-
         given()
                 .pathParam("tenantCode", tenantCode)
                 .pathParam("branchGroupId", branchGroupId)
@@ -335,8 +376,6 @@ public class GroupControllerTest extends BaseSetup {
 
     @Test
     public void removeBranchFromBranchGroup_InvalidTenantCode_ReturnsBadRequest() {
-        final int branchId = 1;
-
         given()
                 .pathParam("tenantCode", invalidTenantCode)
                 .pathParam("branchGroupId", branchGroupId)
