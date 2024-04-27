@@ -243,7 +243,7 @@ function printTicket(ticketId: number) {
 
 async function savePdfToFile(pdfByteArray: ArrayBuffer, filename: string) {
   try {
-    const folderPath = FileSystem.documentDirectory + "pdfs/";
+    const folderPath = await FileSystem.documentDirectory + "pdfs/";
     await FileSystem.makeDirectoryAsync(folderPath, { intermediates: true });
     const filePath = folderPath + filename + ".pdf";
     const buffer = Buffer.from(pdfByteArray);
@@ -260,25 +260,60 @@ async function savePdfToFile(pdfByteArray: ArrayBuffer, filename: string) {
 }
 
 async function saveFile(uri: string, filename: string, mimetype: string) {
+  // await AsyncStorage.removeItem("permission");
   if (Platform.OS === "android") {
-    const permissions = await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
+    const permission = await AsyncStorage.getItem("permission");
+    console.log("PERMISSION : " + permission);
+    if (!permission) {
+      // Check if permission is already granted
+      //let x = await Permissions.askAsync(Permissions.MANAGE_EXTERNAL_STORAGE);
+      const permissions =
+        await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
+      console.log(permissions);
+      if (permissions.granted)
+        await AsyncStorage.setItem("permission", permissions.directoryUri);
+      if (permissions.granted) {
+        const base64 = await FileSystem.readAsStringAsync(uri, {
+          encoding: FileSystem.EncodingType.Base64,
+        });
 
-    if (permissions.granted) {
-      const base64 = await FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 });
-
-      await FileSystem.StorageAccessFramework.createFileAsync(permissions.directoryUri, filename, mimetype)
+        await FileSystem.StorageAccessFramework.createFileAsync(
+          permissions.directoryUri,
+          filename,
+          mimetype
+        )
         .then(async (uri) => {
-          await FileSystem.writeAsStringAsync(uri, base64, { encoding: FileSystem.EncodingType.Base64 });
-        })
-        .catch(e => console.log(e));
+          await FileSystem.writeAsStringAsync(uri, base64, {
+            encoding: FileSystem.EncodingType.Base64,
+            });
+          })
+          .catch((e) => console.log(e));
+      } else {
+        Sharing.shareAsync(uri);
+      }
     } else {
-      Sharing.shareAsync(uri);
+      // Permission already granted
+      const base64 = await FileSystem.readAsStringAsync(uri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+
+      if (permission !== null)
+        await FileSystem.StorageAccessFramework.createFileAsync(
+          permission,
+          filename,
+          mimetype
+        )
+          .then(async (uri) => {
+            await FileSystem.writeAsStringAsync(uri, base64, {
+              encoding: FileSystem.EncodingType.Base64,
+            });
+          })
+          .catch((e) => console.log(e));
     }
   } else {
     Sharing.shareAsync(uri);
   }
 }
-
 
 export {
   getCompanyDetails,
