@@ -8,7 +8,7 @@ public class DateUtils {
 
     public static String formatDate(final String patternFormat, final Instant time) {
         final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(patternFormat)
-                .withZone(ZoneId.systemDefault());
+                .withZone(ZoneId.of("Europe/Sarajevo"));
 
         return formatter.format(time);
     }
