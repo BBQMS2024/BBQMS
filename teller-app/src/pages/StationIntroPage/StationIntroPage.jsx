@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { Dropdown } from 'react-bootstrap';
+import { Dropdown, Button } from 'react-bootstrap';
+import { fetchData } from '../../fetching/Fetch.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { SERVER_URL } from '../../constants.js';
-import {fetchData} from "../../fetching/Fetch.js";
 
 const StationIntroPage = () => {
     const [branches, setBranches] = useState([]);
     const [selectedBranch, setSelectedBranch] = useState(null);
+    const [stations, setStations] = useState([]);
     const [selectedStation, setSelectedStation] = useState(null);
 
-    const url = `${SERVER_URL}/api/v1/`;
+    const url = `${ SERVER_URL }/api/v1/`;
 
     useEffect(() => {
-        fetchData(`${url}branches/DFLT`, 'GET')
+        fetchData(`${ url }branches/DFLT`, 'GET')
             .then(response => {
                 if (response.success) {
                     setBranches(response.data);
@@ -25,9 +26,18 @@ const StationIntroPage = () => {
             });
     }, []);
 
-    const handleBranchSelect = (branch) => {
+    const handleBranchSelect = async (branch) => {
         setSelectedBranch(branch);
-        setSelectedStation(null);
+        try {
+            const response = await fetchData(`${url}stations/DFLT/${branch.id}`, 'GET');
+            if (response.success) {
+                setStations(response.data);
+            } else {
+                console.error('Error fetching stations');
+            }
+        } catch (error) {
+            console.error('Error fetching stations:', error);
+        }
     };
 
     const handleStationSelect = (station) => {
@@ -60,7 +70,7 @@ const StationIntroPage = () => {
                                 {selectedStation ? selectedStation.name : 'Select Station'}
                             </Dropdown.Toggle>
                             <Dropdown.Menu style={{ width: '100%' }}>
-                                {selectedBranch.tellerStations.map(station => (
+                                {stations.map(station => (
                                     <Dropdown.Item key={station.id} onClick={() => handleStationSelect(station)}>
                                         {station.name}
                                     </Dropdown.Item>
