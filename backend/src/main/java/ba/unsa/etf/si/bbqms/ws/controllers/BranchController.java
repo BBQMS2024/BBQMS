@@ -3,10 +3,14 @@ package ba.unsa.etf.si.bbqms.ws.controllers;
 import ba.unsa.etf.si.bbqms.admin_service.api.BranchService;
 import ba.unsa.etf.si.bbqms.auth_service.api.AuthService;
 import ba.unsa.etf.si.bbqms.domain.Branch;
+import ba.unsa.etf.si.bbqms.domain.Service;
 import ba.unsa.etf.si.bbqms.domain.TellerStation;
-import ba.unsa.etf.si.bbqms.domain.Ticket;
 import ba.unsa.etf.si.bbqms.domain.User;
+import ba.unsa.etf.si.bbqms.tenant_service.api.TenantService;
+import ba.unsa.etf.si.bbqms.ticket_service.api.TicketService;
 import ba.unsa.etf.si.bbqms.ws.models.*;
+import ba.unsa.etf.si.bbqms.ws.params.branch.QueueStateParams;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -27,10 +32,17 @@ import java.util.stream.Collectors;
 public class BranchController {
     private final AuthService authService;
     private final BranchService branchService;
+    private final TicketService ticketService;
+    private final TenantService tenantService;
 
-    public BranchController(final AuthService authService, final BranchService branchService) {
+    public BranchController(final AuthService authService,
+                            final BranchService branchService,
+                            final TicketService ticketService,
+                            final TenantService tenantService) {
         this.authService = authService;
         this.branchService = branchService;
+        this.ticketService = ticketService;
+        this.tenantService = tenantService;
     }
 
     @PostMapping("/{tenantCode}")
@@ -164,26 +176,35 @@ public class BranchController {
                 .map(serviceDtos -> ResponseEntity.ok().body(serviceDtos))
                 .orElse(ResponseEntity.badRequest().build());
     }
+
     @GetMapping("/{tenantCode}/{branchId}/queue")
-    @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN', 'ROLE_BRANCH_ADMIN')")
-    public ResponseEntity getBranchQueue(@PathVariable final String tenantCode, @PathVariable final String branchId) {
-        return this.branchService.findById(Long.parseLong(branchId))
-                .map(this.branchService::extractPossibleServices)
-                .map(services -> services.stream().map(service -> {
-                    final Set<Ticket> tickets = this.branchService.getTicketsWithService(Long.parseLong(branchId), service.getId());
-                    final Set<TicketDto> ticketDtos = tickets.stream().map(TicketDto::fromEntity).collect(Collectors.toSet());
-                    return new ServiceWithTicketsDto(ServiceDto.fromEntity(service),ticketDtos);
-                }).collect(Collectors.toSet()))
-                .map(serviceWithTicketsDtos -> ResponseEntity.ok().body(serviceWithTicketsDtos))
-                .orElse(ResponseEntity.badRequest().build());
+    public ResponseEntity getBranchQueue(@PathVariable final String tenantCode,
+                                         @PathVariable final String branchId,
+                                         final QueueStateParams queueStateParams,
+                                         final Sort sort) {
+        final Optional<Branch> optionalBranch = this.branchService.findById(Long.parseLong(branchId));
+        if (optionalBranch.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+        final Branch branch = optionalBranch.get();
+
+        final Set<Service> services;
+        if (queueStateParams.serviceId().isPresent()) {
+            services = Set.of(this.tenantService.getServiceById(queueStateParams.serviceId().get()));
+        } else {
+            services = this.branchService.extractPossibleServices(branch);
+        }
+
+        return ResponseEntity.ok().body(
+                this.ticketService.findAllByServicesAndBranch(services, branch, sort).stream()
+                        .map(TicketDto::fromEntity)
+                        .toList()
+        );
     }
 
     public record BranchRequest(String name, List<String> tellerStations) {
     }
 
     public record StationRequest(String name) {
-    }
-
-    public record ServiceWithTicketsDto(ServiceDto service, Set<TicketDto> tickets) {
     }
 }

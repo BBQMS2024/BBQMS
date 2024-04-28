@@ -135,13 +135,8 @@ public class TellerStationController {
     }
 
     @GetMapping("/{tenantCode}/{branchId}")
-    @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN', 'ROLE_BRANCH_ADMIN')")
     public ResponseEntity getBranchStations(@PathVariable final String tenantCode,
                                             @PathVariable final String branchId) {
-        if (!this.authService.canChangeTenant(tenantCode)) {
-            return ResponseEntity.badRequest().build();
-        }
-
         try{
             return ResponseEntity.ok().body(
                     this.stationService.getAllByBranch(Long.parseLong(branchId)).stream()

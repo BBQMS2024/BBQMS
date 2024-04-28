@@ -4,8 +4,10 @@ import ba.unsa.etf.si.bbqms.domain.Branch;
 import ba.unsa.etf.si.bbqms.domain.Service;
 import ba.unsa.etf.si.bbqms.domain.TellerStation;
 import ba.unsa.etf.si.bbqms.domain.Ticket;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -17,5 +19,5 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     Set<Ticket> findAllByServiceIn(final Set<Service> services);
     Set<Ticket> findAllByBranch_Id(final long branchId);
     Set<Ticket> findAllByServiceInAndBranch_Id(final Set<Service> services, final long branchId);
-    Set<Ticket> findAllByService_IdAndBranch_Id(final long serviceId, final long branchId);
+    Set<Ticket> findAllByServiceInAndBranch_Id(final Set<Service> services, final long branchId, Sort sort);
 }

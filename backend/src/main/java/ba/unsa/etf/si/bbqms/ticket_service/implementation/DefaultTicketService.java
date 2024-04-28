@@ -11,8 +11,10 @@ import ba.unsa.etf.si.bbqms.repository.ServiceRepository;
 import ba.unsa.etf.si.bbqms.repository.TicketRepository;
 import ba.unsa.etf.si.bbqms.ticket_service.api.TicketService;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Sort;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Set;
 
 @org.springframework.stereotype.Service
@@ -89,5 +91,10 @@ public class DefaultTicketService implements TicketService {
     @Override
     public void deleteWithIds(final Set<Long> ticketIds) {
         this.ticketRepository.deleteAllById(ticketIds);
+    }
+
+    @Override
+    public List<Ticket> findAllByServicesAndBranch(final Set<Service> services, final Branch branch, final Sort sort) {
+        return this.ticketRepository.findAllByServiceInAndBranch_Id(services, branch.getId(), sort).stream().toList();
     }
 }
