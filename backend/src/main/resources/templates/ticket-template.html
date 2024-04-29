@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title th:text="${ticketTitle}"></title>
+        <style>
+
+            * {
+                font-family: Helvetica, sans-serif;
+            }
+
+            html, body {
+                height: 100%;
+                width: 100%;
+            }
+
+            main {
+                width: 100%;
+                margin-top: 200px;
+                /* I don't like this margin, but it refuses to center correctly when converted to pdf.
+                Turns our pdfs are HEAVILY limited as to what css can be applied to them. */
+            }
+
+            .table-content {
+                text-align: center;
+            }
+
+            .ticket-text {
+                font-size: 16px;
+                font-weight: 100;
+            }
+
+            .ticket-number {
+                font-size: 44px;
+                font-weight: bold;
+                margin-top: 0;
+                margin-bottom: 0;
+            }
+
+            .thank-you-text {
+                margin-top: 50px;
+            }
+
+        </style>
+    </head>
+    <body>
+        <main>
+            <div class="table-content">
+                <p class="ticket-text">Your ticket number is:</p>
+                <p th:text="${ticketNumber}" class="ticket-number">42</p>
+                <p>
+                    <span class="ticket-text">Created at: </span>
+                    <span th:text="${ticketCreatedAt}"></span>
+                </p>
+
+                <p th:if="${anyAvailableStations == true}"
+                   th:text="'You will be served at stations: ' + ${ticketPossibleStations}"
+                   class="ticket-text"></p>
+
+                <div th:if="${anyAvailableStations == false}" class="ticket-text">
+                    <span>
+                        Currently no available stations for desired service.
+                    </span>
+                    <br />
+                    <span>
+                        Please wait a moment until teller returns.
+                    </span>
+                </div>
+
+                <p class="thank-you-text">
+                    Thank you for using our services.
+                </p>
+            </div>
+        </main>
+    </body>
+</html>
+

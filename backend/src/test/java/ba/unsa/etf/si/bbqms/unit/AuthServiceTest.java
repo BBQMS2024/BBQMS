@@ -1,4 +1,4 @@
-package ba.unsa.etf.si.bbqms;
+package ba.unsa.etf.si.bbqms.unit;
 
 import ba.unsa.etf.si.bbqms.auth_service.api.RoleService;
 import ba.unsa.etf.si.bbqms.auth_service.api.UserService;
