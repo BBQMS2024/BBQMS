@@ -106,4 +106,9 @@ public class Ticket {
     public void setTellerStation(final TellerStation tellerStation) {
         this.tellerStation = tellerStation;
     }
+
+    public String getNumberWithIdentifier() {
+        final char serviceLetter = (char) ('A' + service.getId() - 1);
+        return String.format("%s%d", serviceLetter, number);
+    }
 }
