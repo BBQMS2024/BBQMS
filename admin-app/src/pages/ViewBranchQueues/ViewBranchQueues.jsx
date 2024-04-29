@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Table, Dropdown, DropdownButton, Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { TimePicker } from '../../components/TimePicker/TimePicker.jsx'
-import { formatDate } from '../../utils/DateUtils.js'
-import { addSimpleParamToUrl, addSortToUrl } from '../../utils/QueryParamsService.js';
+import { formatDate, getDifference, getToday, todayWithTime } from '../../utils/DateUtils.js';
+import { addSimpleParamToUrl, addSortToUrl, parseSortFromUrl } from '../../utils/QueryParamsService.js';
 import { SortContextProvider } from '../../context/SortContext.jsx';
 import { SortableHeader } from '../../components/Table/SortableHeader.jsx';
 import { fetchData } from '../../fetching/Fetch.js';
@@ -17,8 +17,8 @@ export default function ViewBranchQueues() {
     const [services, setServices] = useState([]);
     const [queue, setQueue] = useState([]);
     const { tenantCode } = useParams();
-    const [ startTime, setStartTime ] = useState({});
-    const [ endTime, setEndTime ] = useState({});
+    const [ startTime, setStartTime ] = useState({ hour: 0, minutes: 0});
+    const [ endTime, setEndTime ] = useState({ hour: 23, minutes: 59 });
 
     const url = `${ SERVER_URL }/api/v1/`;
 
@@ -28,9 +28,11 @@ export default function ViewBranchQueues() {
             .catch(error => console.error('Error fetching branches:', error));
     }, []);
 
-    async function fetchQueuesForBranch(branch, service, sort) {
+    async function fetchQueuesForBranch(branch, service) {
         try {
             let baseUrl = `${ url }branches/${ tenantCode }/${ branch.id }/queue`;
+
+            const sort = parseSortFromUrl(window.location.href);
             if (sort) {
                 baseUrl = addSortToUrl(sort, baseUrl);
             }
@@ -38,6 +40,12 @@ export default function ViewBranchQueues() {
             if (service) {
                 baseUrl = addSimpleParamToUrl('serviceId', service.id, baseUrl);
             }
+
+            const startInstant = todayWithTime(startTime.hour, startTime.minutes);
+            const endInstant = todayWithTime(endTime.hour, endTime.minutes);
+
+            baseUrl = addSimpleParamToUrl('createdAfter', startInstant.toISOString(), baseUrl);
+            baseUrl = addSimpleParamToUrl('createdBefore', endInstant.toISOString(), baseUrl);
 
             const response = await fetchData(baseUrl, 'GET');
 
@@ -77,11 +85,11 @@ export default function ViewBranchQueues() {
     }
 
     function onStartTimeChange(time) {
-        console.log(time);
+        setStartTime(time);
     }
 
     function onEndTimeChange(time) {
-        console.log(time);
+        setEndTime(time);
     }
 
     return (
@@ -111,23 +119,29 @@ export default function ViewBranchQueues() {
             </div>
 
             <div className="d-flex justify-content-end  gap-3 me-5">
-                <TimePicker title="Start time" onChange={ onStartTimeChange } />
-                <TimePicker title="End time" onChange={ onEndTimeChange } />
-                <Button onClick={ () => console.log('filtering') }
+                <TimePicker title="Start time"
+                            onChange={ onStartTimeChange }
+                            defaultHour="0"
+                            defaultMinute="0" />
+                <TimePicker title="End time"
+                            onChange={ onEndTimeChange }
+                            defaultHour="23"
+                            defaultMinute="59" />
+                <Button onClick={ () => fetchQueuesForBranch(selectedBranch, selectedService) }
                         style={{
                             height: 'fit-content',
                             alignSelf: 'end',
-                            backgroundColor: 'var(--light-blue)'
+                            backgroundColor: 'var(--light-blue)',
+                            padding: '6px 20px'
                         }}>
-                    Filter now
+                    Filter
                 </Button>
             </div>
-
 
             <div style={ { marginTop: '20px' } }>
                 <Table striped bordered hover>
                     <thead>
-                        <SortContextProvider onSort={ sort => fetchQueuesForBranch(selectedBranch, selectedService, sort) }>
+                        <SortContextProvider onSort={ () => fetchQueuesForBranch(selectedBranch, selectedService) }>
                             <tr>
                                 <SortableHeader columnName="number">
                                     Ticket Number
@@ -151,8 +165,8 @@ export default function ViewBranchQueues() {
                     <tbody>
                         { queue.map((ticket, index) => {
                             const createdAt = new Date(ticket.createdAt);
-                            const currentTime = new Date();
-                            const elapsedTime = Math.floor((currentTime - createdAt) / (1000 * 60));
+                            const currentTime = getToday();
+                            const elapsedTime = getDifference(currentTime, createdAt, 'minutes');
 
                             return (
                                 <tr key={ `${ index }-${ ticket.id }` }>

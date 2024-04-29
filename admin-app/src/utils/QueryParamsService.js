@@ -38,3 +38,12 @@ export function addArrayToUrl(params, url) {
 export function addSortToUrl(sort, url) {
     return addSimpleParamToUrl('sort', sort, url);
 }
+
+export function parseSortFromUrl(url) {
+    const searchParams = url.split('?')[1];
+
+    if (searchParams) {
+        const sortParam = searchParams.split('&').find(param => param.split('=')[0] === 'sort');
+        return decodeURIComponent(sortParam.split('=')[1]);
+    }
+}

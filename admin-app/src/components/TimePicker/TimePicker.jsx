@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { createClassName } from '../../utils/StringUtils.js'
 
-export function TimePicker({ title, onChange, className }) {
-    const [ hours, setHours ] = useState('');
-    const [ minutes, setMinutes ] = useState('');
+export function TimePicker({ title, onChange, className, defaultHour, defaultMinute }) {
+    const [ hours, setHours ] = useState(defaultHour ?? '');
+    const [ minutes, setMinutes ] = useState(defaultMinute ?? '');
 
     function handleChange(hours, minutes) {
         onChange({
-            hour: hours && hours !== '' ? parseInt(hours) : 0,
-            minutes: minutes && minutes !== '' ? parseInt(minutes) : 0
+            hour: hours && hours !== '' ? parseInt(hours) : defaultHour ?? 0,
+            minutes: minutes && minutes !== '' ? parseInt(minutes) : defaultMinute ?? 0
         });
     }
 
@@ -29,13 +29,13 @@ export function TimePicker({ title, onChange, className }) {
                 <TimePart value={ hours }
                           placeholder="HH"
                           min={ 0 }
-                          max={ 24 }
+                          max={ 23 }
                           onChange={ handleHourChange } />
                 :
                 <TimePart value={ minutes }
                           placeholder="MM"
                           min={ 0 }
-                          max={ 60 }
+                          max={ 59 }
                           onChange={ handleMinuteChange } />
             </div>
         </div>
@@ -52,8 +52,8 @@ function TimePart({ value, placeholder, onChange, min, max }) {
 
             const newValue = parseInt(newValueString);
 
-            if (newValue < max && newValue > min) {
-                onChange(newValue.toString())
+            if (newValue <= max && newValue >= min) {
+                onChange(newValue)
             }
         } else {
             onChange('');

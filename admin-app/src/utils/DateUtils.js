@@ -35,3 +35,25 @@ export function formatTime(date) {
         minute: '2-digit'
     })
 }
+
+export function getToday() {
+    return new Date();
+}
+
+export function todayWithTime(hour, minute) {
+    const today = getToday();
+    today.setHours(hour, minute);
+
+    return today;
+}
+
+export function getDifference(date1, date2, unit = 'minutes') {
+    const UNIT_FACTOR = {
+        seconds: 1,
+        minutes: 60,
+        hours: 60 * 60
+    }
+
+    return Math.floor(Math.abs(date1 - date2) / (1000 * UNIT_FACTOR[unit]));
+}
+

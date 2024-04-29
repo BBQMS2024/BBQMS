@@ -196,7 +196,13 @@ public class BranchController {
         }
 
         return ResponseEntity.ok().body(
-                this.ticketService.findAllByServicesAndBranch(services, branch, sort).stream()
+                this.ticketService.findAllFiltered(
+                        branch,
+                        services,
+                        queueStateParams.createdAfter().orElse(null),
+                        queueStateParams.createdBefore().orElse(null),
+                        sort)
+                        .stream()
                         .map(TicketDto::fromEntity)
                         .toList()
         );
