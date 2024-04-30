@@ -15,8 +15,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 @RestController
@@ -106,6 +108,30 @@ public class TicketController {
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + ticket.getId() + ".pdf")
                     .contentType(MediaType.APPLICATION_PDF)
                     .body(pdfByteArray);
+        } catch (final Exception exception) {
+            logger.error(exception.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping("/tellerStations/{tellerStationId}")
+    public ResponseEntity getTicketsForTellerStation(@PathVariable final String tellerStationId) {
+        try {
+            final Set<TicketResponse> responses = new TreeSet<>(Comparator.comparingLong((TicketResponse tr) -> tr.ticket().number()));
+            final Set<Ticket> tickets = this.ticketService.getTicketsForTellerStation(Long.parseLong(tellerStationId));
+
+            for (final Ticket ticket : tickets) {
+                final Set<TellerStationDto> stations = this.branchService.getStationsWithService(ticket.getBranch(), ticket.getService()).stream()
+                        .map(TellerStationDto::fromEntity)
+                        .collect(Collectors.toSet());
+
+                responses.add(new TicketResponse(
+                        TicketDto.fromEntity(ticket),
+                        stations
+                ));
+            }
+
+            return ResponseEntity.ok().body(responses);
         } catch (final Exception exception) {
             logger.error(exception.getMessage());
             return ResponseEntity.badRequest().build();

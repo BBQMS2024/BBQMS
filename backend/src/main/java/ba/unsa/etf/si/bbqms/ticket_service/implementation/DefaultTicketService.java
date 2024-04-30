@@ -90,4 +90,9 @@ public class DefaultTicketService implements TicketService {
     public void deleteWithIds(final Set<Long> ticketIds) {
         this.ticketRepository.deleteAllById(ticketIds);
     }
+
+    @Override
+    public Set<Ticket> getTicketsForTellerStation(final long tellerStationId) {
+        return ticketRepository.findByTellerStationId(tellerStationId);
+    }
 }
