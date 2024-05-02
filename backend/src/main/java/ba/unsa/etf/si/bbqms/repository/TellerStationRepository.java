@@ -14,4 +14,5 @@ public interface TellerStationRepository extends JpaRepository<TellerStation, Lo
     Set<TellerStation> findAllByServicesContains(final Service service);
     Set<TellerStation> findAllByBranch_IdAndServicesContains(final long branchId, final Set<Service> services);
     Optional<TellerStation> findByDisplayId(final long displayId);
+
 }

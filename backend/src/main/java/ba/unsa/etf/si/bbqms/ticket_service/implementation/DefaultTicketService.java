@@ -92,7 +92,7 @@ public class DefaultTicketService implements TicketService {
     }
 
     @Override
-    public Set<Ticket> getTicketsForTellerStation(final long tellerStationId) {
-        return ticketRepository.findByTellerStationId(tellerStationId);
+    public Set<Ticket> getTicketsForServices(Set<Service> services) {
+        return ticketRepository.findAllByServiceIn(services);
     }
 }
