@@ -1,4 +1,5 @@
 import Home from './pages/Home/Home'
+import ShowQueuesForTellerPage from './pages/ShowQueuesForTellerPage/ShowQueuesForTellerPage'
 import { Route, Routes } from 'react-router-dom'
 
 
@@ -16,7 +17,7 @@ export default function App() {
     return (
         <>
             <Routes>
-                <Route path='/' element={ <Home /> } />
+                <Route path='/' element={ <ShowQueuesForTellerPage /> } />
             </Routes>
         </>
     )
