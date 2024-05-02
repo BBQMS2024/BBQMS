@@ -3,8 +3,11 @@ import { Dropdown, Button } from 'react-bootstrap';
 import { fetchData } from '../../fetching/Fetch.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { SERVER_URL } from '../../constants.js';
+import { useNavigate } from 'react-router-dom';
 
 const StationIntroPage = () => {
+    const navigate = useNavigate();
+
     const [branches, setBranches] = useState([]);
     const [selectedBranch, setSelectedBranch] = useState(null);
     const [stations, setStations] = useState([]);
@@ -42,7 +45,8 @@ const StationIntroPage = () => {
 
     const handleStationSelect = (station) => {
         setSelectedStation(station);
-        console.log('Selected station:', station);
+        localStorage.setItem('tellerId', station.id);
+        navigate('/tellerqueue')
     };
 
     return (

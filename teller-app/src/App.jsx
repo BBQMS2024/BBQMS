@@ -20,8 +20,10 @@ export default function App() {
         <>
             <Header />
             <Routes>
-                <Route path='/' element={ <StationIntroPage /> } />
+                <Route exact path='/' element={ <StationIntroPage /> } />
+                <Route exact path="/tellerqueue" element={ <ShowQueuesForTellerPage />}/>
             </Routes>
+            
         </>
     )
 }

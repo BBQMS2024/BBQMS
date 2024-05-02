@@ -12,12 +12,12 @@ const styles = {
 
 const ShowQueuesForTellerPage = () =>{
     const [tickets, setTickets] = useState([]);
-    const [tellerStationId, setTellerStationId] = useState(0);
+    const [tellerStationId, setTellerStationId] = useState(localStorage.getItem('tellerId'));
     const url = `${SERVER_URL}/api/v1/`;
-
-    useEffect(() =>{
+    
+    useEffect(() => {
         fetchTicketsForTellerStation();
-    }, []);
+    }, [tellerStationId]);
 
     const fetchTicketsForTellerStation = async () => {
         try{
@@ -49,7 +49,7 @@ const ShowQueuesForTellerPage = () =>{
 
     return (
         <div className="text-center mt-5">
-            <h2>Queues</h2>
+            <h1>Queues</h1>
             <Button
                 variant="primary"
                 style={ { backgroundColor: '#548CA8', color: 'white', borderColor: '#548CA8' } }
@@ -71,7 +71,7 @@ const ShowQueuesForTellerPage = () =>{
                             const createdAt = new Date(ticket.createdAt);
                             return (
                                 <tr key={index}>
-                                    <td style={ticket.station?.id === tellerStationId ? styles.stationRow : {}}>{ticket.number}</td>
+                                    <td style={ticket.station?.id == tellerStationId ? styles.stationRow : {}}>{ticket.number}</td>
                                     <td>{ticket.service.name}</td>
                                     <td>{createdAt.toLocaleString()}</td>
                                 </tr>

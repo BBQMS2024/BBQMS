@@ -1,1 +1,1 @@
-export const SERVER_URL = 'https://bbqms-backend-v1.onrender.com';
+export const SERVER_URL = 'http://localhost:8080';
