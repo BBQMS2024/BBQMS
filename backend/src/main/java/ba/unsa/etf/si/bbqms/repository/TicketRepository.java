@@ -10,7 +10,7 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
-    Optional<Ticket> findTopByServiceInAndBranchOrderByNumberDesc(final Set<Service> service, final Branch branch);
+    Set<Ticket> findAllByServiceInAndBranch(final Set<Service> service, final Branch branch);
     Optional<Ticket> findTopByServiceInAndBranchAndTellerStationIsNullOrderByCreatedAtAsc(final Set<Service> service, final Branch branch);
     void deleteByTellerStation(final TellerStation tellerStation);
     Set<Ticket> findAllByDeviceToken(final String deviceToken);

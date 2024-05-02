@@ -8,7 +8,7 @@ public record TicketDto(long id, String number, Instant createdAt, ServiceDto se
     public static TicketDto fromEntity(final Ticket ticket) {
         return new TicketDto(
                 ticket.getId(),
-                ticket.getNumberWithIdentifier(),
+                ticket.getNumber(),
                 ticket.getCreatedAt(),
                 ServiceDto.fromEntity(ticket.getService()),
                 BranchDto.fromEntity(ticket.getBranch()),
