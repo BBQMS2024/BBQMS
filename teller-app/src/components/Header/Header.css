@@ -1,0 +1,18 @@
+header.main-header {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin: 0 0 3% -2%;
+    background-color: #d3e2f8;
+    width: 101vw;
+}
+
+.header-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    margin-top: 7px;
+    margin-right: auto;
+    margin-left: 2%;
+}
