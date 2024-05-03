@@ -1,0 +1,6 @@
+BEGIN;
+
+ALTER TABLE ticket
+MODIFY number VARCHAR(255);
+
+COMMIT;
