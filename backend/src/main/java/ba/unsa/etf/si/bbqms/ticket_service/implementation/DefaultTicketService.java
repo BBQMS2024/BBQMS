@@ -113,4 +113,9 @@ public class DefaultTicketService implements TicketService {
     private String extractNumericPart(final String ticketNumber) {
         return ticketNumber.replaceAll("[^0-9]", "");
     }
+
+    @Override
+    public Set<Ticket> getTicketsForServices(Set<Service> services) {
+        return ticketRepository.findAllByServiceIn(services);
+    }
 }

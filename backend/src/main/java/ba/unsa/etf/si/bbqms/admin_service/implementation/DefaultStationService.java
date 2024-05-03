@@ -128,4 +128,14 @@ public class DefaultStationService implements StationService {
     public Optional<TellerStation> findById(final long serviceId) {
         return this.tellerStationRepository.findById(serviceId);
     }
+
+    @Override
+    public Set<Service> getServicesForTellerStation(long stationId) {
+        TellerStation tellerStation = tellerStationRepository.findById(stationId).orElse(null);
+        if (tellerStation != null) {
+            return tellerStation.getServices();
+        } else {
+            throw new RuntimeException("Teller station not found");
+        }
+    }
 }
