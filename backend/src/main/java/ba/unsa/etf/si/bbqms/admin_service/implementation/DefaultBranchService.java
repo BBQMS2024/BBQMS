@@ -15,7 +15,10 @@ import ba.unsa.etf.si.bbqms.repository.TicketRepository;
 import jakarta.persistence.EntityNotFoundException;
 
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Service
@@ -148,7 +151,7 @@ public class DefaultBranchService implements BranchService {
     @Override
     public Set<Service> extractPossibleServices(final Branch branch) {
         final Set<BranchGroup> groups = branch.getBranchGroups();
-        final Set<Service> possibleServices = new TreeSet<>(Comparator.comparing(Service::getId));
+        final Set<Service> possibleServices = new HashSet<>();
         for (final BranchGroup group : groups) {
             possibleServices.addAll(group.getServices());
         }

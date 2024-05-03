@@ -17,7 +17,7 @@ public class Ticket {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    private String number;
+    private long number;
     private Instant createdAt;
     private String deviceToken;
     @ManyToOne
@@ -38,7 +38,7 @@ public class Ticket {
     public Ticket() {
     }
 
-    public Ticket(final String number, final Instant createdAt, final String deviceToken, final Service service, final Branch branch, final TellerStation tellerStation) {
+    public Ticket(final long number, final Instant createdAt, final String deviceToken, final Service service, final Branch branch, final TellerStation tellerStation) {
         this.number = number;
         this.createdAt = createdAt;
         this.deviceToken = deviceToken;
@@ -47,7 +47,7 @@ public class Ticket {
         this.tellerStation = tellerStation;
     }
 
-    public Ticket(final String number, final Instant createdAt, final String deviceToken, final Service service, final Branch branch) {
+    public Ticket(final long number, final Instant createdAt, final String deviceToken, final Service service, final Branch branch) {
         this(number, createdAt, deviceToken, service, branch, null);
     }
 
@@ -59,11 +59,11 @@ public class Ticket {
         this.id = id;
     }
 
-    public String getNumber() {
+    public long getNumber() {
         return number;
     }
 
-    public void setNumber(final String number) {
+    public void setNumber(final long number) {
         this.number = number;
     }
 
