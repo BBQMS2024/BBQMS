@@ -161,9 +161,4 @@ public class DefaultBranchService implements BranchService {
                 .filter(station -> station.getServices().contains(service))
                 .collect(Collectors.toSet());
     }
-
-    @Override
-    public Set<Ticket> getTicketsWithService(final long branchId, final long serviceId) {
-        return this.ticketRepository.findAllByService_IdAndBranch_Id(serviceId,branchId);
-    }
 }
