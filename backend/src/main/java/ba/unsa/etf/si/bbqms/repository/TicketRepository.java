@@ -18,4 +18,5 @@ public interface TicketRepository extends JpaRepository<Ticket, Long>, JpaSpecif
     Set<Ticket> findAllByServiceIn(final Set<Service> services);
     Set<Ticket> findAllByBranch_Id(final long branchId);
     Set<Ticket> findAllByServiceInAndBranch_Id(final Set<Service> services, final long branchId);
+    Set<Ticket> findAllByServiceInAndBranchAndTellerStationIsNull(final Set<Service> service, final Branch branch);
 }

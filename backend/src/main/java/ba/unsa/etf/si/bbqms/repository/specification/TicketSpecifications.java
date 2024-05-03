@@ -13,7 +13,7 @@ import java.util.Set;
 
 public class TicketSpecifications {
     public static Specification<Ticket> fieldsSpecification(final Long id,
-                                                            final Long number,
+                                                            final String number,
                                                             final Set<Service> services,
                                                             final Branch branch) {
         return (root, query, criteriaBuilder) -> {

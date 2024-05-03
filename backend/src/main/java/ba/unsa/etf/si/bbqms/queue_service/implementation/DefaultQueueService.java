@@ -6,6 +6,7 @@ import ba.unsa.etf.si.bbqms.notification_service.api.Notification;
 import ba.unsa.etf.si.bbqms.notification_service.api.NotificationService;
 import ba.unsa.etf.si.bbqms.queue_service.api.QueueService;
 import ba.unsa.etf.si.bbqms.repository.TicketRepository;
+import ba.unsa.etf.si.bbqms.ticket_service.api.TicketService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +17,8 @@ public class DefaultQueueService implements QueueService {
     private final TicketRepository ticketRepository;
     private final NotificationService notificationService;
 
-    public DefaultQueueService(final TicketRepository ticketRepository, final NotificationService notificationService) {
+    public DefaultQueueService(final TicketRepository ticketRepository,
+                               final NotificationService notificationService) {
         this.ticketRepository = ticketRepository;
         this.notificationService = notificationService;
     }
@@ -37,7 +39,8 @@ public class DefaultQueueService implements QueueService {
         // First delete the ticket currently on teller station
         this.ticketRepository.deleteByTellerStation(tellerStation);
 
-        final Optional<Ticket> optionalNextTicket = this.findNextTicketForStation(tellerStation);
+        final Optional<Ticket> optionalNextTicket =
+                this.ticketRepository.findTopByServiceInAndBranchAndTellerStationIsNullOrderByCreatedAtAsc(tellerStation.getServices(), tellerStation.getBranch());
         if (optionalNextTicket.isEmpty()) {
             // There is no next ticket. Queue is empty.
             return Optional.empty();

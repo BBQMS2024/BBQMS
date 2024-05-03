@@ -119,7 +119,13 @@ public class DefaultTicketService implements TicketService {
         );
     }
 
-    private long getNextTicketNumber(final Set<Service> possibleServices, final Branch branch) {
+    @Override
+    public void deleteWithIds(final Set<Long> ticketIds) {
+        throw new RuntimeException("");
+    }
+
+    @Override
+    public long getNextTicketNumber(final Set<Service> possibleServices, final Branch branch) {
         final Set<String> ticketNumbers = ticketRepository.findAllByServiceInAndBranch(possibleServices, branch)
                 .stream()
                 .map(Ticket::getNumber)
@@ -136,7 +142,7 @@ public class DefaultTicketService implements TicketService {
     }
 
     @Override
-    public Set<Ticket> getTicketsForServices(Set<Service> services) {
-        return ticketRepository.findAllByServiceIn(services);
+    public Set<Ticket> getTicketsForServicesAndBranch(Set<Service> services, final Branch branch) {
+        return ticketRepository.findAllByServiceInAndBranch(services, branch);
     }
 }

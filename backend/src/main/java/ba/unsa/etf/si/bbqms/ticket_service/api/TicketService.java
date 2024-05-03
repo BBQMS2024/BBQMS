@@ -17,5 +17,6 @@ public interface TicketService {
     void deleteAllTickets();
     List<Ticket> findAllFiltered(final Branch branch, final Set<Service> wantedServices, final Instant after, final Instant before, final Sort sort);
     void deleteWithIds(final Set<Long> ticketIds);
-    Set<Ticket> getTicketsForServices(Set<Service> services);
+    Set<Ticket> getTicketsForServicesAndBranch(Set<Service> services, final Branch branch);
+    long getNextTicketNumber(final Set<Service> possibleServices, final Branch branch);
 }
