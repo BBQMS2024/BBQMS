@@ -155,11 +155,13 @@ public class TellerStationController {
     }
 
     @GetMapping("/{stationId}/tickets")
-    public ResponseEntity getTicketsForTellerStation(@PathVariable long stationId) {
+    public ResponseEntity getTicketsForTellerStation(@PathVariable final long stationId) {
         try {
-            Set<Service> services = stationService.getServicesForTellerStation(stationId);
-            Set<Ticket> tickets = ticketService.getTicketsForServices(services);
+            final Set<Service> services = stationService.getServicesForTellerStation(stationId);
+            final long branchId = stationService.getBranchIdForTellerStation(stationId);
+            Set<Ticket> tickets = ticketService.getTicketsForServicesAtBranch(services, branchId);
             List<TicketDto> ticketDtos = tickets.stream()
+                    .filter(ticket -> ticket.getTellerStation() == null || ticket.getTellerStation().getId() == stationId)
                     .map(TicketDto::fromEntity)
                     .collect(Collectors.toList());
             return ResponseEntity.ok().body(ticketDtos);

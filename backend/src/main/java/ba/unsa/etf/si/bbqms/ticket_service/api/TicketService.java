@@ -12,5 +12,5 @@ public interface TicketService {
     Ticket getTicketById(final long id);
     void deleteAllTickets();
     void deleteWithIds(final Set<Long> ticketIds);
-    Set<Ticket> getTicketsForServices(Set<Service> services);
+    Set<Ticket> getTicketsForServicesAtBranch(final Set<Service> services, final long branchId);
 }

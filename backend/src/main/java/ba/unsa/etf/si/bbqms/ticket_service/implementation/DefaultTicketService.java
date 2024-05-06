@@ -92,7 +92,7 @@ public class DefaultTicketService implements TicketService {
     }
 
     @Override
-    public Set<Ticket> getTicketsForServices(Set<Service> services) {
-        return ticketRepository.findAllByServiceIn(services);
+    public Set<Ticket> getTicketsForServicesAtBranch(final Set<Service> services, final long branchId) {
+        return this.ticketRepository.findAllByServiceInAndBranch_Id(services, branchId);
     }
 }

@@ -18,4 +18,5 @@ public interface StationService {
     Set<TellerStation> getAllOfferingService(final Service service);
     Optional<TellerStation> findById(final long serviceId);
     Set<Service> getServicesForTellerStation(final long stationId);
+    long getBranchIdForTellerStation(final long stationId);
 }

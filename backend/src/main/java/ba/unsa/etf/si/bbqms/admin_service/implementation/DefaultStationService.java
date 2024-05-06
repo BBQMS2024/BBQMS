@@ -131,11 +131,15 @@ public class DefaultStationService implements StationService {
 
     @Override
     public Set<Service> getServicesForTellerStation(long stationId) {
-        TellerStation tellerStation = tellerStationRepository.findById(stationId).orElse(null);
-        if (tellerStation != null) {
-            return tellerStation.getServices();
-        } else {
-            throw new RuntimeException("Teller station not found");
-        }
+        return this.tellerStationRepository.findById(stationId)
+                .map(TellerStation::getServices)
+                .orElseThrow(EntityNotFoundException::new);
+    }
+
+    @Override
+    public long getBranchIdForTellerStation(final long stationId) {
+        return this.tellerStationRepository.findById(stationId)
+                .map(tellerStation -> tellerStation.getBranch().getId())
+                .orElseThrow(EntityNotFoundException::new);
     }
 }
