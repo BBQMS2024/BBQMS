@@ -53,9 +53,8 @@ public class TellerController {
                     .orElseThrow(() -> new EntityNotFoundException("No station with id: " + stationId));
 
             final Optional<Ticket> currentTicket = this.queueService.findCurrentTicketForStation(station);
-            if (currentTicket .isEmpty()) {
-                return ResponseEntity.ok().body(
-                        new SimpleMessageDto("No ticket assigned to this station.")
+            if (currentTicket.isEmpty()) {
+                return ResponseEntity.ok().body(new SimpleMessageDto("No ticket assigned to this station.")
                 );
             }
             return ResponseEntity.ok().body(TicketDto.fromEntity(currentTicket.get()));
