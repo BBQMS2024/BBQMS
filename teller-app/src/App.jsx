@@ -1,5 +1,8 @@
 import Home from './pages/Home/Home'
+import ShowQueuesForTellerPage from './pages/ShowQueuesForTellerPage/ShowQueuesForTellerPage'
 import { Route, Routes } from 'react-router-dom'
+import StationIntroPage from "./pages/StationIntroPage/StationIntroPage.jsx";
+import Header from './components/Header/Header.jsx';
 
 
 /* 
@@ -15,9 +18,12 @@ import { Route, Routes } from 'react-router-dom'
 export default function App() {
     return (
         <>
+            <Header />
             <Routes>
-                <Route path='/' element={ <Home /> } />
+                <Route exact path='/' element={ <StationIntroPage /> } />
+                <Route exact path="/tellerqueue" element={ <ShowQueuesForTellerPage />}/>
             </Routes>
+            
         </>
     )
 }
