@@ -4,9 +4,12 @@ import ba.unsa.etf.si.bbqms.admin_service.api.StationService;
 import ba.unsa.etf.si.bbqms.auth_service.api.AuthService;
 import ba.unsa.etf.si.bbqms.domain.Service;
 import ba.unsa.etf.si.bbqms.domain.TellerStation;
+import ba.unsa.etf.si.bbqms.domain.Ticket;
+import ba.unsa.etf.si.bbqms.ticket_service.api.TicketService;
 import ba.unsa.etf.si.bbqms.ws.models.DisplayDto;
 import ba.unsa.etf.si.bbqms.ws.models.ErrorResponseDto;
 import ba.unsa.etf.si.bbqms.ws.models.ServiceResponseDto;
+import ba.unsa.etf.si.bbqms.ws.models.TicketDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -20,11 +23,14 @@ import java.util.stream.Collectors;
 public class TellerStationController {
     private final StationService stationService;
     private final AuthService authService;
+    private final TicketService ticketService;
 
     public TellerStationController(final StationService stationService,
-                                   final AuthService authService) {
+                                   final AuthService authService,
+                                   final TicketService ticketService) {
         this.stationService = stationService;
         this.authService = authService;
+        this.ticketService = ticketService;
     }
 
     @GetMapping("/{tenantCode}")
@@ -135,13 +141,8 @@ public class TellerStationController {
     }
 
     @GetMapping("/{tenantCode}/{branchId}")
-    @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN', 'ROLE_BRANCH_ADMIN')")
     public ResponseEntity getBranchStations(@PathVariable final String tenantCode,
                                             @PathVariable final String branchId) {
-        if (!this.authService.canChangeTenant(tenantCode)) {
-            return ResponseEntity.badRequest().build();
-        }
-
         try{
             return ResponseEntity.ok().body(
                     this.stationService.getAllByBranch(Long.parseLong(branchId)).stream()
@@ -149,6 +150,22 @@ public class TellerStationController {
                             .collect(Collectors.toList())
             );
         } catch (final Exception exception) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping("/{stationId}/tickets")
+    public ResponseEntity getTicketsForTellerStation(@PathVariable final long stationId) {
+        try {
+            final Set<Service> services = stationService.getServicesForTellerStation(stationId);
+            final long branchId = stationService.getBranchIdForTellerStation(stationId);
+            Set<Ticket> tickets = ticketService.getTicketsForServicesAtBranch(services, branchId);
+            List<TicketDto> ticketDtos = tickets.stream()
+                    .filter(ticket -> ticket.getTellerStation() == null || ticket.getTellerStation().getId() == stationId)
+                    .map(TicketDto::fromEntity)
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok().body(ticketDtos);
+        } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
     }

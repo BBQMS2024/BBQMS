@@ -128,4 +128,18 @@ public class DefaultStationService implements StationService {
     public Optional<TellerStation> findById(final long serviceId) {
         return this.tellerStationRepository.findById(serviceId);
     }
+
+    @Override
+    public Set<Service> getServicesForTellerStation(long stationId) {
+        return this.tellerStationRepository.findById(stationId)
+                .map(TellerStation::getServices)
+                .orElseThrow(EntityNotFoundException::new);
+    }
+
+    @Override
+    public long getBranchIdForTellerStation(final long stationId) {
+        return this.tellerStationRepository.findById(stationId)
+                .map(tellerStation -> tellerStation.getBranch().getId())
+                .orElseThrow(EntityNotFoundException::new);
+    }
 }
