@@ -1,8 +1,12 @@
 package ba.unsa.etf.si.bbqms.ticket_service.api;
 
+import ba.unsa.etf.si.bbqms.domain.Branch;
 import ba.unsa.etf.si.bbqms.domain.Service;
 import ba.unsa.etf.si.bbqms.domain.Ticket;
+import org.springframework.data.domain.Sort;
 
+import java.time.Instant;
+import java.util.List;
 import java.util.Set;
 
 public interface TicketService {
@@ -11,6 +15,6 @@ public interface TicketService {
     void cancelTicket(final long ticketId);
     Ticket getTicketById(final long id);
     void deleteAllTickets();
-    void deleteWithIds(final Set<Long> ticketIds);
     Set<Ticket> getTicketsForServicesAtBranch(final Set<Service> services, final long branchId);
+    List<Ticket> findAllFiltered(final Branch branch, final Set<Service> wantedServices, final Instant after, final Instant before, final Sort sort);
 }
