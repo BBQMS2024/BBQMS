@@ -18,6 +18,7 @@ import org.springframework.data.jpa.domain.Specification;
 import java.time.Instant;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Service
 public class DefaultTicketService implements TicketService {
@@ -47,16 +48,22 @@ public class DefaultTicketService implements TicketService {
                 .orElseThrow(() -> new EntityNotFoundException("No branch with id: " + branchId));
 
         final Set<Service> possibleServices = this.branchService.extractPossibleServices(branch);
-
         if (!possibleServices.contains(service)) {
             throw new IllegalArgumentException("Branch with id: " + branchId + " does not offer service with id: " + serviceId);
         }
 
-        final long currentHighestNumber = this.ticketRepository.findTopByServiceInAndBranchOrderByNumberDesc(possibleServices, branch)
-                .map(Ticket::getNumber)
-                .orElse(0L);
+        int serviceIndex = 0;
+        for (Service possibleService : possibleServices) {
+            if (possibleService.getId() == serviceId) {
+                break;
+            }
+            serviceIndex++;
+        }
 
-        final Ticket newTicket = new Ticket(currentHighestNumber + 1, Instant.now(), deviceToken, service, branch);
+        final char serviceLetter = (char) ('A' + serviceIndex);
+        final String formattedNumber =  serviceLetter + String.valueOf(getNextTicketNumber(possibleServices, branch));
+        final Ticket newTicket = new Ticket(formattedNumber, Instant.now(), deviceToken, service, branch);
+
         return this.ticketRepository.save(newTicket);
     }
 
@@ -110,5 +117,26 @@ public class DefaultTicketService implements TicketService {
                         .and(TicketSpecifications.createdBefore(before)),
                 sort
         );
+    }
+
+    private long getNextTicketNumber(final Set<Service> possibleServices, final Branch branch) {
+        final Set<String> ticketNumbers = ticketRepository.findAllByServiceInAndBranch(possibleServices, branch)
+                .stream()
+                .map(Ticket::getNumber)
+                .map(this::extractNumericPart)
+                .collect(Collectors.toSet());
+
+        final long maxNumber = ticketNumbers.isEmpty() ? 0 : ticketNumbers.stream().mapToLong(Long::parseLong).max().getAsLong();
+
+        return maxNumber + 1;
+    }
+
+    private String extractNumericPart(final String ticketNumber) {
+        return ticketNumber.replaceAll("[^0-9]", "");
+    }
+
+    @Override
+    public Set<Ticket> getTicketsForServicesAtBranch(final Set<Service> services, final long branchId) {
+        return this.ticketRepository.findAllByServiceInAndBranch_Id(services, branchId);
     }
 }

@@ -10,10 +10,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
@@ -43,6 +40,24 @@ public class TellerController {
             }
 
             return ResponseEntity.ok().body(TicketDto.fromEntity(nextTicket.get()));
+        } catch (final Exception exception) {
+            logger.error(exception.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping("/current-ticket/{stationId}")
+    public ResponseEntity returnCurrentTicket(@PathVariable final String stationId) {
+        try {
+            final TellerStation station = this.stationService.findById(Long.parseLong(stationId))
+                    .orElseThrow(() -> new EntityNotFoundException("No station with id: " + stationId));
+
+            final Optional<Ticket> currentTicket = this.queueService.findCurrentTicketForStation(station);
+            if (currentTicket.isEmpty()) {
+                return ResponseEntity.ok().body(new SimpleMessageDto("No ticket assigned to this station.")
+                );
+            }
+            return ResponseEntity.ok().body(TicketDto.fromEntity(currentTicket.get()));
         } catch (final Exception exception) {
             logger.error(exception.getMessage());
             return ResponseEntity.badRequest().build();

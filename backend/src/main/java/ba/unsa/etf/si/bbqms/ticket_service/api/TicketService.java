@@ -15,5 +15,6 @@ public interface TicketService {
     void cancelTicket(final long ticketId);
     Ticket getTicketById(final long id);
     void deleteAllTickets();
+    Set<Ticket> getTicketsForServicesAtBranch(final Set<Service> services, final long branchId);
     List<Ticket> findAllFiltered(final Branch branch, final Set<Service> wantedServices, final Instant after, final Instant before, final Sort sort);
 }
