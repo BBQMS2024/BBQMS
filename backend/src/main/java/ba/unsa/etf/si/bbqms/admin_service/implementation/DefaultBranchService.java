@@ -2,12 +2,7 @@ package ba.unsa.etf.si.bbqms.admin_service.implementation;
 
 import ba.unsa.etf.si.bbqms.admin_service.api.BranchService;
 import ba.unsa.etf.si.bbqms.admin_service.api.GroupService;
-import ba.unsa.etf.si.bbqms.domain.Branch;
-import ba.unsa.etf.si.bbqms.domain.BranchGroup;
-import ba.unsa.etf.si.bbqms.domain.Service;
-import ba.unsa.etf.si.bbqms.domain.TellerStation;
-import ba.unsa.etf.si.bbqms.domain.Tenant;
-import ba.unsa.etf.si.bbqms.domain.Ticket;
+import ba.unsa.etf.si.bbqms.domain.*;
 import ba.unsa.etf.si.bbqms.repository.BranchRepository;
 import ba.unsa.etf.si.bbqms.repository.TellerStationRepository;
 import ba.unsa.etf.si.bbqms.repository.TenantRepository;
@@ -165,5 +160,18 @@ public class DefaultBranchService implements BranchService {
     @Override
     public Set<Ticket> getTicketsWithService(final long branchId, final long serviceId) {
         return this.ticketRepository.findAllByService_IdAndBranch_Id(serviceId,branchId);
+    }
+
+    @Override
+    public boolean isInSpecifiedTenant(final long branchId, final String tenantCode) {
+        final Optional<Branch> branch = this.branchRepository.findById(branchId);
+        return branch.get().getTenant().getCode().equals(tenantCode);
+    }
+
+    @Override
+    public boolean isInSpecifiedTenant(final long branchId, final long stationId, final String tenantCode) {
+        final Optional<Branch> branch = this.branchRepository.findById(branchId);
+        final Optional<TellerStation> station = this.tellerStationRepository.findById(stationId);
+        return branch.get().getTenant().getCode().equals(tenantCode) && station.get().getBranch().equals(branch.get());
     }
 }

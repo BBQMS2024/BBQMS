@@ -21,4 +21,6 @@ public interface BranchService {
     Set<Service> extractPossibleServices(final Branch branch);
     Set<TellerStation> getStationsWithService(final Branch branch, final Service service);
     Set<Ticket> getTicketsWithService(final long branchId, final long serviceId);
+    boolean isInSpecifiedTenant(final long branchId, final String tenantCode);
+    boolean isInSpecifiedTenant(final long branchId, final long stationId, final String tenantCode);
 }

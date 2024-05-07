@@ -77,6 +77,10 @@ public class BranchController {
             return ResponseEntity.badRequest().build();
         }
 
+        if (!this.branchService.isInSpecifiedTenant(Long.parseLong(branchId), tenantCode)) {
+            return ResponseEntity.badRequest().build();
+        }
+
         try {
             final Branch updated = this.branchService.updateBranch(
                     Long.parseLong(branchId),
@@ -98,6 +102,10 @@ public class BranchController {
             return ResponseEntity.badRequest().build();
         }
 
+        if (!this.branchService.isInSpecifiedTenant(Long.parseLong(branchId), tenantCode)) {
+            return ResponseEntity.badRequest().build();
+        }
+
         this.branchService.removeBranch(Long.parseLong(branchId));
 
         return ResponseEntity.ok().body(new SimpleMessageDto("Deleted branch with id: " + branchId));
@@ -109,6 +117,10 @@ public class BranchController {
                                      @PathVariable final String tenantCode,
                                      @PathVariable final String branchId) {
         if (!this.authService.canChangeTenant(tenantCode)) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        if (!this.branchService.isInSpecifiedTenant(Long.parseLong(branchId), tenantCode)) {
             return ResponseEntity.badRequest().build();
         }
 
@@ -130,6 +142,10 @@ public class BranchController {
             return ResponseEntity.badRequest().build();
         }
 
+        if (!this.branchService.isInSpecifiedTenant(Long.parseLong(branchId), Long.parseLong(stationId), tenantCode)) {
+            return ResponseEntity.badRequest().build();
+        }
+
         try {
             final TellerStation updated = this.branchService.updateStation(Long.parseLong(stationId), request.name());
             return ResponseEntity.ok().body(TellerStationDto.fromEntity(updated));
@@ -147,6 +163,10 @@ public class BranchController {
             return ResponseEntity.badRequest().build();
         }
 
+        if (!this.branchService.isInSpecifiedTenant(Long.parseLong(branchId), Long.parseLong(stationId), tenantCode)) {
+            return ResponseEntity.badRequest().build();
+        }
+
         try {
             this.branchService.removeStation(Long.parseLong(stationId));
             return ResponseEntity.ok().body(new SimpleMessageDto("Removed station."));
@@ -158,6 +178,10 @@ public class BranchController {
     @GetMapping("/{tenantCode}/{branchId}/services")
     public ResponseEntity getBranchServices(@PathVariable final String branchId,
                                             @PathVariable final String tenantCode) {
+        if (!this.branchService.isInSpecifiedTenant(Long.parseLong(branchId), tenantCode)) {
+            return ResponseEntity.badRequest().build();
+        }
+
         return this.branchService.findById(Long.parseLong(branchId))
                 .map(this.branchService::extractPossibleServices)
                 .map(services -> services.stream().map(ServiceDto::fromEntity).collect(Collectors.toSet()))
@@ -167,6 +191,14 @@ public class BranchController {
     @GetMapping("/{tenantCode}/{branchId}/queue")
     @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN', 'ROLE_BRANCH_ADMIN')")
     public ResponseEntity getBranchQueue(@PathVariable final String tenantCode, @PathVariable final String branchId) {
+        if (!this.authService.canChangeTenant(tenantCode)) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        if (!this.branchService.isInSpecifiedTenant(Long.parseLong(branchId), tenantCode)) {
+            return ResponseEntity.badRequest().build();
+        }
+
         return this.branchService.findById(Long.parseLong(branchId))
                 .map(this.branchService::extractPossibleServices)
                 .map(services -> services.stream().map(service -> {
