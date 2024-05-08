@@ -58,7 +58,7 @@ public class DefaultQueueService implements QueueService {
     }
 
     @Override
-    public Optional<Ticket> findCurrentTicketForStation(TellerStation tellerStation) {
+    public Optional<Ticket> findCurrentTicketForStation(final TellerStation tellerStation) {
         return this.ticketRepository.findByTellerStation(tellerStation);
     }
 }

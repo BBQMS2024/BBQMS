@@ -9,10 +9,14 @@ import ba.unsa.etf.si.bbqms.queue_service.api.QueueService;
 import ba.unsa.etf.si.bbqms.repository.BranchRepository;
 import ba.unsa.etf.si.bbqms.repository.ServiceRepository;
 import ba.unsa.etf.si.bbqms.repository.TicketRepository;
+import ba.unsa.etf.si.bbqms.repository.specification.TicketSpecifications;
 import ba.unsa.etf.si.bbqms.ticket_service.api.TicketService;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -94,8 +98,25 @@ public class DefaultTicketService implements TicketService {
     }
 
     @Override
-    public void deleteWithIds(final Set<Long> ticketIds) {
-        this.ticketRepository.deleteAllById(ticketIds);
+    public List<Ticket> findAllFiltered(final Branch branch,
+                                        final Set<Service> wantedServices,
+                                        final Instant after,
+                                        final Instant before,
+                                        final Sort sort) {
+        return this.ticketRepository.findAll(
+                Specification
+                        .where(
+                                TicketSpecifications.fieldsSpecification(
+                                    null,
+                                    null,
+                                    wantedServices,
+                                    branch
+                            )
+                        )
+                        .and(TicketSpecifications.createdAfter(after))
+                        .and(TicketSpecifications.createdBefore(before)),
+                sort
+        );
     }
 
     private long getNextTicketNumber(final Set<Service> possibleServices, final Branch branch) {
@@ -112,5 +133,10 @@ public class DefaultTicketService implements TicketService {
 
     private String extractNumericPart(final String ticketNumber) {
         return ticketNumber.replaceAll("[^0-9]", "");
+    }
+
+    @Override
+    public Set<Ticket> getTicketsForServicesAtBranch(final Set<Service> services, final long branchId) {
+        return this.ticketRepository.findAllByServiceInAndBranch_Id(services, branchId);
     }
 }

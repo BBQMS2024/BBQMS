@@ -9,5 +9,5 @@ public interface QueueService {
     Optional<Ticket> findNextTicketForStation(final TellerStation tellerStation);
     void removeActiveTicketFromQueue(final TellerStation tellerStation);
     Optional<Ticket> advanceQueueState(final TellerStation tellerStation);
-    Optional<Ticket> findCurrentTicketForStation(TellerStation tellerStation);
+    Optional<Ticket> findCurrentTicketForStation(final TellerStation tellerStation);
 }
