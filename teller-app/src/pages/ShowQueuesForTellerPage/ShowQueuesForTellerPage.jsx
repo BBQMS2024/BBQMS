@@ -3,6 +3,7 @@ import { Button, Table } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { fetchData } from '../../fetching/Fetch.js'
 import { SERVER_URL } from '../../constants.js';
+import {Link} from "react-router-dom";
 
 const styles = {
     stationRow: {
@@ -57,6 +58,14 @@ const ShowQueuesForTellerPage = () =>{
             >
                 Advance Queue
             </Button>
+            <Link to={`/display/${tellerStationId}`}>
+                <Button
+                    variant="secondary"
+                    style={{ marginLeft: '10px' }}
+                >
+                    Current Ticket
+                </Button>
+            </Link>
             <div style={ { marginTop: '20px' } }>
                 <Table striped bordered hover>
                     <thead>
