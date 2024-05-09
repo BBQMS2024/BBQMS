@@ -6,7 +6,6 @@ import Header from './components/Header/Header.jsx';
 import CurrentTicketPage from './pages/CurrentTicketPage/CurrentTicketPage.jsx';
 
 export default function App() {
-    const stationId = localStorage.getItem('tellerId');
 
     return (
         <>
@@ -14,7 +13,7 @@ export default function App() {
             <Routes>
                 <Route exact path='/' element={<StationIntroPage />} />
                 <Route exact path="/tellerqueue" element={<ShowQueuesForTellerPage />} />
-                <Route path={`/display/${stationId}`} element={<CurrentTicketPage stationId={stationId} />} />
+                <Route path="/display/:stationId" element={<CurrentTicketPage/>} />
             </Routes>
         </>
     );
