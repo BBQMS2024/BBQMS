@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { useInterval } from '../../hooks/hooks.jsx';
 import { fetchData } from '../../fetching/Fetch.js';
 import { SERVER_URL } from '../../constants.js';
 import '../CurrentTicketPage/CurrentTicketPage.css';
@@ -11,6 +12,8 @@ export default function CurrentTicketPage() {
     useEffect(() => {
         fetchCurrentTicket();
     }, [stationId]);
+
+    useInterval(() => fetchCurrentTicket(), 3000);
 
     const fetchCurrentTicket = async () => {
         try {
