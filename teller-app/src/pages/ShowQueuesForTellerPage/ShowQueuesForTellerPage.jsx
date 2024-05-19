@@ -58,7 +58,7 @@ const ShowQueuesForTellerPage = () =>{
             >
                 Advance Queue
             </Button>
-            <Link to={`/display/${tellerStationId}`}>
+            <Link to={`/display/${tellerStationId}`} target="_blank" rel="noopener noreferrer">
                 <Button
                     variant="secondary"
                     style={{ marginLeft: '10px' }}
