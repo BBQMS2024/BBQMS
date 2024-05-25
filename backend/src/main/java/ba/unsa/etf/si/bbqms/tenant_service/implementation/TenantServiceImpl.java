@@ -148,4 +148,15 @@ public class TenantServiceImpl implements TenantService {
 
         serviceRepository.deleteById(id);
     }
+
+    @Override
+    public <T> T unwrap(final Class<T> tClass) {
+        if (tClass.isAssignableFrom(TenantRepository.class)) {
+            return tClass.cast(this.tenantRepository);
+        } else if (tClass.isAssignableFrom(ServiceRepository.class)) {
+            return tClass.cast(this.serviceRepository);
+        }
+
+        return TenantService.super.unwrap(tClass);
+    }
 }

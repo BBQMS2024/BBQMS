@@ -1,12 +1,11 @@
 package ba.unsa.etf.si.bbqms.repository;
 
-import ba.unsa.etf.si.bbqms.domain.Branch;
+import ba.ekapic1.stonebase.BaseRepository;
 import ba.unsa.etf.si.bbqms.domain.Display;
-import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Set;
 
-public interface DisplayRepository extends JpaRepository<Display, Long> {
+public interface DisplayRepository extends BaseRepository<Display, Long> {
     Set<Display> findByBranchId(final long branchId);
     Set<Display> findByBranchTenantCode(String tenantCode);
     Set<Display> findByBranchTenantCodeAndTellerStationIsNull(String tenantCode);

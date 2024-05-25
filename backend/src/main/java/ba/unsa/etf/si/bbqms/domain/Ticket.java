@@ -1,5 +1,6 @@
 package ba.unsa.etf.si.bbqms.domain;
 
+import ba.ekapic1.stonebase.model.Model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,6 +14,7 @@ import java.time.Instant;
 
 @Entity
 @Table(name = "ticket")
+@Model
 public class Ticket {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,6 +22,7 @@ public class Ticket {
     private String number;
     private Instant createdAt;
     private String deviceToken;
+    private boolean deleted;
     @ManyToOne
     @JoinColumn(name = "service_id", referencedColumnName = "id")
     private Service service;
@@ -29,7 +32,7 @@ public class Ticket {
     private Branch branch;
 
     /**
-     * Represents the teller station to which ticket is currently assigned, if assigned at all.
+     * Represents the teller station to which the ticket is currently assigned, if assigned at all.
      */
     @OneToOne
     @JoinColumn(name = "teller_station_id", referencedColumnName = "id")
@@ -38,17 +41,18 @@ public class Ticket {
     public Ticket() {
     }
 
-    public Ticket(final String number, final Instant createdAt, final String deviceToken, final Service service, final Branch branch, final TellerStation tellerStation) {
+    public Ticket(final String number, final Instant createdAt, final String deviceToken, final boolean deleted, final Service service, final Branch branch, final TellerStation tellerStation) {
         this.number = number;
         this.createdAt = createdAt;
         this.deviceToken = deviceToken;
+        this.deleted = deleted;
         this.service = service;
         this.branch = branch;
         this.tellerStation = tellerStation;
     }
 
     public Ticket(final String number, final Instant createdAt, final String deviceToken, final Service service, final Branch branch) {
-        this(number, createdAt, deviceToken, service, branch, null);
+        this(number, createdAt, deviceToken, false, service, branch, null);
     }
 
     public long getId() {
@@ -81,6 +85,14 @@ public class Ticket {
 
     public void setDeviceToken(final String deviceToken) {
         this.deviceToken = deviceToken;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(final boolean deleted) {
+        this.deleted = deleted;
     }
 
     public Service getService() {

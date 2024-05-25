@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Dropdown, DropdownButton, Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { useInterval } from '../../hooks/hooks.jsx';
 import { TimePicker } from '../../components/TimePicker/TimePicker.jsx'
 import { formatDate, getDifference, getToday, todayWithTime } from '../../utils/DateUtils.js';
 import { addSimpleParamToUrl, addSortToUrl, parseSortFromUrl } from '../../utils/QueryParamsService.js';
@@ -26,7 +27,13 @@ export default function ViewBranchQueues() {
         fetchData(`${ url }branches/${ tenantCode }`, 'GET')
             .then(response => setBranches(response.data))
             .catch(error => console.error('Error fetching branches:', error));
-    }, []);
+    }, [])
+
+    useInterval(() => {
+        if (selectedBranch) {
+            fetchQueuesForBranch(selectedBranch, selectedService);
+        }
+    }, 10000, [selectedBranch, selectedService])
 
     async function fetchQueuesForBranch(branch, service) {
         try {

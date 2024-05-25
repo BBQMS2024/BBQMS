@@ -1,16 +1,27 @@
 package ba.unsa.etf.si.bbqms.ws.controllers;
 
+import ba.ekapic1.stonebase.filter.CompositeField;
+import ba.ekapic1.stonebase.filter.ConditionType;
 import ba.unsa.etf.si.bbqms.admin_service.api.BranchService;
 import ba.unsa.etf.si.bbqms.auth_service.api.AuthService;
 import ba.unsa.etf.si.bbqms.domain.Branch;
-import ba.unsa.etf.si.bbqms.domain.Service;
+import ba.unsa.etf.si.bbqms.domain.BranchField;
+import ba.unsa.etf.si.bbqms.domain.ServiceField;
 import ba.unsa.etf.si.bbqms.domain.TellerStation;
+import ba.unsa.etf.si.bbqms.domain.Ticket;
+import ba.unsa.etf.si.bbqms.domain.TicketField;
 import ba.unsa.etf.si.bbqms.domain.User;
+import ba.unsa.etf.si.bbqms.repository.TicketRepository;
 import ba.unsa.etf.si.bbqms.tenant_service.api.TenantService;
 import ba.unsa.etf.si.bbqms.ticket_service.api.TicketService;
-import ba.unsa.etf.si.bbqms.ws.models.*;
+import ba.unsa.etf.si.bbqms.ws.models.BranchWithStationsDto;
+import ba.unsa.etf.si.bbqms.ws.models.ServiceDto;
+import ba.unsa.etf.si.bbqms.ws.models.SimpleMessageDto;
+import ba.unsa.etf.si.bbqms.ws.models.TellerStationDto;
+import ba.unsa.etf.si.bbqms.ws.models.TicketDto;
 import ba.unsa.etf.si.bbqms.ws.params.branch.QueueStateParams;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,7 +34,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -182,29 +192,28 @@ public class BranchController {
                                          @PathVariable final String branchId,
                                          final QueueStateParams queueStateParams,
                                          final Sort sort) {
-        final Optional<Branch> optionalBranch = this.branchService.findById(Long.parseLong(branchId));
-        if (optionalBranch.isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        }
-        final Branch branch = optionalBranch.get();
+        final Branch branch = this.branchService.findById(Long.parseLong(branchId)).orElseThrow();
 
-        final Set<Service> services;
-        if (queueStateParams.serviceId().isPresent()) {
-            services = Set.of(this.tenantService.getServiceById(queueStateParams.serviceId().get()));
-        } else {
-            services = this.branchService.extractPossibleServices(branch);
-        }
+        final TicketRepository ticketRepository = this.ticketService.unwrap(TicketRepository.class);
+
+        final Specification<Ticket> filter = ticketRepository.filterBuilder()
+                .with(
+                        CompositeField.of(TicketField.BRANCH, BranchField.ID),
+                        ConditionType.EQUAL,
+                        branch.getId()
+                )
+                .optionally(
+                        CompositeField.of(TicketField.SERVICE, ServiceField.ID),
+                        ConditionType.EQUAL,
+                        queueStateParams.serviceId()
+                )
+                .optionally(TicketField.CREATED_AT, ConditionType.GREATER_THAN_EQUAL, queueStateParams.createdAfter())
+                .optionally(TicketField.CREATED_AT, ConditionType.LESS_THAN_EQUAL, queueStateParams.createdBefore())
+                .build();
+
 
         return ResponseEntity.ok().body(
-                this.ticketService.findAllFiltered(
-                        branch,
-                        services,
-                        queueStateParams.createdAfter().orElse(null),
-                        queueStateParams.createdBefore().orElse(null),
-                        sort)
-                        .stream()
-                        .map(TicketDto::fromEntity)
-                        .toList()
+                ticketRepository.findAll(filter, sort).stream().map(TicketDto::fromEntity).toList()
         );
     }
 

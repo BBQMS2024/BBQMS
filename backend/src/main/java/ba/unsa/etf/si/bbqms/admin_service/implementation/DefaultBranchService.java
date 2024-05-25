@@ -14,8 +14,11 @@ import ba.unsa.etf.si.bbqms.repository.TenantRepository;
 import ba.unsa.etf.si.bbqms.repository.TicketRepository;
 import jakarta.persistence.EntityNotFoundException;
 
-
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Service
@@ -160,5 +163,14 @@ public class DefaultBranchService implements BranchService {
         return branch.getTellerStations().stream()
                 .filter(station -> station.getServices().contains(service))
                 .collect(Collectors.toSet());
+    }
+
+    @Override
+    public <T> T unwrap(final Class<T> tClass) {
+        if (tClass.isAssignableFrom(BranchRepository.class)) {
+            return tClass.cast(this.branchRepository);
+        }
+
+        return BranchService.super.unwrap(tClass);
     }
 }

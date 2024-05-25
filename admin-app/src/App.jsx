@@ -81,7 +81,7 @@ export default function App() {
                         </AuthGuard> }
                     />
                     <Route exact path="/:tenantCode/manage/users" element={
-                        <AuthGuard roles={[ROLES.ROLE_SUPER_ADMIN, ROLES.ROLE_BRANCH_ADMIN]}>
+                        <AuthGuard roles={ [ROLES.ROLE_SUPER_ADMIN, ROLES.ROLE_BRANCH_ADMIN] }>
                             <ManageUsers />
                         </AuthGuard>
                     } />
@@ -110,88 +110,85 @@ export default function App() {
                     <Route exact path="/:tenantCode/home" element={
                         <AuthGuard roles={ [ROLES.ROLE_SUPER_ADMIN, ROLES.ROLE_BRANCH_ADMIN] }>
                             <HomePage></HomePage>
-                            <CanAccess roles={[ROLES.ROLE_SUPER_ADMIN, ROLES.ROLE_BRANCH_ADMIN]}>
+                            <CanAccess roles={ [ROLES.ROLE_SUPER_ADMIN, ROLES.ROLE_BRANCH_ADMIN] }>
                                 <>
-                                    {user  && (
+                                    { user && (
                                         <>
                                             <HomePageCard
                                                 title="Manage displays"
                                                 backgroundColor="var(--dark-blue)"
                                                 buttonColor="var(--light-blue)"
-                                                url={`/${user.tenantCode}/manage/displays`}
+                                                url={ `/${ user.tenantCode }/manage/displays` }
                                             />
                                             <HomePageCard
                                                 title="Manage groups"
                                                 backgroundColor="var(--light-blue)"
                                                 buttonColor="var(--dark-blue)"
-                                                url={`/${user.tenantCode}/manage/groups`}
+                                                url={ `/${ user.tenantCode }/manage/groups` }
                                             />
                                             <HomePageCard
                                                 title="Manage branches"
                                                 backgroundColor="var(--dark-blue)"
                                                 buttonColor="var(--light-blue)"
-                                                url={`/${user.tenantCode}/manage/branches`}
+                                                url={ `/${ user.tenantCode }/manage/branches` }
                                             />
                                             <HomePageCard
                                                 title="Manage services"
                                                 backgroundColor="var(--light-blue)"
                                                 buttonColor="var(--dark-blue)"
-                                                url={`/${user.tenantCode}/manage/services`}
+                                                url={ `/${ user.tenantCode }/manage/services` }
                                             />
                                             <HomePageCard
                                                 title="Manage teller stations"
                                                 backgroundColor="var(--light-blue)"
                                                 buttonColor="var(--dark-blue)"
-                                                url={`/${user.tenantCode}/manage/stations`}
+                                                url={ `/${ user.tenantCode }/manage/stations` }
                                             />
                                             <HomePageCard
                                                 title="Manage company details"
                                                 backgroundColor="var(--dark-blue)"
                                                 buttonColor="var(--light-blue)"
-                                                url={`/${user.tenantCode}/companydetails`}
+                                                url={ `/${ user.tenantCode }/companydetails` }
                                             />
                                             <HomePageCard
                                                 title="View queues"
                                                 backgroundColor="var(--light-blue)"
                                                 buttonColor="var(--dark-blue)"
-                                                url={`/${user.tenantCode}/queues`}
+                                                url={ `/${ user.tenantCode }/queues` }
                                             />
                                         </>
-                                    )}
+                                    ) }
                                 </>
                             </CanAccess>
 
                             <CanAccess roles={ [ROLES.ROLE_SUPER_ADMIN] }>
                                 <>
-                                {user && (
-                                    <>
-                                <HomePageCard title="Manage administrators" backgroundColor="var(--dark-blue)"
-                                              buttonColor="var(--light-blue)"
-                                              url={ `/${user.tenantCode}/manage/admins` }></HomePageCard>
-                                <HomePageCard
-                                    title="Manage users"
-                                    backgroundColor="var(--light-blue)"
-                                    buttonColor="var(--dark-blue)"
-                                    url={`/${user.tenantCode}/manage/users`}
-                                />
-                                </>
-                                )}
+                                    { user && (
+                                        <>
+                                            <HomePageCard title="Manage administrators"
+                                                          backgroundColor="var(--dark-blue)"
+                                                          buttonColor="var(--light-blue)"
+                                                          url={ `/${ user.tenantCode }/manage/admins` }></HomePageCard>
+                                            <HomePageCard
+                                                title="Manage users"
+                                                backgroundColor="var(--light-blue)"
+                                                buttonColor="var(--dark-blue)"
+                                                url={ `/${ user.tenantCode }/manage/users` }
+                                            />
+                                        </>
+                                    ) }
                                 </>
                             </CanAccess>
 
-                            <CanAccess roles={[ROLES.ROLE_BRANCH_ADMIN]}>
-                                <>
-                                {user  && (
-                                    <>
-                                <HomePageCard
-                                    title="Manage users"
-                                    backgroundColor="var(--dark-blue)"
-                                    buttonColor="var(--light-blue)"
-                                    url={`/${user.tenantCode}/manage/users`}
-                                />
-                                </>
-                                )}
-                                    </>
+                            <CanAccess roles={ [ROLES.ROLE_BRANCH_ADMIN] }>
+                                { user && (
+                                    <HomePageCard
+                                        title="Manage users"
+                                        backgroundColor="var(--dark-blue)"
+                                        buttonColor="var(--light-blue)"
+                                        url={ `/${ user.tenantCode }/manage/users` }
+                                    />
+                                ) }
                             </CanAccess>
                         </AuthGuard>
                     } />
