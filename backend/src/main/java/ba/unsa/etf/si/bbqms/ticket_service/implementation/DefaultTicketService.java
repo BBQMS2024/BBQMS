@@ -75,8 +75,12 @@ public class DefaultTicketService implements TicketService {
     }
 
     @Override
-    public Set<Ticket> getByDevice(final String deviceToken) {
-        return this.ticketRepository.findAllByDeviceToken(deviceToken);
+    public List<Ticket> getByDevice(final String deviceToken) {
+        return this.ticketRepository.findAll(
+                this.ticketRepository.filterBuilder()
+                        .with(TicketField.DEVICE_TOKEN, ConditionType.EQUAL, deviceToken)
+                        .build()
+        );
     }
 
     @Override
@@ -131,8 +135,22 @@ public class DefaultTicketService implements TicketService {
 
 
     private long getNextTicketNumber(final Set<Service> possibleServices, final Branch branch) {
-        final Set<String> ticketNumbers = ticketRepository.findAllByServiceInAndBranch(possibleServices, branch)
-                .stream()
+        final List<Ticket> tickets = this.ticketRepository.findAll(
+                this.ticketRepository.filterBuilder()
+                        .with(
+                                CompositeField.of(TicketField.SERVICE, ServiceField.ID),
+                                ConditionType.IN,
+                                possibleServices.stream().map(Service::getId).toList()
+                        )
+                        .with(
+                                CompositeField.of(TicketField.BRANCH, BranchField.ID),
+                                ConditionType.EQUAL,
+                                branch.getId()
+                        )
+                        .build()
+        );
+
+        final Set<String> ticketNumbers = tickets.stream()
                 .map(Ticket::getNumber)
                 .map(this::extractNumericPart)
                 .collect(Collectors.toSet());
@@ -146,10 +164,6 @@ public class DefaultTicketService implements TicketService {
         return ticketNumber.replaceAll("[^0-9]", "");
     }
 
-    @Override
-    public Set<Ticket> getTicketsForServicesAtBranch(final Set<Service> services, final long branchId) {
-        return this.ticketRepository.findAllByServiceInAndBranch_Id(services, branchId);
-    }
 
     @Override
     public <T> T unwrap(final Class<T> tClass) {

@@ -13,7 +13,7 @@ import java.util.Set;
 public interface BranchService extends Wrapper {
     Optional<Branch> findById(final long branchId);
     Branch createBranch(final String name, final List<String> tellerStations, final String tenantCode) throws Exception;
-    Set<Branch> getBranches(final String tenantCode);
+    List<Branch> getBranches(final String tenantCode);
     Branch updateBranch(final long branchId, final String name, final List<String> tellerStations, final String tenantCode) throws Exception;
     void removeBranch(final long branchId);
     TellerStation addStation(final String name, final long branchId) throws Exception;

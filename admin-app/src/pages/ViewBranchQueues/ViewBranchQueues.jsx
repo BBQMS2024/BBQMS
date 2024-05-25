@@ -100,7 +100,7 @@ export default function ViewBranchQueues() {
     }
 
     return (
-        <div className="text-center mt-5">
+        <div className="text-center">
             <h2>Queue</h2>
             <DropdownButton title={ selectedBranch ? selectedBranch.name : 'Select Branch' }
                             variant="btn btn-outline-secondary">

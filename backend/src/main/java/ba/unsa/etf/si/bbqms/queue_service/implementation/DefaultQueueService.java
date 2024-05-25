@@ -88,7 +88,7 @@ public class DefaultQueueService implements QueueService {
         final Ticket nextTicket = optionalNextTicket.get();
         nextTicket.setTellerStation(tellerStation);
 
-        // Send the notification to whoever is holding the ticket next.
+        // Send the notification to whoever is holding the next ticket.
         final Notification newNotification = new Notification(
                 nextTicket.getDeviceToken(),
                 "It's your turn!",

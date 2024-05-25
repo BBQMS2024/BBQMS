@@ -6,6 +6,7 @@ import ba.unsa.etf.si.bbqms.admin_service.api.StationService;
 import ba.unsa.etf.si.bbqms.domain.Branch;
 import ba.unsa.etf.si.bbqms.domain.BranchField;
 import ba.unsa.etf.si.bbqms.domain.BranchGroup;
+import ba.unsa.etf.si.bbqms.domain.BranchGroupField;
 import ba.unsa.etf.si.bbqms.domain.Service;
 import ba.unsa.etf.si.bbqms.admin_service.api.GroupService;
 import ba.unsa.etf.si.bbqms.domain.ServiceField;
@@ -13,6 +14,7 @@ import ba.unsa.etf.si.bbqms.domain.TellerStation;
 import ba.unsa.etf.si.bbqms.domain.Tenant;
 import ba.unsa.etf.si.bbqms.domain.TenantField;
 import ba.unsa.etf.si.bbqms.domain.Ticket;
+import ba.unsa.etf.si.bbqms.domain.TicketField;
 import ba.unsa.etf.si.bbqms.repository.*;
 import ba.unsa.etf.si.bbqms.ws.models.BranchGroupCreateDto;
 import ba.unsa.etf.si.bbqms.repository.TellerStationRepository;
@@ -152,7 +154,15 @@ public class DefaultGroupService implements GroupService {
 
     @Override
     public List<BranchGroup> getAllByTenant(final String tenantCode) {
-        return this.branchGroupRepository.findGroupsByTenantCode(tenantCode);
+        return this.branchGroupRepository.findAll(
+                this.branchGroupRepository.filterBuilder()
+                        .with(
+                                CompositeField.of(BranchGroupField.TENANT, TenantField.CODE),
+                                ConditionType.EQUAL,
+                                tenantCode
+                        )
+                        .build()
+        );
     }
 
     @Override
@@ -246,9 +256,25 @@ public class DefaultGroupService implements GroupService {
     }
 
     private void discardUnavailableTickets(final Set<Service> noLongerAvailableServices, final long branchId) {
-        final Set<Long> ticketsToBeDiscarded = this.ticketRepository.findAllByServiceInAndBranch_Id(noLongerAvailableServices, branchId).stream()
+        final List<Ticket> ticketsToDiscard = this.ticketRepository.findAll(
+                this.ticketRepository.filterBuilder()
+                        .with(
+                                CompositeField.of(TicketField.SERVICE, ServiceField.ID),
+                                ConditionType.IN,
+                                noLongerAvailableServices.stream().map(Service::getId).toList()
+                        )
+                        .with(
+                                CompositeField.of(TicketField.BRANCH, BranchField.ID),
+                                ConditionType.EQUAL,
+                                branchId
+                        )
+                        .build()
+        );
+
+        final List<Long> ticketsToBeDiscarded = ticketsToDiscard.stream()
                 .map(Ticket::getId)
-                .collect(Collectors.toSet());
+                .toList();
+
         this.ticketRepository.deleteAllById(ticketsToBeDiscarded);
     }
 }

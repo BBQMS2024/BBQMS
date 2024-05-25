@@ -18,7 +18,7 @@ export default function Header() {
         navigate('/');
     }
 
-    const isHomePage = 'home' === lastPathPart(window.location.href)
+    const showBackButton = 'home' === lastPathPart(window.location.href) || '' === window.location.pathname
 
     return (
         <>
@@ -37,7 +37,7 @@ export default function Header() {
                     <img src={ profileImage } className="header-profile-png" alt="Profile image" />
                 </div>
             </header>
-            { !isHomePage && (
+            { showBackButton && (
                 <Button variant="secondary"
                         className="mt-2 px-4"
                         onClick={ () => navigate(`${ user.tenantCode }/home`) }>

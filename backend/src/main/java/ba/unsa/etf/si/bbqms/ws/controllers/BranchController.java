@@ -79,9 +79,9 @@ public class BranchController {
 
     @GetMapping("/{tenantCode}")
     public ResponseEntity getBranches(@PathVariable final String tenantCode) {
-        final Set<BranchWithStationsDto> dtos = this.branchService.getBranches(tenantCode).stream()
+        final List<BranchWithStationsDto> dtos = this.branchService.getBranches(tenantCode).stream()
                 .map(BranchWithStationsDto::fromEntity)
-                .collect(Collectors.toSet());
+                .toList();
 
         return ResponseEntity.ok().body(dtos);
     }

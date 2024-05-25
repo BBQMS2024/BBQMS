@@ -1,11 +1,13 @@
 package ba.unsa.etf.si.bbqms.domain;
 
+import ba.ekapic1.stonebase.model.Model;
 import jakarta.persistence.*;
 
 import java.util.Set;
 
 @Entity
 @Table(name = "branch_group")
+@Model
 public class BranchGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -12,7 +12,7 @@ public interface TicketService extends Wrapper {
 
     Ticket create(final long serviceId, final long branchId, final String deviceToken);
 
-    Set<Ticket> getByDevice(final String deviceToken);
+    List<Ticket> getByDevice(final String deviceToken);
 
     void cancelTicket(final long ticketId);
 
@@ -23,6 +23,4 @@ public interface TicketService extends Wrapper {
     }
 
     List<Ticket> findWithStation(final long stationId, final boolean deleted);
-
-    Set<Ticket> getTicketsForServicesAtBranch(final Set<Service> services, final long branchId);
 }

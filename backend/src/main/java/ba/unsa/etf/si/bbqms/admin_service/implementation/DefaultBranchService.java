@@ -1,13 +1,19 @@
 package ba.unsa.etf.si.bbqms.admin_service.implementation;
 
+import ba.ekapic1.stonebase.filter.CompositeField;
+import ba.ekapic1.stonebase.filter.ConditionType;
 import ba.unsa.etf.si.bbqms.admin_service.api.BranchService;
 import ba.unsa.etf.si.bbqms.admin_service.api.GroupService;
 import ba.unsa.etf.si.bbqms.domain.Branch;
+import ba.unsa.etf.si.bbqms.domain.BranchField;
 import ba.unsa.etf.si.bbqms.domain.BranchGroup;
 import ba.unsa.etf.si.bbqms.domain.Service;
+import ba.unsa.etf.si.bbqms.domain.ServiceField;
 import ba.unsa.etf.si.bbqms.domain.TellerStation;
 import ba.unsa.etf.si.bbqms.domain.Tenant;
+import ba.unsa.etf.si.bbqms.domain.TenantField;
 import ba.unsa.etf.si.bbqms.domain.Ticket;
+import ba.unsa.etf.si.bbqms.domain.TicketField;
 import ba.unsa.etf.si.bbqms.repository.BranchRepository;
 import ba.unsa.etf.si.bbqms.repository.TellerStationRepository;
 import ba.unsa.etf.si.bbqms.repository.TenantRepository;
@@ -67,8 +73,16 @@ public class DefaultBranchService implements BranchService {
     }
 
     @Override
-    public Set<Branch> getBranches(final String tenantCode) {
-        return this.branchRepository.findAllByTenant_Code(tenantCode);
+    public List<Branch> getBranches(final String tenantCode) {
+        return this.branchRepository.findAll(
+                this.branchRepository.filterBuilder()
+                        .with(
+                                CompositeField.of(BranchField.TENANT, TenantField.CODE),
+                                ConditionType.EQUAL,
+                                tenantCode
+                        )
+                        .build()
+        );
     }
 
     @Override
@@ -102,7 +116,18 @@ public class DefaultBranchService implements BranchService {
                 .orElseThrow(() -> new EntityNotFoundException("Branch with id: " + branchId + " doesn't exist."));
 
         // Discard all tickets which are at the current branch
-        final Set<Long> ticketsToBeDiscarded = this.ticketRepository.findAllByBranch_Id(branch.getId()).stream()
+
+        final List<Ticket> ticketsToDiscard = this.ticketRepository.findAll(
+                this.ticketRepository.filterBuilder()
+                        .with(
+                                CompositeField.of(TicketField.BRANCH, BranchField.ID),
+                                ConditionType.EQUAL,
+                                branch.getId()
+                        )
+                        .build()
+        );
+
+        final Set<Long> ticketsToBeDiscarded = ticketsToDiscard.stream()
                 .map(Ticket::getId)
                 .collect(Collectors.toSet());
         this.ticketRepository.deleteAllById(ticketsToBeDiscarded);
