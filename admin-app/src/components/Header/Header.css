@@ -2,7 +2,7 @@ header.main-header {
     display: flex;
     justify-content: space-around;
     align-items: center;
-    margin: 0 0 3% -2%;
+    margin: 0 0 0 -2%;
     background-color: #d3e2f8;
     width: 101vw;
 }

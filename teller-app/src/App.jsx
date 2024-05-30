@@ -12,7 +12,7 @@ export default function App() {
             <Header />
             <Routes>
                 <Route exact path='/' element={<StationIntroPage />} />
-                <Route exact path="/tellerqueue" element={<ShowQueuesForTellerPage />} />
+                <Route exact path="/teller-queue/:stationId" element={<ShowQueuesForTellerPage />} />
                 <Route path="/display/:stationId" element={<CurrentTicketPage/>} />
             </Routes>
         </>

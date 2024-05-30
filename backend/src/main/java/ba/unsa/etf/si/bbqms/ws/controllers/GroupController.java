@@ -1,5 +1,6 @@
 package ba.unsa.etf.si.bbqms.ws.controllers;
 
+import ba.unsa.etf.si.bbqms.admin_service.api.BranchService;
 import ba.unsa.etf.si.bbqms.auth_service.api.AuthService;
 import ba.unsa.etf.si.bbqms.domain.Branch;
 import ba.unsa.etf.si.bbqms.domain.BranchGroup;
@@ -18,10 +19,14 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/v1/groups")
 public class GroupController {
     private final GroupService groupService;
+    private final BranchService branchService;
     private final AuthService authService;
 
-    public GroupController(final GroupService groupService, final AuthService authService) {
+    public GroupController(final GroupService groupService,
+                           final BranchService branchService,
+                           final AuthService authService) {
         this.groupService = groupService;
+        this.branchService = branchService;
         this.authService = authService;
     }
 
@@ -41,6 +46,20 @@ public class GroupController {
         } catch (final Exception e) {
             return ResponseEntity.badRequest().body(new ErrorResponseDto(e.getMessage()));
         }
+    }
+
+    @GetMapping("/{code}/{groupId}/assignable/branch")
+    public List<BranchDto> findAssignableBranches(@PathVariable final String code, @PathVariable final String groupId) {
+        return this.groupService.findAssignableBranches(Long.parseLong(groupId), code).stream()
+                .map(BranchDto::fromEntity)
+                .toList();
+    }
+
+    @GetMapping("/{code}/{groupId}/assignable/service")
+    public List<ServiceDto> findAssignableServices(@PathVariable final String code, @PathVariable final String groupId) {
+        return this.groupService.findAssignableServices(Long.parseLong(groupId), code).stream()
+                .map(ServiceDto::fromEntity)
+                .toList();
     }
 
     @PostMapping("/{tenantCode}")

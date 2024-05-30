@@ -1,5 +1,6 @@
 package ba.unsa.etf.si.bbqms.domain;
 
+import ba.ekapic1.stonebase.model.Model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,6 +11,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "service")
+@Model
 public class Service {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

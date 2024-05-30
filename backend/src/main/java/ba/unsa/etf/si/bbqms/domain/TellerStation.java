@@ -1,5 +1,6 @@
 package ba.unsa.etf.si.bbqms.domain;
 
+import ba.ekapic1.stonebase.model.Model;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,6 +17,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "teller_station")
+@Model
 public class TellerStation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,5 +1,6 @@
 package ba.unsa.etf.si.bbqms.admin_service.api;
 
+import ba.unsa.etf.si.bbqms.domain.Branch;
 import ba.unsa.etf.si.bbqms.domain.BranchGroup;
 import ba.unsa.etf.si.bbqms.domain.Service;
 import ba.unsa.etf.si.bbqms.ws.models.BranchGroupCreateDto;
@@ -9,6 +10,9 @@ import java.util.List;
 import java.util.Set;
 
 public interface GroupService {
+    BranchGroup get(final long id);
+    List<Branch> findAssignableBranches(final long groupId, final String tenantCode);
+    List<Service> findAssignableServices(final long groupId, final String tenantCode);
     BranchGroup addBranchGroup(final String tenantCode, final BranchGroupCreateDto name) throws Exception;
     BranchGroup updateBranchGroup(final long branchGroupId, final BranchGroupUpdateDto request);
     BranchGroup addBranchGroupService(final long branchGroupId, final long serviceId);

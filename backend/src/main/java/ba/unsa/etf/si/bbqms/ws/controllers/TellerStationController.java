@@ -2,12 +2,14 @@ package ba.unsa.etf.si.bbqms.ws.controllers;
 
 import ba.unsa.etf.si.bbqms.admin_service.api.StationService;
 import ba.unsa.etf.si.bbqms.auth_service.api.AuthService;
+import ba.unsa.etf.si.bbqms.domain.Branch;
 import ba.unsa.etf.si.bbqms.domain.Service;
 import ba.unsa.etf.si.bbqms.domain.TellerStation;
 import ba.unsa.etf.si.bbqms.domain.Ticket;
 import ba.unsa.etf.si.bbqms.ticket_service.api.TicketService;
 import ba.unsa.etf.si.bbqms.ws.models.DisplayDto;
 import ba.unsa.etf.si.bbqms.ws.models.ErrorResponseDto;
+import ba.unsa.etf.si.bbqms.ws.models.ServiceDto;
 import ba.unsa.etf.si.bbqms.ws.models.ServiceResponseDto;
 import ba.unsa.etf.si.bbqms.ws.models.TicketDto;
 import org.springframework.http.ResponseEntity;
@@ -70,6 +72,14 @@ public class TellerStationController {
         catch (final Exception e) {
             return ResponseEntity.badRequest().body(new ErrorResponseDto(e.getMessage()));
         }
+    }
+
+    @GetMapping("/{tenantCode}/{stationId}/services/assignable")
+    public ResponseEntity findAssignableServices(@PathVariable final String stationId,
+                                                 @PathVariable final String tenantCode) {
+        return ResponseEntity.ok().body(
+                this.stationService.findAssignableServices(Long.parseLong(stationId))
+        );
     }
 
     @PutMapping("/{tenantCode}/{stationId}/services/{serviceId}")
@@ -147,7 +157,7 @@ public class TellerStationController {
             return ResponseEntity.ok().body(
                     this.stationService.getAllByBranch(Long.parseLong(branchId)).stream()
                             .map(TellerStationResponseDto::fromEntity)
-                            .collect(Collectors.toList())
+                            .toList()
             );
         } catch (final Exception exception) {
             return ResponseEntity.badRequest().build();
@@ -157,13 +167,11 @@ public class TellerStationController {
     @GetMapping("/{stationId}/tickets")
     public ResponseEntity getTicketsForTellerStation(@PathVariable final long stationId) {
         try {
-            final Set<Service> services = stationService.getServicesForTellerStation(stationId);
-            final long branchId = stationService.getBranchIdForTellerStation(stationId);
-            Set<Ticket> tickets = ticketService.getTicketsForServicesAtBranch(services, branchId);
-            List<TicketDto> ticketDtos = tickets.stream()
+            final List<TicketDto> ticketDtos = this.ticketService.findWithStation(stationId).stream()
                     .filter(ticket -> ticket.getTellerStation() == null || ticket.getTellerStation().getId() == stationId)
                     .map(TicketDto::fromEntity)
-                    .collect(Collectors.toList());
+                    .toList();
+
             return ResponseEntity.ok().body(ticketDtos);
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();

@@ -11,3 +11,10 @@ export function createClassName(classNames) {
         return prev + (prev.length > 0 ? ' ' : '') + className.trim()
     }, '');
 }
+
+export function lastPathPart(path) {
+    if (path) {
+        const splitPath = path.split('/')
+        return splitPath[splitPath.length - 1]
+    }
+}

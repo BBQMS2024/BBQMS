@@ -1,15 +1,22 @@
 package ba.unsa.etf.si.bbqms.admin_service.implementation;
 
+import ba.ekapic1.stonebase.filter.CompositeField;
+import ba.ekapic1.stonebase.filter.ConditionType;
 import ba.unsa.etf.si.bbqms.admin_service.api.DisplayService;
 import ba.unsa.etf.si.bbqms.domain.Branch;
+import ba.unsa.etf.si.bbqms.domain.BranchField;
 import ba.unsa.etf.si.bbqms.domain.Display;
+import ba.unsa.etf.si.bbqms.domain.DisplayField;
 import ba.unsa.etf.si.bbqms.domain.TellerStation;
+import ba.unsa.etf.si.bbqms.domain.TellerStationField;
+import ba.unsa.etf.si.bbqms.domain.TenantField;
 import ba.unsa.etf.si.bbqms.repository.BranchRepository;
 import ba.unsa.etf.si.bbqms.repository.DisplayRepository;
 import ba.unsa.etf.si.bbqms.repository.TellerStationRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -27,43 +34,76 @@ public class DefaultDisplayService implements DisplayService {
     }
 
     @Override
-    public Display createDisplay(final String name, final long branchId) throws Exception {
-        final Branch branch = this.branchRepository.findById(branchId)
-                .orElseThrow(() -> new Exception("Branch with id: " + branchId + " doesn't exist."));
-
+    public Display createDisplay(final String name, final long branchId) {
+        final Branch branch = this.branchRepository.get(branchId);
         final Display newDisplay = new Display(name, branch);
 
         return this.displayRepository.save(newDisplay);
     }
 
     @Override
-    public Set<Display> getDisplays(final long branchId) throws Exception {
-        this.branchRepository.findById(branchId)
-                .orElseThrow(() -> new Exception("Branch with id: " + branchId + " doesn't exist."));
-
-        return this.displayRepository.findByBranchId(branchId);
+    public List<Display> getDisplays(final long branchId) {
+        return this.displayRepository.findAll(
+                this.displayRepository.filterBuilder()
+                        .with(
+                                CompositeField.of(DisplayField.BRANCH, BranchField.ID),
+                                ConditionType.EQUAL,
+                                branchId
+                        )
+                        .build()
+        );
     }
 
     @Override
-    public Set<Display> getDisplaysByTenant(final String tenantCode) {
-        return this.displayRepository.findByBranchTenantCode(tenantCode);
+    public List<Display> getDisplaysByTenant(final String tenantCode) {
+        return this.displayRepository.findAll(
+                this.displayRepository.filterBuilder()
+                        .with(
+                                CompositeField.of(DisplayField.BRANCH, BranchField.TENANT, TenantField.CODE),
+                                ConditionType.EQUAL,
+                                tenantCode
+                        )
+                        .build()
+        );
     }
 
     @Override
-    public Set<Display> getUnassignedDisplaysByTenant(final String tenantCode) {
-        return this.displayRepository.findByBranchTenantCodeAndTellerStationIsNull(tenantCode);
+    public List<Display> getUnassignedDisplaysByTenant(final String tenantCode) {
+        final List<Display> displays = this.displayRepository.findAll(
+                this.displayRepository.filterBuilder()
+                        .with(
+                                CompositeField.of(DisplayField.BRANCH, BranchField.TENANT, TenantField.CODE),
+                                ConditionType.EQUAL,
+                                tenantCode
+                        )
+                        .build()
+        );
+
+        /*
+            Display doesn't actually have a FK to tellerStation in the database, so we cannot use BaseRepository FilterBuilder
+            to access the field. Because of this we must manually filter the displays here. Same below.
+         */
+        return displays.stream().filter(display -> display.getTellerStation() == null).toList();
     }
 
     @Override
-    public Set<Display> getUnassignedDisplaysByBranch(final long branchId) {
-        return this.displayRepository.findAllByBranch_IdAndTellerStationIsNull(branchId);
+    public List<Display> getUnassignedDisplaysByBranch(final long branchId) {
+        final List<Display> displays = this.displayRepository.findAll(
+                this.displayRepository.filterBuilder()
+                        .with(
+                                CompositeField.of(DisplayField.BRANCH, BranchField.ID),
+                                ConditionType.EQUAL,
+                                branchId
+                        )
+                        .build()
+        );
+
+        return displays.stream().filter(display -> display.getTellerStation() == null).toList();
     }
 
     @Override
-    public Display updateDisplay(final long displayId, final String name) throws Exception {
-        final Display existingDisplay = displayRepository.findById(displayId)
-                .orElseThrow(() -> new Exception("Display with id: " + displayId + " doesn't exist."));
-
+    public Display updateDisplay(final long displayId, final String name) {
+        final Display existingDisplay = displayRepository.get(displayId);
         existingDisplay.setName(name);
 
         return this.displayRepository.save(existingDisplay);
@@ -71,8 +111,7 @@ public class DefaultDisplayService implements DisplayService {
 
     @Override
     public void removeDisplay(final long displayId) {
-        final Display display = this.displayRepository.findById(displayId)
-                .orElseThrow(EntityNotFoundException::new);
+        final Display display = this.displayRepository.get(displayId);
 
         if (display.getTellerStation() != null) {
             final TellerStation tellerStation = display.getTellerStation();
