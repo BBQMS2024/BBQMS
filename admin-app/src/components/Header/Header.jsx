@@ -18,7 +18,7 @@ export default function Header() {
         navigate('/');
     }
 
-    const showBackButton = 'home' === lastPathPart(window.location.href) || '' === window.location.pathname
+    const showBackButton = '/' !== window.location.pathname && 'home' !== lastPathPart(window.location.href)
 
     return (
         <>
