@@ -1,20 +1,9 @@
-# USERNAME : emacaga
-# PASSWORD : bbqms13579
+#!/bin/bash
 
-filename="docker-compose.yml"
+cd mobile-app
+sudo docker pull hmerritt/android-sdk:latest
+sudo docker run -d --name mobile-app-app-build-1 --restart on-failure -v "$(pwd)":/project/app hmerritt/android-sdk:latest
 
-echo "version: '3.1'" | sudo tee "$filename"
-echo "services:" | sudo tee -a "$filename"
-echo " app-build:" | sudo tee -a "$filename"
-echo "  image: hmerritt/android-sdk:latest" | sudo tee -a "$filename"
-echo "  network_mode: 'host'" | sudo tee -a "$filename"
-echo "  restart: on-failure" | sudo tee -a "$filename"
-echo "  volumes:" | sudo tee -a "$filename"
-echo "   - ./:/project/app" | sudo tee -a "$filename"
-
-sudo apt install docker-compose -y
-sudo docker-compose --version
-sudo docker-compose up -d
 sudo docker exec -it mobile-app-app-build-1 bash -c "npm install -g eas-cli"
 sudo docker exec -it mobile-app-app-build-1 bash -c "eas build --local -p android --profile preview"
 
