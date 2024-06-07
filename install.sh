@@ -3,6 +3,9 @@
 echo "Updating package manager"
 sudo apt update -y
 
+echo "Installing Git"
+sudo apt install git -y
+
 echo "Installing Docker Engine"
 sudo apt install docker.io -y
 
@@ -12,23 +15,24 @@ sudo apt install openjdk-17-jdk openjdk-17-jre -y
 echo "Installing Maven"
 sudo apt install maven -y
 
-echo "Installing Node 21"
-sudo apt install curl -y
-sudo curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-nvm install 21
-nvm use 21
+#echo "Installing Node 21"
+#sudo apt install curl -y
+#sudo curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
+#export NVM_DIR="$HOME/.nvm"
+#[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+#[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+#nvm install 21
+#nvm use 21
 
 echo "Pulling DB Docker Image"
 sudo docker pull mysql
 
 echo "Starting DB Container"
-sudo docker run -p 3306:3306 -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=bbqms --name db mysql
+sudo docker run -p 3306:3306 -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=bbqms --name db -d mysql
 
 echo "Building Backend"
 cd backend/stonebase
+sudo git submodule update --init --recursive
 sudo mvn install
 cd ..
 sudo mvn install -DskipTests
