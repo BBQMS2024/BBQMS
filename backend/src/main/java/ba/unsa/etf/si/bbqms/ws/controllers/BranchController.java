@@ -209,6 +209,7 @@ public class BranchController {
                 )
                 .optionally(TicketField.CREATED_AT, ConditionType.GREATER_THAN_EQUAL, queueStateParams.createdAfter())
                 .optionally(TicketField.CREATED_AT, ConditionType.LESS_THAN_EQUAL, queueStateParams.createdBefore())
+                .with(TicketField.DELETED, ConditionType.EQUAL, false)
                 .build();
 
 
