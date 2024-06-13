@@ -20,20 +20,6 @@ const ManageServices = () => {
     const [selectedServiceId, setSelectedServiceId] = useState(-1);
     const [serviceNameInput, setServiceNameInput] = useState("");
 
-    const staticServices = [
-        {
-            id: 1,
-            name: "Service 1",
-        },
-        {
-            id: 2,
-            name: "Service 2",
-        },
-        {
-            id: 3,
-            name: "Service 3",
-        },
-    ];
 
     const getServices = () => {
         fetchData(

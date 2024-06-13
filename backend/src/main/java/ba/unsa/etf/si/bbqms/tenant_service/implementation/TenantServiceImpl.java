@@ -1,11 +1,17 @@
 package ba.unsa.etf.si.bbqms.tenant_service.implementation;
 
+import ba.ekapic1.stonebase.filter.CompositeField;
+import ba.ekapic1.stonebase.filter.ConditionType;
 import ba.unsa.etf.si.bbqms.admin_service.api.GroupService;
+import ba.unsa.etf.si.bbqms.domain.BranchField;
 import ba.unsa.etf.si.bbqms.domain.BranchGroup;
 import ba.unsa.etf.si.bbqms.domain.Service;
+import ba.unsa.etf.si.bbqms.domain.ServiceField;
 import ba.unsa.etf.si.bbqms.domain.Tenant;
+import ba.unsa.etf.si.bbqms.domain.TenantField;
 import ba.unsa.etf.si.bbqms.domain.TenantLogo;
 import ba.unsa.etf.si.bbqms.domain.Ticket;
+import ba.unsa.etf.si.bbqms.domain.TicketField;
 import ba.unsa.etf.si.bbqms.repository.ServiceRepository;
 import ba.unsa.etf.si.bbqms.repository.TenantLogoRepository;
 import ba.unsa.etf.si.bbqms.repository.TenantRepository;
@@ -93,7 +99,7 @@ public class TenantServiceImpl implements TenantService {
 
     @Override
     public List<Service> getAllServicesByTenant(final String code) {
-        return serviceRepository.findAllByTenant_Code(code);
+        return findByTenantCode(code);
     }
 
     @Override
@@ -101,7 +107,7 @@ public class TenantServiceImpl implements TenantService {
         final Tenant tenant= tenantRepository.findByCode(code).
                 orElseThrow(() -> new Exception("Tenant not found") );
 
-        final List<Service> services = serviceRepository.findAllByTenant_Code(code);
+        final List<Service> services = findByTenantCode(code);
         final boolean nameExists = services.stream()
                 .anyMatch(service -> service.getName().equals(request.name()));
         if(nameExists){
@@ -117,7 +123,7 @@ public class TenantServiceImpl implements TenantService {
 
     @Override
     public Service updateService(final String code, final long id, final ServiceRequestDto request) throws Exception {
-        final List<Service> services = serviceRepository.findAllByTenant_Code(code);
+        final List<Service> services = findByTenantCode(code);
         final boolean nameExists = services.stream()
                 .anyMatch(service -> service.getName().equals(request.name()));
         if(nameExists){
@@ -136,10 +142,21 @@ public class TenantServiceImpl implements TenantService {
                 .orElseThrow(() -> new EntityNotFoundException("No service with id: " + id));
 
         // We must discard tickets which request the service
-        final Set<Long> ticketsToBeDiscarded = this.ticketRepository.findAllByServiceIn(Set.of(service)).stream()
+
+        final List<Ticket> ticketsToDiscard = this.ticketRepository.findAll(
+                this.ticketRepository.filterBuilder()
+                        .with(
+                                CompositeField.of(TicketField.SERVICE, ServiceField.ID),
+                                ConditionType.IN,
+                                id
+                        )
+                        .build()
+        );
+        final List<Long> ticketIds = ticketsToDiscard.stream()
                 .map(Ticket::getId)
-                .collect(Collectors.toSet());
-        this.ticketRepository.deleteAllById(ticketsToBeDiscarded);
+                .toList();
+
+        this.ticketRepository.deleteAllById(ticketIds);
 
         // We also must discard it from groups/teller stations that are already using it
         for (final BranchGroup group : this.groupService.getAllOfferingService(service)) {
@@ -147,5 +164,28 @@ public class TenantServiceImpl implements TenantService {
         }
 
         serviceRepository.deleteById(id);
+    }
+
+    private List<Service> findByTenantCode(final String tenantCode) {
+        return this.serviceRepository.findAll(
+                this.serviceRepository.filterBuilder()
+                        .with(
+                                CompositeField.of(ServiceField.TENANT, TenantField.CODE),
+                                ConditionType.EQUAL,
+                                tenantCode
+                        )
+                        .build()
+        );
+    }
+
+    @Override
+    public <T> T unwrap(final Class<T> tClass) {
+        if (tClass.isAssignableFrom(TenantRepository.class)) {
+            return tClass.cast(this.tenantRepository);
+        } else if (tClass.isAssignableFrom(ServiceRepository.class)) {
+            return tClass.cast(this.serviceRepository);
+        }
+
+        return TenantService.super.unwrap(tClass);
     }
 }

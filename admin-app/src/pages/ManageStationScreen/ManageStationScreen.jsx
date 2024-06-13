@@ -1,16 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Table, Modal, Form, Dropdown, DropdownButton } from 'react-bootstrap';
+import React, { useEffect, useState } from 'react';
+import { Button, Dropdown, DropdownButton, Form, Modal, Table } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { fetchData } from '../../fetching/Fetch.js';
-import { useLocation } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import { SERVER_URL } from '../../constants.js';
+import { fetchData } from '../../fetching/Fetch.js';
 
 const ManageStationScreen = () => {
-    const location = useLocation();
     const [showServiceModal, setShowServiceModal] = useState(false);
     const [showDisplayModal, setShowDisplayModal] = useState(false);
-    const [deleteConfirmation, setDeleteConfirmation] = useState(false);
     const [stations, setStations] = useState([]);
     const [selectedStation, setSelectedStation] = useState(null);
     const [selectedBranch, setSelectedBranch] = useState(null);
@@ -24,19 +21,10 @@ const ManageStationScreen = () => {
     const url = `${ SERVER_URL }/api/v1/`;
 
     useEffect(() => {
-        async function fetchStationsForBranch() {
-            try {
-                const response = await fetchData(`${ url }stations/${ tenantCode }/${ selectedBranch.id }`, 'GET');
-                if (response.success) {
-                    setStations(response.data);
-                } else {
-                    console.error('Error fetching stations:', response.error);
-                }
-            } catch (error) {
-                console.error('Error fetching stations:', error);
-            }
-        }
+        fetchBranches();
+    }, []);
 
+    useEffect(() => {
         if (selectedBranch) {
             fetchStationsForBranch();
             fetchAvailableDisplays(selectedBranch);
@@ -46,80 +34,76 @@ const ManageStationScreen = () => {
     }, [selectedBranch]);
 
     useEffect(() => {
-        async function fetchBranches() {
-            try {
-                const response = await fetchData(`${ url }branches/${ tenantCode }`, 'GET');
-                if (response.success) {
-                    setBranches(response.data);
-                } else {
-                    console.error('Error fetching branches:', response.error);
-                }
-            } catch (error) {
-                console.error('Error fetching branches:', error);
-            }
-        }
-
-        fetchBranches();
-    }, [location]);
-
-    async function fetchAvailableDisplays(branch) {
-        try {
-            const response = await fetchData(`${ url }displays/unassigned/${ tenantCode }/${ branch.id }`, 'GET');
-            if (response.success) {
-                setAvailableDisplays(response.data);
-            } else {
-                console.error('Error fetching available displays:', response.error);
-            }
-        } catch (error) {
-            console.error('Error fetching available displays:', error);
-        }
-    }
-
-    async function fetchAvailableServices(station) {
-        try {
-            const response = await fetchData(`${ url }stations/${ tenantCode }/${ station.id }/services?assigned=false`, 'GET');
-            if (response.success) {
-                setAvailableServices(response.data);
-            } else {
-                console.error('Error fetching available services:', response.error);
-            }
-        } catch (error) {
-            console.error('Error fetching available services:', error);
-        }
-    }
-
-    useEffect(() => {
         setSelectedServices(selectedStation ? selectedStation.services : []);
         if (selectedStation) {
             fetchAvailableServices(selectedStation);
         }
     }, [selectedStation]);
 
-    const confirmDeleteStation = () => {
-    };
+    function fetchBranches() {
+        fetchData(`${ url }branches/${ tenantCode }`, 'GET')
+            .then(response => response.data)
+            .then(setBranches)
+            .catch(console.error)
+    }
 
-    const saveServiceToStation = async (service) => {
-        try {
-            const response = await fetchData(`${ url }stations/${ tenantCode }/${ selectedStation.id }/services/${ service.id }`, 'PUT');
-            if (response.success) {
-                const updatedStations = stations.map(station => {
-                    if (station.id === selectedStation.id) {
-                        return {
-                            ...station,
-                            services: [...station.services, service]
-                        };
-                    }
-                    return station;
-                });
-                setStations(updatedStations);
-            } else {
-                console.error('Error adding service to station:', response.error);
-            }
-        } catch (error) {
-            console.error('Error adding service to station:', error);
-        }
-    };
+    function fetchStationsForBranch() {
+        fetchData(`${ url }stations/${ tenantCode }/${ selectedBranch.id }`, 'GET')
+            .then(response => response.data)
+            .then(setStations)
+            .catch(console.error)
+    }
 
+    function fetchAvailableDisplays(branch) {
+        fetchData(`${ url }displays/unassigned/${ tenantCode }/${ branch.id }`, 'GET')
+            .then(response => response.data)
+            .then(setAvailableDisplays)
+            .catch(console.error)
+    }
+
+    function fetchAssignableServices(station) {
+        fetchData(`${ url }stations/${ tenantCode }/${ station.id }/services/assignable`)
+            .then(response => response.data)
+            .then(setAvailableServices)
+            .catch(console.error)
+    }
+
+    function onEditServices(station) {
+        fetchAssignableServices(station)
+        setShowServiceModal(true)
+        setSelectedStation(station)
+        setSelectedServices(station.services)
+    }
+
+    function fetchAvailableServices(station) {
+        fetchData(`${ url }stations/${ tenantCode }/${ station.id }/services?assigned=false`, 'GET')
+            .then(response => response.data)
+            .then(setAvailableServices)
+            .catch(console.error)
+    }
+
+
+    function addService(service) {
+        fetchData(`${ url }stations/${ tenantCode }/${ selectedStation.id }/services/${ service.id }`, 'PUT')
+            .then(() => fetchAssignableServices(selectedStation))
+            .then(fetchStationsForBranch)
+            .catch(console.error)
+
+        setSelectedServices([...selectedServices, service]);
+    }
+
+    function removeSelectedService(service) {
+        fetchData(`${ url }stations/${ tenantCode }/${ selectedStation.id }/services/${ service.id }`, 'DELETE')
+            .then(() => fetchAssignableServices(selectedStation))
+            .then(fetchStationsForBranch)
+            .catch(console.error)
+
+        const updatedServices = selectedServices.filter(selectedService => selectedService.id !== service.id)
+        setSelectedServices(updatedServices)
+    }
+
+
+    // Ove dvije funkcije ispod isto treba ispraviti da se ne radi filtriranje na frontendu, ali nemam vise vremena.
     const addDisplayToStation = async (display) => {
         try {
             const response = await fetchData(`${ url }stations/${ tenantCode }/${ selectedStation.id }/displays/${ display.id }`, 'PUT');
@@ -148,34 +132,6 @@ const ManageStationScreen = () => {
         }
     };
 
-    const removeServiceFromStation = async (serviceId) => {
-        try {
-            const response = await fetchData(`${ url }stations/${ tenantCode }/${ selectedStation.id }/services/${ serviceId }`, 'DELETE');
-            if (response.success) {
-                const updatedStations = stations.map(station => {
-                    if (station.id === selectedStation.id) {
-                        return {
-                            ...station,
-                            services: station.services.filter(service => service.id !== serviceId)
-                        };
-                    }
-                    return station;
-                });
-                setStations(updatedStations);
-            } else {
-                console.error('Error removing service from station:', response.error);
-            }
-        } catch (error) {
-            console.error('Error removing service from station:', error);
-        }
-    };
-
-    const removeSelectedService = (serviceId) => {
-        removeServiceFromStation(serviceId);
-        const updatedServices = selectedServices.filter(service => service.id !== serviceId);
-        setSelectedServices(updatedServices);
-    };
-
     const removeDisplayFromStation = async () => {
         try {
             const response = await fetchData(`${ url }stations/${ tenantCode }/${ selectedStation.id }/displays/${ selectedStation.display.id }`, 'DELETE');
@@ -200,11 +156,6 @@ const ManageStationScreen = () => {
         }
     };
 
-    const addService = (service) => {
-        saveServiceToStation(service);
-        setSelectedServices([...selectedServices, service]);
-    };
-
     const handleCloseModal = () => {
         setSelectedServices(selectedStation ? selectedStation.services : []);
         setShowServiceModal(false);
@@ -212,7 +163,7 @@ const ManageStationScreen = () => {
     };
 
     return (
-        <div className="text-center mt-5">
+        <div className="text-center">
             <h2>Teller Stations</h2>
             <DropdownButton title={ selectedBranch ? selectedBranch.name : 'Select Branch' }
                             variant="btn btn-outline-secondary">
@@ -239,7 +190,9 @@ const ManageStationScreen = () => {
                             <td>{ station.id }</td>
                             <td>{ station.name }</td>
                             <td>
-                                { station.services && station.services.length > 0 ? (
+                                {
+
+                                    station.services && station.services.length > 0 ? (
                                     station.services.map((service, serviceIndex) => (
                                         <span key={ serviceIndex } style={ { marginRight: '5px' } }>
                                             { serviceIndex > 0 && ', ' }
@@ -254,10 +207,7 @@ const ManageStationScreen = () => {
                                 <Button
                                     variant="primary"
                                     style={ { backgroundColor: '#548CA8', color: 'white', borderColor: '#548CA8' } }
-                                    onClick={ () => {
-                                        setShowServiceModal(true);
-                                        setSelectedStation(station);
-                                    } }
+                                    onClick={ () => onEditServices(station) }
                                 >
                                     Edit
                                 </Button>
@@ -305,7 +255,7 @@ const ManageStationScreen = () => {
                                             padding: '2px 5px',
                                             backgroundColor: '#dc3545',
                                             borderColor: '#dc3545'
-                                        } } onClick={ () => removeSelectedService(service.id) }>X</Button>
+                                        } } onClick={ () => removeSelectedService(service) }>X</Button>
                                 </span>
                                 ))
                             ) : (
@@ -381,19 +331,6 @@ const ManageStationScreen = () => {
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={ handleCloseModal }>Close</Button>
-                </Modal.Footer>
-            </Modal>
-
-            <Modal show={ deleteConfirmation } onHide={ () => setDeleteConfirmation(false) }>
-                <Modal.Header closeButton style={ { backgroundColor: '#334257', color: 'white' } }>
-                    <Modal.Title>Confirmation</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    Are you sure you want to delete this station?
-                </Modal.Body>
-                <Modal.Footer style={ { backgroundColor: '#334257', color: 'white' } }>
-                    <Button variant="secondary" onClick={ () => setDeleteConfirmation(false) }>Cancel</Button>
-                    <Button variant="danger" onClick={ confirmDeleteStation }>Delete</Button>
                 </Modal.Footer>
             </Modal>
         </div>

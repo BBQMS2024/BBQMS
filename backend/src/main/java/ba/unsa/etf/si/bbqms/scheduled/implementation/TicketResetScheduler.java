@@ -20,7 +20,7 @@ public class TicketResetScheduler {
     public void run() {
         logger.info("Running ticket reset task scheduler.");
         try {
-            this.ticketService.deleteAllTickets();
+            this.ticketService.deleteAll();
             logger.info("Tickets reset.");
         } catch (final Exception exception) {
             logger.error("Failed to reset tickets.");

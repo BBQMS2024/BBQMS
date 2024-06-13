@@ -200,7 +200,7 @@ const ManageBranchesScreen = () => {
     };
 
     return (
-        <div className="text-center mt-5">
+        <div className="text-center">
             <h2>Manage Branches</h2>
             <Button variant="primary" style={styles.primaryButton} className="mb-3" onClick={() => { setShowModal(true); setSelectedBranchIndex(null); }}>Add Branch</Button>
 

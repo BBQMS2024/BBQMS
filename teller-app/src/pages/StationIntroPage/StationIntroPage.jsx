@@ -17,37 +17,22 @@ const StationIntroPage = () => {
 
     useEffect(() => {
         fetchData(`${ url }branches/DFLT`, 'GET')
-            .then(response => {
-                if (response.success) {
-                    setBranches(response.data);
-                } else {
-                    console.error('Error fetching branches');
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching branches:', error);
-            });
+            .then(response => response.data)
+            .then(setBranches)
+            .catch(console.error)
     }, []);
 
-    const handleBranchSelect = async (branch) => {
-        setSelectedBranch(branch);
-        try {
-            const response = await fetchData(`${url}stations/DFLT/${branch.id}`, 'GET');
-            if (response.success) {
-                setStations(response.data);
-            } else {
-                console.error('Error fetching stations');
-            }
-        } catch (error) {
-            console.error('Error fetching stations:', error);
-        }
-    };
+    function handleBranchSelect(branch) {
+        setSelectedBranch(branch)
+        fetchData(`${ url }stations/DFLT/${ branch.id }`, 'GET')
+            .then(response => response.data)
+            .then(setStations)
+            .catch(console.error)
+    }
 
-    const handleStationSelect = (station) => {
-        setSelectedStation(station);
-        localStorage.setItem('tellerId', station.id);
-        navigate('/tellerqueue')
-    };
+    function handleStationSelect(station) {
+        navigate(`/teller-queue/${ station.id }`)
+    }
 
     return (
         <div className="text-center mt-5">

@@ -1,19 +1,28 @@
 package ba.unsa.etf.si.bbqms.admin_service.implementation;
 
+import ba.ekapic1.stonebase.filter.CompositeField;
+import ba.ekapic1.stonebase.filter.ConditionType;
+import ba.unsa.etf.si.bbqms.admin_service.api.BranchService;
 import ba.unsa.etf.si.bbqms.admin_service.api.StationService;
+import ba.unsa.etf.si.bbqms.domain.Branch;
+import ba.unsa.etf.si.bbqms.domain.BranchField;
 import ba.unsa.etf.si.bbqms.domain.BranchGroup;
 import ba.unsa.etf.si.bbqms.domain.Display;
 import ba.unsa.etf.si.bbqms.domain.Service;
 import ba.unsa.etf.si.bbqms.domain.TellerStation;
+import ba.unsa.etf.si.bbqms.domain.TellerStationField;
+import ba.unsa.etf.si.bbqms.domain.TenantField;
 import ba.unsa.etf.si.bbqms.repository.DisplayRepository;
 import ba.unsa.etf.si.bbqms.repository.ServiceRepository;
 import ba.unsa.etf.si.bbqms.repository.TellerStationRepository;
 import jakarta.persistence.EntityNotFoundException;
 
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeSet;
 
 
 @org.springframework.stereotype.Service
@@ -32,15 +41,40 @@ public class DefaultStationService implements StationService {
 
     @Override
     public List<TellerStation> getAllByTenant(final String tenantCode) {
-        return this.tellerStationRepository.findByBranch_Tenant_Code(tenantCode);
+        return this.tellerStationRepository.findAll(
+                this.tellerStationRepository.filterBuilder()
+                        .with(
+                                CompositeField.of(
+                                        TellerStationField.BRANCH,
+                                        BranchField.TENANT,
+                                        TenantField.CODE
+                                ),
+                                ConditionType.EQUAL,
+                                tenantCode
+                        )
+                        .build()
+        );
+    }
+
+    @Override
+    public Set<Service> findAssignableServices(final long stationId) {
+        final TellerStation station = this.tellerStationRepository.get(stationId);
+
+        final Set<BranchGroup> groups = station.getBranch().getBranchGroups();
+        final Set<Service> possibleServices = new TreeSet<>(Comparator.comparing(Service::getId));
+        for (final BranchGroup group : groups) {
+            possibleServices.addAll(group.getServices());
+        }
+
+        possibleServices.removeAll(station.getServices());
+
+        return possibleServices;
     }
 
     @Override
     public TellerStation addTellerStationService(final long stationId, final long serviceId) {
-        final TellerStation tellerStation = this.tellerStationRepository.findById(stationId)
-                .orElseThrow(() -> new EntityNotFoundException("No station found with id: " + stationId ));
-        final Service service = this.serviceRepository.findById(serviceId)
-                .orElseThrow(() -> new EntityNotFoundException("No service found with id: " + serviceId));
+        final TellerStation tellerStation = this.tellerStationRepository.get(stationId);
+        final Service service = this.serviceRepository.get(serviceId);
 
         tellerStation.getServices().add(service);
 
@@ -49,10 +83,8 @@ public class DefaultStationService implements StationService {
 
     @Override
     public TellerStation deleteTellerStationService(final long stationId, final long serviceId) {
-        final TellerStation tellerStation = this.tellerStationRepository.findById(stationId)
-                .orElseThrow(() -> new EntityNotFoundException("No station found with id: " + stationId ));
-        final Service service = this.serviceRepository.findById(serviceId)
-                .orElseThrow(() -> new EntityNotFoundException("No service found with id: " + serviceId));
+        final TellerStation tellerStation = this.tellerStationRepository.get(stationId);
+        final Service service = this.serviceRepository.get(serviceId);
 
         if (tellerStation.getServices().remove(service)) {
             return this.tellerStationRepository.save(tellerStation);
@@ -62,11 +94,8 @@ public class DefaultStationService implements StationService {
 
     @Override
     public TellerStation addTellerStationDisplay(final long stationId, final long displayId) {
-        final TellerStation tellerStation = this.tellerStationRepository.findById(stationId)
-                .orElseThrow(() -> new EntityNotFoundException("No station found with id: " + stationId ));
-
-        final Display display = this.displayRepository.findById(displayId)
-                .orElseThrow(() -> new EntityNotFoundException("No display with id: " + displayId));
+        final TellerStation tellerStation = this.tellerStationRepository.get(stationId);
+        final Display display = this.displayRepository.get(displayId);
 
         tellerStation.setDisplay(display);
         display.setTellerStation(tellerStation);
@@ -76,15 +105,13 @@ public class DefaultStationService implements StationService {
 
     @Override
     public TellerStation deleteTellerStationDisplay(final long stationId, final long displayId) {
-        final TellerStation tellerStation = this.tellerStationRepository.findById(stationId)
-                .orElseThrow(() -> new EntityNotFoundException("No station found with id: " + stationId ));
+        final TellerStation tellerStation = this.tellerStationRepository.get(stationId);
 
         if (tellerStation.getDisplay().getId() != displayId) {
             throw new RuntimeException("Display is not assigned to station: " + stationId);
         }
 
-        final Display display = this.displayRepository.findById(displayId)
-                .orElseThrow(() -> new EntityNotFoundException("No display with id: " + displayId));
+        final Display display = this.displayRepository.get(displayId);
 
         tellerStation.setDisplay(null);
         display.setTellerStation(null);
@@ -94,8 +121,7 @@ public class DefaultStationService implements StationService {
 
     @Override
     public Set<Service> getServicesByAssigned(final long stationId, final boolean assigned) {
-        final TellerStation tellerStation = this.tellerStationRepository.findById(stationId)
-                .orElseThrow(() -> new EntityNotFoundException("No station found with id: " + stationId ));
+        final TellerStation tellerStation = this.tellerStationRepository.get(stationId);
 
         if (assigned) {
             return tellerStation.getServices();
@@ -115,8 +141,12 @@ public class DefaultStationService implements StationService {
     }
 
     @Override
-    public Set<TellerStation> getAllByBranch(final long branchId) {
-        return this.tellerStationRepository.findAllByBranch_Id(branchId);
+    public List<TellerStation> getAllByBranch(final long branchId) {
+        return this.tellerStationRepository.findAll(
+                this.tellerStationRepository.filterBuilder()
+                        .with(CompositeField.of(TellerStationField.BRANCH, BranchField.ID), ConditionType.EQUAL, branchId)
+                        .build()
+        );
     }
 
     @Override
@@ -127,19 +157,5 @@ public class DefaultStationService implements StationService {
     @Override
     public Optional<TellerStation> findById(final long serviceId) {
         return this.tellerStationRepository.findById(serviceId);
-    }
-
-    @Override
-    public Set<Service> getServicesForTellerStation(long stationId) {
-        return this.tellerStationRepository.findById(stationId)
-                .map(TellerStation::getServices)
-                .orElseThrow(EntityNotFoundException::new);
-    }
-
-    @Override
-    public long getBranchIdForTellerStation(final long stationId) {
-        return this.tellerStationRepository.findById(stationId)
-                .map(tellerStation -> tellerStation.getBranch().getId())
-                .orElseThrow(EntityNotFoundException::new);
     }
 }

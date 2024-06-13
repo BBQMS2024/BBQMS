@@ -170,7 +170,7 @@ const UserManageScreen = () => {
     };
 
     return (
-        <div className="text-center mt-5">
+        <div className="text-center">
             <h2>Manage Users</h2>
             <Button variant="primary" style={styles.primaryButton} className="mb-3" onClick={() => { setShowModal(true); setSelectedUserIndex(null); }}>Add User</Button>
 
